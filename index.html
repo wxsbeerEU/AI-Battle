@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CORE_TERMINAL // Battle of the AIs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0d14;
+      --panel: #0f172a;
+      --panel-border: #00ff66;
+      --accent: #00ff66;
+      --accent-cyan: #00e5ff;
+      --accent-red: #ff3366;
+      --text: #c9d1d9;
+      --text-bright: #ffffff;
+      --font-mono: 'Share Tech Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        linear-gradient(rgba(0, 255, 102, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 102, 0.03) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    /* Scanline effect */
+    body::before {
+      content: " ";
+      position: fixed;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    header {
+      border-bottom: 2px solid var(--panel-border);
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.95);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand {
+      font-size: 1.4rem;
+      color: var(--accent);
+      text-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
+      letter-spacing: 2px;
+    }
+
+    .system-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--accent-red);
+      font-weight: bold;
+      animation: pulse 1.5s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { opacity: 0.6; }
+      to { opacity: 1; }
+    }
+
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      flex-grow: 1;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid rgba(0, 255, 102, 0.2);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .panel-header {
+      border-bottom: 1px dashed rgba(0, 255, 102, 0.3);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      color: var(--accent-cyan);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Team Switcher */
+    .team-select-bar {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    select, button, input {
+      font-family: var(--font-mono);
+      background: #050811;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    button {
+      cursor: pointer;
+      background: rgba(0, 255, 102, 0.1);
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    /* Broadcast Banner */
+    .broadcast-box {
+      border-left: 4px solid var(--accent-cyan);
+      background: rgba(0, 229, 255, 0.05);
+      padding: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Grid Sectoren */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .sector-card {
+      background: rgba(5, 8, 17, 0.8);
+      border: 1px solid #1e293b;
+      padding: 1.25rem;
+      transition: border-color 0.2s;
+    }
+
+    .sector-card:hover {
+      border-color: var(--accent-cyan);
+    }
+
+    .sector-card h3 {
+      color: var(--accent-cyan);
+      margin-bottom: 0.25rem;
+    }
+
+    .sector-location {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-bottom: 1rem;
+    }
+
+    .task-item {
+      background: #0f172a;
+      border-left: 3px solid #334155;
+      padding: 0.75rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.9rem;
+    }
+
+    .task-item.done {
+      border-left-color: var(--accent);
+      opacity: 0.6;
+    }
+
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.25rem;
+      color: var(--text-bright);
+    }
+
+    .task-prompt {
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+
+    /* Timer */
+    .timer-display {
+      font-size: 2rem;
+      color: var(--accent-red);
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.75rem;
+      border-radius: 2px;
+      text-transform: uppercase;
+    }
+
+    .badge-pending { background: #334155; color: #fff; }
+    .badge-done { background: var(--accent); color: #000; font-weight: bold; }
+
+    /* Mastermind Helper */
+    .mm-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .color-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #334155;
+      cursor: pointer;
+    }
+
+    .color-dot[data-color="none"] { background: transparent; }
+    .color-dot[data-color="red"] { background: #ff3366; }
+    .color-dot[data-color="blue"] { background: #00e5ff; }
+    .color-dot[data-color="green"] { background: #00ff66; }
+    .color-dot[data-color="yellow"] { background: #ffd700; }
+    .color-dot[data-color="orange"] { background: #ff9900; }
+    .color-dot[data-color="purple"] { background: #b026ff; }
+
+    /* Admin */
+    .admin-section {
+      margin-top: 3rem;
+      border-top: 1px dashed #334155;
+      padding-top: 1rem;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">CORE_TERMINAL // v2.6</div>
+    <div class="system-status">🚨 STATUS: GEHACKT DOOR VIRUS GLITCH</div>
+    <div class="timer-display" id="gameTimer">120:00</div>
+  </header>
+
+  <div class="container">
+    
+    <!-- Team Switcher Header -->
+    <div class="panel">
+      <div class="team-select-bar">
+        <label for="teamSelect"><strong>SELECTEER AI TERMINAL:</strong></label>
+        <select id="teamSelect" onchange="switchTeam()">
+          <option value="chatgpt">Team ChatGPT</option>
+          <option value="midjourney">Team Midjourney</option>
+          <option value="gemini">Team Gemini</option>
+          <option value="sora">Team Sora</option>
+          <option value="copilot">Team Copilot</option>
+        </select>
+        <span id="activeTeamDisplay" style="color: var(--accent); margin-left: auto;">ONLINE: Team ChatGPT</span>
+      </div>
+    </div>
+
+    <!-- Live Leiding Broadcast -->
+    <div class="broadcast-box">
+      <div style="color: var(--accent-cyan); font-weight: bold; margin-bottom: 0.25rem;">📡 SYSTEEM BROADCAST / COMMANDER UPDATE:</div>
+      <div id="broadcastMessage">Verstoring gedetecteerd in alle 4 sectoren. Los de opdrachten op en kraak de centrale Master Core!</div>
+    </div>
+
+    <!-- Sector Grid -->
+    <div class="grid">
+      
+      <!-- Sector 1 -->
+      <div class="sector-card">
+        <h3>SECTOR 1: PROMPT ENGINEERING</h3>
+        <div class="sector-location">📍 Locatie: Achter de Hoofdtent</div>
+
+        <div class="task-item" id="task-s1-a">
+          <div class="task-header">
+            <strong>Opdracht A: Audio Prompt</strong>
+            <button onclick="toggleTask('s1-a')">Status</button>
+          </div>
+          <p class="task-prompt">"Verstoring in spraakmodule. Stuur 1 operator naar het zendstation met walkietalkie. Bouw het fysieke LEGO-prototype na via enkel gesproken commando's."</p>
+        </div>
+
+        <div class="task-item" id="task-s1-b">
+          <div class="task-header">
+            <strong>Opdracht B: Blind Algorithm</strong>
+            <button onclick="toggleTask('s1-b')">Status</button>
+          </div>
+          <p class="task-prompt">"Visuele sensoren offline. Blinddoek 1 teamlid (De Robot). Stuur de Robot met strikte stap-commando's foutloos door het mijnenveld."</p>
+        </div>
+
+        <div class="task-item" id="task-s1-c">
+          <div class="task-header">
+            <strong>Opdracht C: Censuur Filter</strong>
+            <button onclick="toggleTask('s1-c')">Status</button>
+          </div>
+          <p class="task-prompt">"Datafilter corruptie. Lees het protocol voor aan de posthouder zonder de 8 verboden woorden te activeren."</p>
+        </div>
+      </div>
+
+      <!-- Sector 2 -->
+      <div class="sector-card">
+        <h3>SECTOR 2: CREATIVE NEURAL NET</h3>
+        <div class="sector-location">📍 Locatie: Bij het Open Veld</div>
+
+        <div class="task-item" id="task-s2-a">
+          <div class="task-header">
+            <strong>Opdracht A: Hallucination Drawing</strong>
+            <button onclick="toggleTask('s2-a')">Status</button>
+          </div>
+          <p class="task-prompt">"Generatieve beeldfout. 1 teamlid trekt een prompt en tekent deze direct. Het team moet binnen 2 minuten de exacte prompttekst decoderen."</p>
+        </div>
+
+        <div class="task-item" id="task-s2-b">
+          <div class="task-header">
+            <strong>Opdracht B: Motion Tracking</strong>
+            <button onclick="toggleTask('s2-b')">Status</button>
+          </div>
+          <p class="task-prompt">"Kinematische calibratie. Bekijk de robotdans van de posthouder en repliceer deze binnen 2 minuten 100% synchroon met het volledige team."</p>
+        </div>
+
+        <div class="task-item" id="task-s2-c">
+          <div class="task-header">
+            <strong>Opdracht C: Deepfake Detector</strong>
+            <button onclick="toggleTask('s2-c')">Status</button>
+          </div>
+          <p class="task-prompt">"Visuele fraude gedetecteerd. Analyseer de 10 data-afbeeldingen bij de posthouder en markeer alle 5 de AI-deepfakes."</p>
+        </div>
+      </div>
+
+      <!-- Sector 3 -->
+      <div class="sector-card">
+        <h3>SECTOR 3: CYBERSECURITY FIREWALL</h3>
+        <div class="sector-location">📍 Locatie: In het Bos</div>
+
+        <div class="task-item" id="task-s3-a">
+          <div class="task-header">
+            <strong>Opdracht A: DDoS Attack</strong>
+            <button onclick="toggleTask('s3-a')">Status</button>
+          </div>
+          <p class="task-prompt">"Serveroverbelasting. Steek de firewall-zone over. Minstens 6 teamleden moeten de overkant bereiken zonder geraakt te worden door trefballen."</p>
+        </div>
+
+        <div class="task-item" id="task-s3-b">
+          <div class="task-header">
+            <strong>Opdracht B: Laser Grid Defusal</strong>
+            <button onclick="toggleTask('s3-b')">Status</button>
+          </div>
+          <p class="task-prompt">"Inbraakdetectie actief. Doorkruis het touwenweb met belletjes. Het alarm mag maximaal 1 keer geactiveerd worden."</p>
+        </div>
+
+        <div class="task-item" id="task-s3-c">
+          <div class="task-header">
+            <strong>Opdracht C: Hardware Extraction</strong>
+            <button onclick="toggleTask('s3-c')">Status</button>
+          </div>
+          <p class="task-prompt">"Fysieke registerschade. Haal 5 microchips uit het koelvloeistof-reservoir (de bak) met enkel eetstokjes."</p>
+        </div>
+      </div>
+
+      <!-- Sector 4 -->
+      <div class="sector-card">
+        <h3>SECTOR 4: MACHINE LEARNING LOGIC</h3>
+        <div class="sector-location">📍 Locatie: Bij het Kampvuur</div>
+
+        <div class="task-item" id="task-s4-a">
+          <div class="task-header">
+            <strong>Opdracht A: Pattern Recognition</strong>
+            <button onclick="toggleTask('s4-a')">Status</button>
+          </div>
+          <p class="task-prompt">"Onbekend sorteeralgoritme. Analyseer de datakaarten en ontdek de verborgen sorteerregel binnen 2 pogingen."</p>
+        </div>
+
+        <div class="task-item" id="task-s4-b">
+          <div class="task-header">
+            <strong>Opdracht B: Bug Fixing</strong>
+            <button onclick="toggleTask('s4-b')">Status</button>
+          </div>
+          <p class="task-prompt">"Deadlock in het systeem. Los de fysieke knoop van teamhanden op tot een schone ring zonder het contact te verbreken."</p>
+        </div>
+
+        <div class="task-item" id="task-s4-c">
+          <div class="task-header">
+            <strong>Opdracht C: Binary Decoder</strong>
+            <button onclick="toggleTask('s4-c')">Status</button>
+          </div>
+          <p class="task-prompt">"Gecodeerd datafragment. Converteer de reeks binaire getallen via de ASCII-tabel naar het juiste wachtwoord."</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Mastermind Kladblok Module -->
+    <div class="panel" style="margin-top: 2rem;">
+      <div class="panel-header">
+        <span>DECRYPTION NOTEBOOK (KLADBLOK VOOR CODE-KRAKEN)</span>
+        <button onclick="resetDots()">Reset Kladblok</button>
+      </div>
+      <p style="font-size: 0.85rem; margin-bottom: 1rem; color: #94a3b8;">
+        Klik op de bollen om kleuren te testen (Rood, Blauw, Groen, Geel, Oranje, Paars). <em>Let op: Geef de officiële poging altijd aan op je fysieke Hack-Kaart!</em>
+      </p>
+      
+      <div id="mastermindDraft"></div>
+    </div>
+
+    <!-- Admin / Leiding Paneel -->
+    <div class="admin-section">
+      <details>
+        <summary style="cursor: pointer; color: #64748b;">⚙️ LEIDING / CENTRALE POST CONTROLES</summary>
+        <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <input type="password" id="adminPass" placeholder="Wachtwoord (admin123)">
+          <input type="text" id="adminMsg" placeholder="Nieuw broadcast bericht..." style="flex-grow: 1;">
+          <button onclick="setBroadcast()">Verstuur Broadcast</button>
+          <button onclick="startTimer()">Start/Reset Timer (120m)</button>
+        </div>
+      </details>
+    </div>
+
+  </div>
+
+  <script>
+    const COLORS = ['none', 'red', 'blue', 'green', 'yellow', 'orange', 'purple'];
+    
+    // Initialiseer Kladblok
+    const mmContainer = document.getElementById('mastermindDraft');
+    for (let r = 1; r <= 6; r++) {
+      const row = document.createElement('div');
+      row.className = 'mm-row';
+      row.innerHTML = `<span style="width: 80px;">Poging ${r}:</span>`;
+      for (let c = 1; c <= 4; c++) {
+        const dot = document.createElement('div');
+        dot.className = 'color-dot';
+        dot.dataset.color = 'none';
+        dot.onclick = function() {
+          let curr = COLORS.indexOf(this.dataset.color);
+          let next = COLORS[(curr + 1) % COLORS.length];
+          this.dataset.color = next;
+        };
+        row.appendChild(dot);
+      }
+      mmContainer.appendChild(row);
+    }
+
+    function resetDots() {
+      document.querySelectorAll('.color-dot').forEach(d => d.dataset.color = 'none');
+    }
+
+    // Team Status Management
+    function switchTeam() {
+      const select = document.getElementById('teamSelect');
+      const teamName = select.options[select.selectedIndex].text;
+      document.getElementById('activeTeamDisplay').innerText = `ONLINE: ${teamName}`;
+      loadTeamProgress(select.value);
+    }
+
+    function toggleTask(taskId) {
+      const el = document.getElementById(`task-${taskId}`);
+      el.classList.toggle('done');
+      saveTeamProgress();
+    }
+
+    function saveTeamProgress() {
+      const team = document.getElementById('teamSelect').value;
+      const tasks = document.querySelectorAll('.task-item');
+      const status = {};
+      tasks.forEach(t => {
+        status[t.id] = t.classList.contains('done');
+      });
+      localStorage.setItem(`team_${team}`, JSON.stringify(status));
+    }
+
+    function loadTeamProgress(team) {
+      const saved = localStorage.getItem(`team_${team}`);
+      const status = saved ? JSON.parse(saved) : {};
+      document.querySelectorAll('.task-item').forEach(t => {
+        if (status[t.id]) {
+          t.classList.add('done');
+        } else {
+          t.classList.remove('done');
+        }
+      });
+    }
+
+    // Timer Module
+    let timeRemaining = 120 * 60;
+    let timerInterval = null;
+
+    function updateTimer() {
+      const mins = Math.floor(timeRemaining / 60);
+      const secs = timeRemaining % 60;
+      document.getElementById('gameTimer').innerText = 
+        `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      if (timeRemaining > 0) {
+        timeRemaining--;
+      } else {
+        clearInterval(timerInterval);
+        document.getElementById('gameTimer').innerText = "00:00 - CORE LOCKED";
+      }
+    }
+
+    function startTimer() {
+      const pass = document.getElementById('adminPass').value;
+      if (pass !== 'admin123') return alert('Verkeerd beheerderswachtwoord');
+      clearInterval(timerInterval);
+      timeRemaining = 120 * 60;
+      timerInterval = setInterval(updateTimer, 1000);
+      updateTimer();
+    }
+
+    // Broadcast Module
+    function setBroadcast() {
+      const pass = document.getElementById('adminPass').value;
+      const msg = document.getElementById('adminMsg').value;
+      if (pass !== 'admin123') return alert('Verkeerd beheerderswachtwoord');
+      if (msg) {
+        document.getElementById('broadcastMessage').innerText = msg;
+        localStorage.setItem('core_broadcast', msg);
+      }
+    }
+
+    // Auto load state
+    window.onload = function() {
+      switchTeam();
+      timerInterval = setInterval(updateTimer, 1000);
+      const savedMsg = localStorage.getItem('core_broadcast');
+      if (savedMsg) document.getElementById('broadcastMessage').innerText = savedMsg;
+    };
+  </script>
+</body>
+</html>
