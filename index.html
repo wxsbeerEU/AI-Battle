@@ -3,548 +3,419 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CORE_TERMINAL // Battle of the AIs</title>
+  <title>CYBER_CORE // Battle of the AIs</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0a0d14;
-      --panel: #0f172a;
-      --panel-border: #00ff66;
-      --accent: #00ff66;
-      --accent-cyan: #00e5ff;
-      --accent-red: #ff3366;
-      --text: #c9d1d9;
-      --text-bright: #ffffff;
-      --font-mono: 'Share Tech Mono', monospace;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: var(--font-mono);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background-image: 
-        linear-gradient(rgba(0, 255, 102, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 102, 0.03) 1px, transparent 1px);
-      background-size: 24px 24px;
-    }
-
-    /* Scanline effect */
-    body::before {
-      content: " ";
-      position: fixed;
-      top: 0; left: 0; bottom: 0; right: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-      background-size: 100% 4px;
-      pointer-events: none;
-      z-index: 1000;
-    }
-
-    header {
-      border-bottom: 2px solid var(--panel-border);
-      padding: 1rem 2rem;
-      background: rgba(15, 23, 42, 0.95);
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .brand {
-      font-size: 1.4rem;
-      color: var(--accent);
-      text-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
-      letter-spacing: 2px;
-    }
-
-    .system-status {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: var(--accent-red);
-      font-weight: bold;
-      animation: pulse 1.5s infinite alternate;
-    }
-
-    @keyframes pulse {
-      from { opacity: 0.6; }
-      to { opacity: 1; }
-    }
-
-    .container {
-      max-width: 1200px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 2rem 1rem;
-      flex-grow: 1;
-    }
-
-    .panel {
-      background: var(--panel);
-      border: 1px solid rgba(0, 255, 102, 0.2);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      position: relative;
-    }
-
-    .panel-header {
-      border-bottom: 1px dashed rgba(0, 255, 102, 0.3);
-      padding-bottom: 0.5rem;
-      margin-bottom: 1rem;
-      color: var(--accent-cyan);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    /* Team Switcher */
-    .team-select-bar {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    select, button, input {
-      font-family: var(--font-mono);
-      background: #050811;
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-      outline: none;
-    }
-
-    button {
-      cursor: pointer;
-      background: rgba(0, 255, 102, 0.1);
-      transition: all 0.2s;
-    }
-
-    button:hover {
-      background: var(--accent);
-      color: #000;
-      box-shadow: 0 0 10px var(--accent);
-    }
-
-    /* Broadcast Banner */
-    .broadcast-box {
-      border-left: 4px solid var(--accent-cyan);
-      background: rgba(0, 229, 255, 0.05);
-      padding: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    /* Grid Sectoren */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .sector-card {
-      background: rgba(5, 8, 17, 0.8);
-      border: 1px solid #1e293b;
-      padding: 1.25rem;
-      transition: border-color 0.2s;
-    }
-
-    .sector-card:hover {
-      border-color: var(--accent-cyan);
-    }
-
-    .sector-card h3 {
-      color: var(--accent-cyan);
-      margin-bottom: 0.25rem;
-    }
-
-    .sector-location {
-      font-size: 0.85rem;
-      color: #94a3b8;
-      margin-bottom: 1rem;
-    }
-
-    .task-item {
-      background: #0f172a;
-      border-left: 3px solid #334155;
-      padding: 0.75rem;
-      margin-bottom: 0.75rem;
-      font-size: 0.9rem;
-    }
-
-    .task-item.done {
-      border-left-color: var(--accent);
-      opacity: 0.6;
-    }
-
-    .task-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.25rem;
-      color: var(--text-bright);
-    }
-
-    .task-prompt {
-      color: #94a3b8;
-      line-height: 1.4;
-    }
-
-    /* Timer */
-    .timer-display {
-      font-size: 2rem;
-      color: var(--accent-red);
-      font-weight: bold;
-      letter-spacing: 2px;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 0.2rem 0.5rem;
-      font-size: 0.75rem;
-      border-radius: 2px;
-      text-transform: uppercase;
-    }
-
-    .badge-pending { background: #334155; color: #fff; }
-    .badge-done { background: var(--accent); color: #000; font-weight: bold; }
-
-    /* Mastermind Helper */
-    .mm-row {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-      margin-bottom: 0.5rem;
-    }
-
-    .color-dot {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      border: 2px solid #334155;
-      cursor: pointer;
-    }
-
-    .color-dot[data-color="none"] { background: transparent; }
-    .color-dot[data-color="red"] { background: #ff3366; }
-    .color-dot[data-color="blue"] { background: #00e5ff; }
-    .color-dot[data-color="green"] { background: #00ff66; }
-    .color-dot[data-color="yellow"] { background: #ffd700; }
-    .color-dot[data-color="orange"] { background: #ff9900; }
-    .color-dot[data-color="purple"] { background: #b026ff; }
-
-    /* Admin */
-    .admin-section {
-      margin-top: 3rem;
-      border-top: 1px dashed #334155;
-      padding-top: 1rem;
-      font-size: 0.85rem;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="theme-dark">
+  <div class="glitch-overlay"></div>
+  <div class="grid-background"></div>
 
-  <header>
-    <div class="brand">CORE_TERMINAL // v2.6</div>
-    <div class="system-status">🚨 STATUS: GEHACKT DOOR VIRUS GLITCH</div>
-    <div class="timer-display" id="gameTimer">120:00</div>
+  <!-- TOP HUD BAR -->
+  <header class="hud-header">
+    <div class="hud-left">
+      <div class="terminal-badge">
+        <span class="pulse-dot"></span>
+        <span class="system-id">CORE_NET // NODE-7</span>
+      </div>
+      <h1 class="glitch-title" data-text="THE BATTLE OF THE AIs">THE BATTLE OF THE AIs</h1>
+    </div>
+
+    <div class="hud-center">
+      <div class="threat-level">
+        <span class="threat-label">SYSTEM INTEGRITY</span>
+        <div class="integrity-bar">
+          <div class="integrity-fill" id="integrityFill"></div>
+        </div>
+        <span class="threat-val" id="integrityVal">24% - CRITICAL</span>
+      </div>
+    </div>
+
+    <div class="hud-right">
+      <div class="timer-card">
+        <span class="timer-label">CORE MELTDOWN IN</span>
+        <div class="timer-digits" id="gameTimer">02:00:00</div>
+      </div>
+      <button class="sound-toggle-btn" id="audioToggleBtn" title="Geluidseffecten">
+        🔊 SFX: <span id="sfxStatus">AAN</span>
+      </button>
+    </div>
   </header>
 
-  <div class="container">
+  <!-- LIVE SYSTEM BROADCAST / TICKER -->
+  <section class="ticker-banner">
+    <div class="ticker-tag">🔴 SYSTEEM COMMUNICATIE //</div>
+    <div class="ticker-content" id="broadcastDisplay">
+      ⚠️ NOODTOESTAND: Virus GLITCH heeft de Master Core vergrendeld. 5 AI-clusters geactiveerd. Voer opdrachten uit om decryptie-codes te bemachtigen!
+    </div>
+    <div class="ticker-time" id="lastBroadcastTime">LIVE</div>
+  </section>
+
+  <!-- MAIN VIEWPORT -->
+  <div class="app-layout">
     
-    <!-- Team Switcher Header -->
-    <div class="panel">
-      <div class="team-select-bar">
-        <label for="teamSelect"><strong>SELECTEER AI TERMINAL:</strong></label>
-        <select id="teamSelect" onchange="switchTeam()">
-          <option value="chatgpt">Team ChatGPT</option>
-          <option value="midjourney">Team Midjourney</option>
-          <option value="gemini">Team Gemini</option>
-          <option value="sora">Team Sora</option>
-          <option value="copilot">Team Copilot</option>
-        </select>
-        <span id="activeTeamDisplay" style="color: var(--accent); margin-left: auto;">ONLINE: Team ChatGPT</span>
-      </div>
-    </div>
-
-    <!-- Live Leiding Broadcast -->
-    <div class="broadcast-box">
-      <div style="color: var(--accent-cyan); font-weight: bold; margin-bottom: 0.25rem;">📡 SYSTEEM BROADCAST / COMMANDER UPDATE:</div>
-      <div id="broadcastMessage">Verstoring gedetecteerd in alle 4 sectoren. Los de opdrachten op en kraak de centrale Master Core!</div>
-    </div>
-
-    <!-- Sector Grid -->
-    <div class="grid">
+    <!-- LEFT SIDEBAR: TEAM IDENTITY & PROGRESS SUMMARY -->
+    <aside class="sidebar-panel">
       
-      <!-- Sector 1 -->
-      <div class="sector-card">
-        <h3>SECTOR 1: PROMPT ENGINEERING</h3>
-        <div class="sector-location">📍 Locatie: Achter de Hoofdtent</div>
-
-        <div class="task-item" id="task-s1-a">
-          <div class="task-header">
-            <strong>Opdracht A: Audio Prompt</strong>
-            <button onclick="toggleTask('s1-a')">Status</button>
-          </div>
-          <p class="task-prompt">"Verstoring in spraakmodule. Stuur 1 operator naar het zendstation met walkietalkie. Bouw het fysieke LEGO-prototype na via enkel gesproken commando's."</p>
+      <!-- Team Selector / Profile Box -->
+      <div class="panel-box team-profile-box">
+        <div class="box-title">IDENTITEIT SELECTIE</div>
+        <div class="custom-select-wrapper">
+          <select id="teamSelect" class="cyber-select" onchange="onTeamChanged()">
+            <option value="chatgpt">🟢 Team ChatGPT (GPT-4o)</option>
+            <option value="midjourney">🎨 Team Midjourney (v6.1)</option>
+            <option value="gemini">✨ Team Gemini (1.5 Pro)</option>
+            <option value="sora">🎬 Team Sora (Diffusion)</option>
+            <option value="copilot">⚡ Team Copilot (Neural Auto)</option>
+          </select>
         </div>
 
-        <div class="task-item" id="task-s1-b">
-          <div class="task-header">
-            <strong>Opdracht B: Blind Algorithm</strong>
-            <button onclick="toggleTask('s1-b')">Status</button>
+        <div class="ai-avatar-card" id="teamAvatarCard">
+          <div class="ai-avatar-icon" id="teamAvatarIcon">🤖</div>
+          <div class="ai-avatar-info">
+            <h3 id="currentTeamTitle">Team ChatGPT</h3>
+            <span class="ai-spec" id="currentTeamSpec">LLM Supercluster // NLP Module</span>
           </div>
-          <p class="task-prompt">"Visuele sensoren offline. Blinddoek 1 teamlid (De Robot). Stuur de Robot met strikte stap-commando's foutloos door het mijnenveld."</p>
         </div>
 
-        <div class="task-item" id="task-s1-c">
-          <div class="task-header">
-            <strong>Opdracht C: Censuur Filter</strong>
-            <button onclick="toggleTask('s1-c')">Status</button>
+        <!-- Mini Stats -->
+        <div class="stat-grid">
+          <div class="stat-item">
+            <span class="stat-label">Sectoren Klaar</span>
+            <span class="stat-number" id="teamTasksCount">0 / 12</span>
           </div>
-          <p class="task-prompt">"Datafilter corruptie. Lees het protocol voor aan de posthouder zonder de 8 verboden woorden te activeren."</p>
-        </div>
-      </div>
-
-      <!-- Sector 2 -->
-      <div class="sector-card">
-        <h3>SECTOR 2: CREATIVE NEURAL NET</h3>
-        <div class="sector-location">📍 Locatie: Bij het Open Veld</div>
-
-        <div class="task-item" id="task-s2-a">
-          <div class="task-header">
-            <strong>Opdracht A: Hallucination Drawing</strong>
-            <button onclick="toggleTask('s2-a')">Status</button>
+          <div class="stat-item">
+            <span class="stat-label">Hack Pogingen</span>
+            <span class="stat-number" id="teamAttemptsCount">0 / 6</span>
           </div>
-          <p class="task-prompt">"Generatieve beeldfout. 1 teamlid trekt een prompt en tekent deze direct. Het team moet binnen 2 minuten de exacte prompttekst decoderen."</p>
-        </div>
-
-        <div class="task-item" id="task-s2-b">
-          <div class="task-header">
-            <strong>Opdracht B: Motion Tracking</strong>
-            <button onclick="toggleTask('s2-b')">Status</button>
+          <div class="stat-item highlight">
+            <span class="stat-label">Master Core Status</span>
+            <span class="stat-number" id="teamCoreStatus">VERGRENDELD</span>
           </div>
-          <p class="task-prompt">"Kinematische calibratie. Bekijk de robotdans van de posthouder en repliceer deze binnen 2 minuten 100% synchroon met het volledige team."</p>
-        </div>
-
-        <div class="task-item" id="task-s2-c">
-          <div class="task-header">
-            <strong>Opdracht C: Deepfake Detector</strong>
-            <button onclick="toggleTask('s2-c')">Status</button>
-          </div>
-          <p class="task-prompt">"Visuele fraude gedetecteerd. Analyseer de 10 data-afbeeldingen bij de posthouder en markeer alle 5 de AI-deepfakes."</p>
         </div>
       </div>
 
-      <!-- Sector 3 -->
-      <div class="sector-card">
-        <h3>SECTOR 3: CYBERSECURITY FIREWALL</h3>
-        <div class="sector-location">📍 Locatie: In het Bos</div>
+      <!-- Quick Navigation Tabs -->
+      <nav class="nav-pills">
+        <button class="nav-pill active" onclick="switchTab('sectors')">
+          <span class="pill-icon">📡</span> Sectoren & Opdrachten
+        </button>
+        <button class="nav-pill" onclick="switchTab('mastermind')">
+          <span class="pill-icon">🧩</span> Mastermind Terminal
+        </button>
+        <button class="nav-pill" onclick="switchTab('map')">
+          <span class="pill-icon">🗺️</span> Terrein Kaart & Posten
+        </button>
+        <button class="nav-pill" onclick="switchTab('binary')">
+          <span class="pill-icon">💾</span> Binair / ASCII Decoder
+        </button>
+      </nav>
 
-        <div class="task-item" id="task-s3-a">
-          <div class="task-header">
-            <strong>Opdracht A: DDoS Attack</strong>
-            <button onclick="toggleTask('s3-a')">Status</button>
-          </div>
-          <p class="task-prompt">"Serveroverbelasting. Steek de firewall-zone over. Minstens 6 teamleden moeten de overkant bereiken zonder geraakt te worden door trefballen."</p>
-        </div>
-
-        <div class="task-item" id="task-s3-b">
-          <div class="task-header">
-            <strong>Opdracht B: Laser Grid Defusal</strong>
-            <button onclick="toggleTask('s3-b')">Status</button>
-          </div>
-          <p class="task-prompt">"Inbraakdetectie actief. Doorkruis het touwenweb met belletjes. Het alarm mag maximaal 1 keer geactiveerd worden."</p>
-        </div>
-
-        <div class="task-item" id="task-s3-c">
-          <div class="task-header">
-            <strong>Opdracht C: Hardware Extraction</strong>
-            <button onclick="toggleTask('s3-c')">Status</button>
-          </div>
-          <p class="task-prompt">"Fysieke registerschade. Haal 5 microchips uit het koelvloeistof-reservoir (de bak) met enkel eetstokjes."</p>
-        </div>
+      <!-- Protocol / Rules Fast Guide -->
+      <div class="panel-box mini-guide">
+        <div class="box-title">HACK PROTOCOL</div>
+        <ol class="protocol-steps">
+          <li><strong>Lees de prompt</strong> op deze terminal.</li>
+          <li><strong>Ga fysiek naar de sector</strong> en voltooi de test.</li>
+          <li><strong>Krijg een paraaf</strong> + kleur 1 Mastermind bolletje in op je fysieke kaart.</li>
+          <li><strong>Rij van 4 vol?</strong> Valideer bij de Centrale Post voor feedback!</li>
+        </ol>
       </div>
 
-      <!-- Sector 4 -->
-      <div class="sector-card">
-        <h3>SECTOR 4: MACHINE LEARNING LOGIC</h3>
-        <div class="sector-location">📍 Locatie: Bij het Kampvuur</div>
+      <!-- Leiding Drawer Button -->
+      <button class="admin-access-btn" onclick="openAdminModal()">
+        🔒 CENTRALE POST / LEIDING CONTROLES
+      </button>
 
-        <div class="task-item" id="task-s4-a">
-          <div class="task-header">
-            <strong>Opdracht A: Pattern Recognition</strong>
-            <button onclick="toggleTask('s4-a')">Status</button>
-          </div>
-          <p class="task-prompt">"Onbekend sorteeralgoritme. Analyseer de datakaarten en ontdek de verborgen sorteerregel binnen 2 pogingen."</p>
-        </div>
+    </aside>
 
-        <div class="task-item" id="task-s4-b">
-          <div class="task-header">
-            <strong>Opdracht B: Bug Fixing</strong>
-            <button onclick="toggleTask('s4-b')">Status</button>
-          </div>
-          <p class="task-prompt">"Deadlock in het systeem. Los de fysieke knoop van teamhanden op tot een schone ring zonder het contact te verbreken."</p>
-        </div>
-
-        <div class="task-item" id="task-s4-c">
-          <div class="task-header">
-            <strong>Opdracht C: Binary Decoder</strong>
-            <button onclick="toggleTask('s4-c')">Status</button>
-          </div>
-          <p class="task-prompt">"Gecodeerd datafragment. Converteer de reeks binaire getallen via de ASCII-tabel naar het juiste wachtwoord."</p>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Mastermind Kladblok Module -->
-    <div class="panel" style="margin-top: 2rem;">
-      <div class="panel-header">
-        <span>DECRYPTION NOTEBOOK (KLADBLOK VOOR CODE-KRAKEN)</span>
-        <button onclick="resetDots()">Reset Kladblok</button>
-      </div>
-      <p style="font-size: 0.85rem; margin-bottom: 1rem; color: #94a3b8;">
-        Klik op de bollen om kleuren te testen (Rood, Blauw, Groen, Geel, Oranje, Paars). <em>Let op: Geef de officiële poging altijd aan op je fysieke Hack-Kaart!</em>
-      </p>
+    <!-- MAIN CONTENT AREA -->
+    <main class="main-content">
       
-      <div id="mastermindDraft"></div>
-    </div>
-
-    <!-- Admin / Leiding Paneel -->
-    <div class="admin-section">
-      <details>
-        <summary style="cursor: pointer; color: #64748b;">⚙️ LEIDING / CENTRALE POST CONTROLES</summary>
-        <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
-          <input type="password" id="adminPass" placeholder="Wachtwoord (admin123)">
-          <input type="text" id="adminMsg" placeholder="Nieuw broadcast bericht..." style="flex-grow: 1;">
-          <button onclick="setBroadcast()">Verstuur Broadcast</button>
-          <button onclick="startTimer()">Start/Reset Timer (120m)</button>
+      <!-- TAB 1: SECTOREN & OPDRACHTEN -->
+      <div id="tab-sectors" class="tab-pane active">
+        
+        <div class="section-topbar">
+          <div>
+            <h2 class="section-heading">OPERATIELE SECTOREN // STATUS OVERZICHT</h2>
+            <p class="section-sub">Selecteer een opdracht om de prompt en verificatie-eisen te bekijken.</p>
+          </div>
+          <div class="filter-pills">
+            <button class="filter-btn active" onclick="filterSectors('all')">Alles</button>
+            <button class="filter-btn" onclick="filterSectors('1')">Sector 1</button>
+            <button class="filter-btn" onclick="filterSectors('2')">Sector 2</button>
+            <button class="filter-btn" onclick="filterSectors('3')">Sector 3</button>
+            <button class="filter-btn" onclick="filterSectors('4')">Sector 4</button>
+          </div>
         </div>
-      </details>
-    </div>
 
+        <div class="sectors-grid" id="sectorsContainer">
+          <!-- Dynamisch gegenereerd door script.js -->
+        </div>
+
+      </div>
+
+      <!-- TAB 2: MASTERMIND DECRYPTION TERMINAL -->
+      <div id="tab-mastermind" class="tab-pane">
+        <div class="section-topbar">
+          <div>
+            <h2 class="section-heading">MASTERMIND HACK SIMULATOR</h2>
+            <p class="section-sub">Test theorieën en houd je fysieke kleurenkaart synchroon op het scherm.</p>
+          </div>
+          <button class="cyber-btn secondary" onclick="resetMastermindRows()">🧹 Reset Kladbord</button>
+        </div>
+
+        <div class="mastermind-wrapper">
+          <div class="mastermind-terminal">
+            <div class="mm-legend">
+              <span class="legend-title">BESCHIKBARE ENERGIE-KLEUREN:</span>
+              <div class="palette-options">
+                <span class="palette-swatch" style="background:#ff2a5f;">🔴 Rood</span>
+                <span class="palette-swatch" style="background:#00d9ff;">🔵 Blauw</span>
+                <span class="palette-swatch" style="background:#00ff66;">🟢 Groen</span>
+                <span class="palette-swatch" style="background:#ffd900; color:#000;">🟡 Geel</span>
+                <span class="palette-swatch" style="background:#ff8800; color:#000;">🟠 Oranje</span>
+                <span class="palette-swatch" style="background:#b336ff;">🟣 Paars</span>
+              </div>
+            </div>
+
+            <div class="mm-board" id="mastermindBoard">
+              <!-- Rendered rows -->
+            </div>
+          </div>
+
+          <div class="mastermind-rules-card">
+            <h3>FEEDBACK PROTOCOL</h3>
+            <div class="feedback-rule">
+              <div class="pin pin-black"></div>
+              <div>
+                <strong>Zwart (⬛)</strong>
+                <p>1 Kleur staat op exact de <em>juiste positie</em>.</p>
+              </div>
+            </div>
+            <div class="feedback-rule">
+              <div class="pin pin-white"></div>
+              <div>
+                <strong>Wit (⬜)</strong>
+                <p>1 Kleur is aanwezig in de code, maar staat op een <em>verkeerde positie</em>.</p>
+              </div>
+            </div>
+            <div class="feedback-rule">
+              <div class="pin pin-empty"></div>
+              <div>
+                <strong>Leeg ( )</strong>
+                <p>De geteste kleur zit <em>niet</em> in de geheime code.</p>
+              </div>
+            </div>
+
+            <div class="terminal-tip">
+              💡 <strong>Tip van de Centrale Post:</strong> Verdien eerst 4 kleuren door 4 opdrachten te volbrengen voordat je naar het basisstation rent!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: TERREIN KAART & POSTEN -->
+      <div id="tab-map" class="tab-pane">
+        <div class="section-topbar">
+          <div>
+            <h2 class="section-heading">TERREIN KAART // COÖRDINATEN</h2>
+            <p class="section-sub">Locatiebepaling van de fysieke posthouders en de Centrale Master Core.</p>
+          </div>
+        </div>
+
+        <div class="map-grid">
+          <div class="map-card" style="border-color: #00e5ff;">
+            <div class="map-header">
+              <span class="map-badge">SECTOR 1</span>
+              <h3>Prompt Engineering</h3>
+            </div>
+            <div class="map-body">
+              <p class="map-location">📍 <strong>Achter de Hoofdtent</strong></p>
+              <p class="map-desc">Hier bevindt zich de Lego & Communicatie zendpost. Walkietalkies operationeel.</p>
+            </div>
+          </div>
+
+          <div class="map-card" style="border-color: #b336ff;">
+            <div class="map-header">
+              <span class="map-badge">SECTOR 2</span>
+              <h3>Creative Neural Net</h3>
+            </div>
+            <div class="map-body">
+              <p class="map-location">📍 <strong>Bij het Open Veld</strong></p>
+              <p class="map-desc">Tekenen, motion-tracking en deepfake analyse station.</p>
+            </div>
+          </div>
+
+          <div class="map-card" style="border-color: #ff3366;">
+            <div class="map-header">
+              <span class="map-badge">SECTOR 3</span>
+              <h3>Cybersecurity Firewall</h3>
+            </div>
+            <div class="map-body">
+              <p class="map-location">📍 <strong>In het Bos</strong></p>
+              <p class="map-desc">Trefbal firewall, laser-touwenparcours en koelvloeistof reservoir.</p>
+            </div>
+          </div>
+
+          <div class="map-card" style="border-color: #ffd900;">
+            <div class="map-header">
+              <span class="map-badge">SECTOR 4</span>
+              <h3>Machine Learning Logic</h3>
+            </div>
+            <div class="map-body">
+              <p class="map-location">📍 <strong>Bij het Kampvuur</strong></p>
+              <p class="map-desc">Patronen, knopen ontwarren en binair decoderen.</p>
+            </div>
+          </div>
+
+          <div class="map-card central-core-card" style="grid-column: 1 / -1; border-color: #00ff66;">
+            <div class="map-header">
+              <span class="map-badge">HOOFDKWARTIER</span>
+              <h3>CENTRALE POST // DE MASTER CORE</h3>
+            </div>
+            <div class="map-body">
+              <p class="map-location">📍 <strong>Centraal Plein</strong></p>
+              <p class="map-desc">Hier valideer je volle Mastermind rijen bij de Systeembeheerder en ontgrendel je de Master Core kist zodra je 4x Zwart hebt!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: BINAIR / ASCII TOOL -->
+      <div id="tab-binary" class="tab-pane">
+        <div class="section-topbar">
+          <div>
+            <h2 class="section-heading">HULPTOOL: BINAIR // ASCII DECODER</h2>
+            <p class="section-sub">Snelle decryptie-assistent voor Sector 4 Opdracht C.</p>
+          </div>
+        </div>
+
+        <div class="decoder-container">
+          <div class="decoder-box">
+            <label for="binaryInput">Voer 8-bit Binaire Reeks In (spaties tussen bytes, bijv: <code>01000001 01001001</code>):</label>
+            <textarea id="binaryInput" rows="3" class="cyber-textarea" placeholder="01000001 01001001..."></textarea>
+            <div class="decoder-actions">
+              <button class="cyber-btn" onclick="decodeBinary()">🔓 DECODEER NAAR TEKST</button>
+              <button class="cyber-btn secondary" onclick="clearBinary()">WISSEN</button>
+            </div>
+            <div class="decode-result">
+              <span class="result-label">Gedecodeerde Output:</span>
+              <div class="result-text" id="binaryOutput">-- Wacht op invoer --</div>
+            </div>
+          </div>
+
+          <div class="ascii-reference-table">
+            <h3>SNELLE REFERENTIETABEL</h3>
+            <div class="ascii-grid">
+              <div>A = 01000001</div>
+              <div>B = 01000010</div>
+              <div>C = 01000011</div>
+              <div>D = 01000100</div>
+              <div>E = 01000101</div>
+              <div>F = 01000110</div>
+              <div>G = 01000111</div>
+              <div>H = 01001000</div>
+              <div>I = 01001001</div>
+              <div>J = 01001010</div>
+              <div>K = 01001011</div>
+              <div>L = 01001100</div>
+              <div>M = 01001101</div>
+              <div>N = 01001110</div>
+              <div>O = 01001111</div>
+              <div>P = 01010000</div>
+              <div>Q = 01010001</div>
+              <div>R = 01010010</div>
+              <div>S = 01010011</div>
+              <div>T = 01010100</div>
+              <div>U = 01010101</div>
+              <div>V = 01010110</div>
+              <div>W = 01010111</div>
+              <div>X = 01011000</div>
+              <div>Y = 01011001</div>
+              <div>Z = 01011010</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
   </div>
 
-  <script>
-    const COLORS = ['none', 'red', 'blue', 'green', 'yellow', 'orange', 'purple'];
-    
-    // Initialiseer Kladblok
-    const mmContainer = document.getElementById('mastermindDraft');
-    for (let r = 1; r <= 6; r++) {
-      const row = document.createElement('div');
-      row.className = 'mm-row';
-      row.innerHTML = `<span style="width: 80px;">Poging ${r}:</span>`;
-      for (let c = 1; c <= 4; c++) {
-        const dot = document.createElement('div');
-        dot.className = 'color-dot';
-        dot.dataset.color = 'none';
-        dot.onclick = function() {
-          let curr = COLORS.indexOf(this.dataset.color);
-          let next = COLORS[(curr + 1) % COLORS.length];
-          this.dataset.color = next;
-        };
-        row.appendChild(dot);
-      }
-      mmContainer.appendChild(row);
-    }
+  <!-- ADMIN / LEIDING MODAL -->
+  <div class="modal-backdrop" id="adminModal">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <span class="modal-title">⚙️ CENTRALE POST // BEHEERDERS INTERFACE</span>
+        <button class="close-btn" onclick="closeAdminModal()">✕</button>
+      </div>
 
-    function resetDots() {
-      document.querySelectorAll('.color-dot').forEach(d => d.dataset.color = 'none');
-    }
+      <div class="modal-body">
+        
+        <!-- Auth Step -->
+        <div id="adminAuthSection">
+          <p style="margin-bottom: 1rem;">Toegang voorbehouden aan spelleiding. Voer beheerders-toegangssleutel in.</p>
+          <div class="auth-row">
+            <input type="password" id="adminPasswordInput" class="cyber-input" placeholder="Wachtwoord (bijv: admin123)">
+            <button class="cyber-btn" onclick="loginAdmin()">VERIFIEER</button>
+          </div>
+          <p id="adminAuthError" class="error-msg" style="display:none;">Toegang geweigerd: Onjuist wachtwoord.</p>
+        </div>
 
-    // Team Status Management
-    function switchTeam() {
-      const select = document.getElementById('teamSelect');
-      const teamName = select.options[select.selectedIndex].text;
-      document.getElementById('activeTeamDisplay').innerText = `ONLINE: ${teamName}`;
-      loadTeamProgress(select.value);
-    }
+        <!-- Controls (shown after auth) -->
+        <div id="adminControlsSection" style="display: none;">
+          
+          <div class="admin-group">
+            <h4>📡 SYSTEEM BROADCAST NAAR ALLE TERMINALS</h4>
+            <div class="broadcast-input-row">
+              <input type="text" id="adminBroadcastInput" class="cyber-input" placeholder="Bijv: ALERT! Sector 3 staat onder zwaar vuur!">
+              <button class="cyber-btn" onclick="publishBroadcast()">VERSTUUR</button>
+            </div>
+            <div class="preset-broadcasts">
+              <button class="mini-btn" onclick="quickBroadcast('⚠️ NOG 30 MINUTEN: Haast jullie naar de Centrale Post!')">30m Waarschuwing</button>
+              <button class="mini-btn" onclick="quickBroadcast('🚨 GLITCH SURGE: Alle Sectoren leveren nu dubbele data op!')">Glitch Surge</button>
+              <button class="mini-btn" onclick="quickBroadcast('🏆 DE MASTER CORE IS ONTGRENDELD! Einde van het spel!')">Overwinning</button>
+            </div>
+          </div>
 
-    function toggleTask(taskId) {
-      const el = document.getElementById(`task-${taskId}`);
-      el.classList.toggle('done');
-      saveTeamProgress();
-    }
+          <div class="admin-group">
+            <h4>⏱️ TIMER CONTROLE</h4>
+            <div class="timer-controls-row">
+              <button class="cyber-btn" onclick="startTimer()">▶️ Start</button>
+              <button class="cyber-btn secondary" onclick="pauseTimer()">⏸️ Pauzeer</button>
+              <button class="cyber-btn secondary" onclick="resetTimer(120)">🔄 Reset (120 min)</button>
+              <button class="cyber-btn secondary" onclick="resetTimer(60)">🔄 60 min</button>
+            </div>
+          </div>
 
-    function saveTeamProgress() {
-      const team = document.getElementById('teamSelect').value;
-      const tasks = document.querySelectorAll('.task-item');
-      const status = {};
-      tasks.forEach(t => {
-        status[t.id] = t.classList.contains('done');
-      });
-      localStorage.setItem(`team_${team}`, JSON.stringify(status));
-    }
+          <div class="admin-group">
+            <h4>📊 OVERZICHT VOLTOOIINGEN PER TEAM</h4>
+            <div class="admin-teams-table-wrapper">
+              <table class="cyber-table" id="adminScoresTable">
+                <thead>
+                  <tr>
+                    <th>AI Cluster</th>
+                    <th>Voltooide Sectoren</th>
+                    <th>Pogingen</th>
+                    <th>Acties</th>
+                  </tr>
+                </thead>
+                <tbody id="adminScoresBody"></tbody>
+              </table>
+            </div>
+          </div>
 
-    function loadTeamProgress(team) {
-      const saved = localStorage.getItem(`team_${team}`);
-      const status = saved ? JSON.parse(saved) : {};
-      document.querySelectorAll('.task-item').forEach(t => {
-        if (status[t.id]) {
-          t.classList.add('done');
-        } else {
-          t.classList.remove('done');
-        }
-      });
-    }
+        </div>
 
-    // Timer Module
-    let timeRemaining = 120 * 60;
-    let timerInterval = null;
+      </div>
+    </div>
+  </div>
 
-    function updateTimer() {
-      const mins = Math.floor(timeRemaining / 60);
-      const secs = timeRemaining % 60;
-      document.getElementById('gameTimer').innerText = 
-        `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-      if (timeRemaining > 0) {
-        timeRemaining--;
-      } else {
-        clearInterval(timerInterval);
-        document.getElementById('gameTimer').innerText = "00:00 - CORE LOCKED";
-      }
-    }
+  <!-- POPUP NOTIFICATION TOAST -->
+  <div id="toastNotification" class="toast-notification"></div>
 
-    function startTimer() {
-      const pass = document.getElementById('adminPass').value;
-      if (pass !== 'admin123') return alert('Verkeerd beheerderswachtwoord');
-      clearInterval(timerInterval);
-      timeRemaining = 120 * 60;
-      timerInterval = setInterval(updateTimer, 1000);
-      updateTimer();
-    }
-
-    // Broadcast Module
-    function setBroadcast() {
-      const pass = document.getElementById('adminPass').value;
-      const msg = document.getElementById('adminMsg').value;
-      if (pass !== 'admin123') return alert('Verkeerd beheerderswachtwoord');
-      if (msg) {
-        document.getElementById('broadcastMessage').innerText = msg;
-        localStorage.setItem('core_broadcast', msg);
-      }
-    }
-
-    // Auto load state
-    window.onload = function() {
-      switchTeam();
-      timerInterval = setInterval(updateTimer, 1000);
-      const savedMsg = localStorage.getItem('core_broadcast');
-      if (savedMsg) document.getElementById('broadcastMessage').innerText = savedMsg;
-    };
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
