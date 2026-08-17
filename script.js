@@ -1,50 +1,58 @@
 /**
- * AI BATTLE TERMINAL - EENVOUDIG, ROBUUST & OVERZICHTELIJK
+ * AETHER_OS - SOUND ENGINE, GAME FLOW & 6-COLOR MASTERMIND
  */
 
 const SECTORS_DATA = [
-  // Categorie A: Rondom Ter Duinen
+  // Categorie A: Rondom de Gebouwen & Terrein Ter Duinen
   {
     id: 'cat-a',
-    title: 'Zone A: Terrein Ter Duinen',
+    categoryName: 'CATEGORIE A: TERREIN TER DUINEN',
+    title: 'Zone A: Gebouwen & Parking Ter Duinen',
+    location: 'Rondom Ingang, Trappen & Parking',
     tasks: [
-      { id: 't-1', code: 'Opdracht 1', name: 'De Masterchef Brigade', desc: 'AI-keukensimulatie vereist. Zoek een buitentrap of ingang van Ter Duinen. Maak een groepsfoto waarbij iedereen een specifieke restaurantfunctie uitbeeldt (bijv. 1 boze chef-kok, 2 obers, 3 afwassers, 4 hongerige gasten).' },
-      { id: 't-2', code: 'Opdracht 2', name: 'Parkeerplaats Datamining', desc: 'Zoek op de parking of in de straat naar nummerplaten. Vind 3 auto\'s waarvan de nummerplaat een A, een I of het cijfer 4 bevat. Stuur de 3 foto\'s door.' },
-      { id: 't-3', code: 'Opdracht 3', name: 'Het Verborgen Wifi-Wachtwoord', desc: 'Vind een officieel bord aan de school. Maak een woord van minstens 6 letters met enkel letters die op dit bord staan.' },
-      { id: 't-4', code: 'Opdracht 4', name: 'De Stille Serverruimte', desc: 'Koelingsprocedure actief! Het hele team moet 45 seconden lang op een bankje of de stoep liggen en muisstil opladen. Stuur een video van 15 seconden waarin niemand beweegt of lacht.' }
+      { id: 't-1', code: 'Opdracht 1', name: 'De Masterchef Brigade', desc: 'AI-keukensimulatie vereist. Zoek een buitentrap of ingang van Ter Duinen. Maak een groepsfoto waarbij iedereen een specifieke restaurantfunctie uitbeeldt (bijv. 1 boze chef-kok, 2 obers met onzichtbare borden, 3 afwassers, 4 hongerige gasten).' },
+      { id: 't-2', code: 'Opdracht 2', name: 'Parkeerplaats Datamining', desc: 'Zoek op de parking of in de straat naar nummerplaten. Vind 3 auto\'s waarvan de nummerplaat een A, een I of het cijfer 4 bevat. Maak een collage of stuur de 3 foto\'s door.' },
+      { id: 't-3', code: 'Opdracht 3', name: 'Het Verborgen Wifi-Wachtwoord', desc: 'Vind een officieel uithangbord, openingsuren-bord of verkeersbord aan de school. Maak een woord van minstens 6 letters met enkel letters die op dit bord staan.' },
+      { id: 't-4', code: 'Opdracht 4', name: 'De Stille Serverruimte', desc: 'Koelingsprocedure actief! Het hele team moet 45 seconden lang op een bankje of de stoep gaan liggen en muisstil \'opladen\'. Stuur een videofragment van 15 seconden waarin niemand beweegt of lacht.' }
     ]
   },
-  // Categorie B: Straat & Natuur
+  // Categorie B: De Directe Straat & Natuurrand
   {
     id: 'cat-b',
-    title: 'Zone B: Straat & Natuur (Binnen 200-300m)',
+    categoryName: 'CATEGORIE B: STRAAT & NATUURRAND',
+    title: 'Zone B: Straat & Bermen (Binnen 200-300m)',
+    location: 'Openbare Weg & Groenstroken',
     tasks: [
-      { id: 't-5', code: 'Opdracht 5', name: 'De AI Kleurenpalet Scan', desc: 'Verzamel in de berm/tuinen binnen 3 minuten 4 natuurlijke voorwerpen: iets groens (blad), iets bruins (takje), iets wit/grijs (steen/schelp) en iets geels/roods (bloem/bes).' },
-      { id: 't-6', code: 'Opdracht 6', name: 'Huisnummer Rekensom', desc: 'Vind in de straat 2 verschillende huisnummers die samen exact 50 vormen. Maak een selfie van teamleden bij elk van die twee huizen.' },
-      { id: 't-7', code: 'Opdracht 7', name: 'Binaire Boomknuffel', desc: 'Vind de dikste boom in de buurt. Hoeveel kinderen zijn er nodig om met gespreide armen de stam helemaal te omcirkelen? Stuur foto + het aantal.' },
-      { id: 't-8', code: 'Opdracht 8', name: 'De Straat-Microchip', desc: 'Vind een riooldeksel of watermeter-plaatje op de stoep. Gebruik krijt of takjes om het om te toveren tot een moederbord met lijnen eromheen.' }
+      { id: 't-5', code: 'Opdracht 5', name: 'De AI Kleurenpalet Scan', desc: 'Hardware-calibratie: Verzamel in de berm/tuinen binnen 3 minuten 4 natuurlijke voorwerpen met exact de 4 basiskleuren: iets groens (blad), iets bruins (takje), iets wit/grijs (steentje/schelpje) en iets geels/roods (bloem/bes).' },
+      { id: 't-6', code: 'Opdracht 6', name: 'Huisnummer Rekensom', desc: 'Vind in de straat 2 verschillende huisnummers die samen opgeteld exact 50 (of een ander getal naar keuze) vormen. Maak een selfie van 2 teamleden bij elk van die twee huizen.' },
+      { id: 't-7', code: 'Opdracht 7', name: 'Binaire Boomknuffel', desc: 'Data-aarding vereist: Vind de dikste boom in de directe omgeving van de straat. Hoeveel teamleden zijn er nodig om met gespreide armen de stam helemaal te omcirkelen? Stuur foto + aantal.' },
+      { id: 't-8', code: 'Opdracht 8', name: 'De Straat-Microchip', desc: 'Vind een riooldeksel, brandkraan-bordje of watermeter-plaatje op de stoep. Gebruik krijt, takjes of je vinger om het om te toveren tot een \'moederbord\' met lijnen eromheen.' }
     ]
   },
-  // Categorie C: Fysieke Challenges
+  // Categorie C: Fysieke Team-Challenges
   {
     id: 'cat-c',
-    title: 'Zone C: Fysieke Challenges',
+    categoryName: 'CATEGORIE C: FYSIEKE TEAM CHALLENGES',
+    title: 'Zone C: Fysieke Challenges (Ter Plekke)',
+    location: 'Grasveld of Vlakke Ondergrond',
     tasks: [
-      { id: 't-9', code: 'Opdracht 9', name: 'De Menselijke QR-Code', desc: 'Vorm met minimaal 8 kinderen liggend op het gras/de grond een perfect vierkant met een stip in het midden (zoals een hoekpunt van een QR-code).' },
-      { id: 't-10', code: 'Opdracht 10', name: '10-Sec Slowmotion Sprint', desc: 'Systeemvertraging! Maak een video van 10 seconden waarin het hele team een sprintje trekt in extreem overdreven slow-motion zónder te lachen.' },
-      { id: 't-11', code: 'Opdracht 11', name: 'Data-Transportketting', desc: 'Ga op een rij staan met 1 meter tussenafstand. Geef een voorwerp (dennenappel of schoen) van voor naar achter door via de ellebogen of knieën (handen op de rug!).' },
-      { id: 't-12', code: 'Opdracht 12', name: 'De Stoeprand-Balans', desc: 'Bandbreedte-test: Alle 10 de kinderen moeten tegelijk op de rand van het trottoir/stoeprand op één been balanceren gedurende 20 seconden. Stuur video van 10 sec.' }
+      { id: 't-9', code: 'Opdracht 9', name: 'De Menselijke QR-Code', desc: 'Vorm met minimaal 8 kinderen liggend op het gras/de grond een perfect vierkant met een \'stip\' in het midden (zoals een hoekpunt van een QR-code).' },
+      { id: 't-10', code: 'Opdracht 10', name: 'Het 10-Seconden Slowmotion Protocol', desc: 'Systeemvertraging! Maak een video van 10 seconden waarin het hele team een sprintje trekt, maar dan in extreem overdreven slow-motion zónder te lachen.' },
+      { id: 't-11', code: 'Opdracht 11', name: 'Data-Transportketting', desc: 'Ga allemaal op een rij staan met 1 meter tussenafstand. Geef een voorwerp (bijv. een dennenappel of schoen) van voor naar achter door via de ellebogen of knieën (handen op de rug!).' },
+      { id: 't-12', code: 'Opdracht 12', name: 'De Stoeprand-Balans', desc: 'Bandbreedte-test: Alle 10 de teamleden moeten tegelijk op de rand van het trottoir/stoeprand op één been balanceren gedurende 20 seconden. Stuur video van 10 sec.' }
     ]
   },
-  // Categorie D: Puzzels & Audio
+  // Categorie D: Slimme Mini-Puzzels & Observatie
   {
     id: 'cat-d',
-    title: 'Zone D: Puzzels & Audio',
+    categoryName: 'CATEGORIE D: PUZZELS & OBSERVATIE',
+    title: 'Zone D: Observatie & Audio Transmissie',
+    location: 'Vrije Zone rondom Kampterrein',
     tasks: [
-      { id: 't-13', code: 'Opdracht 13', name: 'Het AI-Portret met Natuur', desc: 'Maak op de grond met takjes, steentjes, zand en bladeren een robotgezicht van minstens 50 cm breed.' },
-      { id: 't-14', code: 'Opdracht 14', name: 'Verkeersbord Decoder', desc: 'Zoek het dichtstbijzijnde verkeersbord in de straat. Bedenk als team een maffe nieuwe betekenis gelinkt aan robots/AI en stuur foto + tekst door.' },
-      { id: 't-15', code: 'Opdracht 15', name: 'Lengte-Algoritme', desc: 'Ga binnen 30 seconden op een rij staan, exact gesorteerd van klein naar groot, met de ruggen tegen een muur/hek. Iedereen geeft een robot-saluut.' },
-      { id: 't-16', code: 'Opdracht 16', name: 'Geluidsfragment Hack', desc: 'Neem een spraakbericht op van 10 seconden waarin het hele team tegelijk een bizar computer/robotgeluid maakt (piepjes, lasers, storingen).' }
+      { id: 't-13', code: 'Opdracht 13', name: 'Het AI-Portret met Natuur', desc: 'Maak op de grond met takjes, steentjes, zand en bladeren een \'robotgezicht\' van minstens 50 cm breed.' },
+      { id: 't-14', code: 'Opdracht 14', name: 'Verkeersbord Decoder', desc: 'Zoek het dichtstbijzijnde driehoekige of ronde verkeersbord in de straat. Bedenk als team een compleet nieuwe, maffe betekenis gerelateerd aan AI (bijv. \'Pas op voor overstekende robots\').' },
+      { id: 't-15', code: 'Opdracht 15', name: 'Lengte-Algoritme', desc: 'Ga binnen 30 seconden op een rij staan, exact gesorteerd van klein naar groot, met de ruggen tegen een muur/hek. Iedereen moet een robot-saluut geven.' },
+      { id: 't-16', code: 'Opdracht 16', name: 'Geluidsfragment Hack (Audio-Opname)', desc: 'Neem een spraakbericht op van 10 seconden via WhatsApp waarin het hele team tegelijk een bizar robot- of computergeluid maakt (piepjes, storingen, lasers).' }
     ]
   }
 ];
@@ -70,33 +78,99 @@ const COLOR_MAP = {
 let authenticatedTeam = null;
 let currentlySelectedColor = 'red';
 let currentCategoryFilter = 'all';
+let audioCtx = null;
 
-// STORAGE
+// SYNTHESIZER SOUND ENGINE (Web Audio API)
+function getAudioContext() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playGlitchNoise() {
+  try {
+    const ctx = getAudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(140, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.3);
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.3);
+  } catch(e) {}
+}
+
+function playBeep(freq = 600, duration = 0.08) {
+  try {
+    const ctx = getAudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + duration);
+  } catch(e) {}
+}
+
+function playVictoryFanfare() {
+  playBeep(440, 0.1);
+  setTimeout(() => playBeep(554, 0.1), 120);
+  setTimeout(() => playBeep(659, 0.15), 240);
+  setTimeout(() => playBeep(880, 0.3), 380);
+}
+
+// STORAGE HELPERS
 function getStorageKey(team, subkey) {
-  return `aibattle_clean_${team}_${subkey}`;
+  return `aibattle_widescreen_6col_${team}_${subkey}`;
 }
 
 function getRoomEscapeCode(teamKey) {
-  return localStorage.getItem(`aibattle_clean_roomcode_${teamKey}`) || '482619';
+  return localStorage.getItem(`aibattle_widescreen_6col_roomcode_${teamKey}`) || '482619';
 }
 
 function setRoomEscapeCode(teamKey, code) {
-  localStorage.setItem(`aibattle_clean_roomcode_${teamKey}`, code);
+  localStorage.setItem(`aibattle_widescreen_6col_roomcode_${teamKey}`, code);
 }
 
 function getPersonalPassword(teamKey) {
-  return localStorage.getItem(`aibattle_clean_personal_pw_${teamKey}`);
+  return localStorage.getItem(`aibattle_widescreen_6col_personal_pw_${teamKey}`);
 }
 
 function setPersonalPassword(teamKey, pw) {
-  localStorage.setItem(`aibattle_clean_personal_pw_${teamKey}`, pw);
+  localStorage.setItem(`aibattle_widescreen_6col_personal_pw_${teamKey}`, pw);
 }
 
-// AUTH & INLOGGEN
-function onTeamSelectChange() {
+// =======================================================
+// FASE 1: START SCREEN FLOW
+// =======================================================
+function goToRoomCodeScreen() {
+  getAudioContext();
+  playGlitchNoise();
+  document.getElementById('screenIntro').style.display = 'none';
+  document.getElementById('screenRoomCode').style.display = 'flex';
+  onTeamSelectionChange();
+}
+
+function backToIntro() {
+  document.getElementById('screenRoomCode').style.display = 'none';
+  document.getElementById('screenIntro').style.display = 'flex';
+}
+
+// =======================================================
+// FASE 2: ROOM CODE VALIDATIE
+// =======================================================
+function onTeamSelectionChange() {
   const teamKey = document.getElementById('gateTeamSelect').value;
   const personalPw = getPersonalPassword(teamKey);
-  document.getElementById('gateErrorMsg').innerText = '';
+  const errorEl = document.getElementById('gateErrorMsg');
+  errorEl.innerText = '';
 
   const bunkerGroup = document.getElementById('bunkerCodeGroup');
   const returningGroup = document.getElementById('returningLoginGroup');
@@ -112,11 +186,11 @@ function onTeamSelectChange() {
   } else {
     bunkerGroup.style.display = 'block';
     returningGroup.style.display = 'none';
-    btn.innerText = "START TERMINAL 🚀";
+    btn.innerText = "VERIFIEER CODE & ONTGRENDEL 🔓";
   }
 }
 
-function handleAuthSubmit() {
+function handleRoomCodeSubmit() {
   const teamKey = document.getElementById('gateTeamSelect').value;
   const personalPw = getPersonalPassword(teamKey);
   const errorEl = document.getElementById('gateErrorMsg');
@@ -128,30 +202,34 @@ function handleAuthSubmit() {
       return;
     }
     if (enteredPw === personalPw || enteredPw === 'admin123') {
-      loginSuccess(teamKey);
+      launchCockpit(teamKey);
     } else {
-      errorEl.innerText = "Verkeerd wachtwoord!";
+      errorEl.innerText = "Verkeerd wachtwoord! Vraag hulp aan de leiding.";
     }
   } else {
     const enteredCode = document.getElementById('bunker6DigitInput').value.trim();
     const correctCode = getRoomEscapeCode(teamKey);
 
     if (enteredCode.length !== 6) {
-      errorEl.innerText = "De kamercode moet 6 cijfers zijn!";
+      errorEl.innerText = "De kamercode moet exact 6 cijfers zijn!";
       return;
     }
 
     if (enteredCode === correctCode || enteredCode === '123456' || enteredCode === '482619' || enteredCode === 'admin123') {
+      playVictoryFanfare();
       authenticatedTeam = teamKey;
-      document.getElementById('introModal').style.display = 'none';
-      document.getElementById('setPasswordModal').style.display = 'flex';
+      document.getElementById('screenRoomCode').style.display = 'none';
+      document.getElementById('screenSetPassword').style.display = 'flex';
     } else {
-      errorEl.innerText = "Onjuiste code! Controleer jullie antwoorden op de 3 raadsels.";
+      errorEl.innerText = "Onjuiste 6-cijferige code! Controleer jullie 3 raadsels in het lokaal.";
     }
   }
 }
 
-function savePersonalPasswordAndStart() {
+// =======================================================
+// FASE 3: EIGEN WACHTWOORD VASTLEGGEN
+// =======================================================
+function savePasswordAndLaunchCockpit() {
   const newPw = document.getElementById('newTeamPasswordInput').value.trim();
   const errorEl = document.getElementById('step2ErrorMsg');
 
@@ -161,16 +239,18 @@ function savePersonalPasswordAndStart() {
   }
 
   setPersonalPassword(authenticatedTeam, newPw);
-  document.getElementById('setPasswordModal').style.display = 'none';
-  showToast("Wachtwoord ingesteld!");
-  loginSuccess(authenticatedTeam);
+  playVictoryFanfare();
+  showToast("Wachtwoord succesvol opgeslagen!");
+  launchCockpit(authenticatedTeam);
 }
 
-function loginSuccess(teamKey) {
+function launchCockpit(teamKey) {
   authenticatedTeam = teamKey;
-  sessionStorage.setItem('aibattle_clean_active_team', teamKey);
-  document.getElementById('introModal').style.display = 'none';
-  document.getElementById('setPasswordModal').style.display = 'none';
+  sessionStorage.setItem('aibattle_widescreen_6col_active_team', teamKey);
+  
+  document.getElementById('screenIntro').style.display = 'none';
+  document.getElementById('screenRoomCode').style.display = 'none';
+  document.getElementById('screenSetPassword').style.display = 'none';
 
   const info = TEAMS_INFO[teamKey];
   document.getElementById('headerTeamIcon').innerText = info.icon;
@@ -183,19 +263,23 @@ function loginSuccess(teamKey) {
 }
 
 function logoutCurrentTeam() {
-  sessionStorage.removeItem('aibattle_clean_active_team');
+  sessionStorage.removeItem('aibattle_widescreen_6col_active_team');
   authenticatedTeam = null;
-  document.getElementById('introModal').style.display = 'flex';
-  onTeamSelectChange();
+  document.getElementById('screenIntro').style.display = 'flex';
+  document.getElementById('screenRoomCode').style.display = 'none';
+  document.getElementById('screenSetPassword').style.display = 'none';
 }
 
-// OPDRACHTEN
+// =======================================================
+// FASE 4: OPDRACHTEN & GSM BEWIJS
+// =======================================================
 let activePendingTask = null;
 
-function filterSectors(catId) {
-  currentCategoryFilter = catId;
-  document.querySelectorAll('.filter-chip').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${catId}'`));
+function filterSectors(categoryId) {
+  playBeep(450, 0.04);
+  currentCategoryFilter = categoryId;
+  document.querySelectorAll('.cat-chip').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${categoryId}'`));
   });
   renderSectors();
 }
@@ -210,40 +294,52 @@ function renderSectors() {
   SECTORS_DATA.forEach(cat => {
     if (currentCategoryFilter !== 'all' && cat.id !== currentCategoryFilter) return;
 
+    const card = document.createElement('div');
+    card.className = 'panel-card sector-card';
+
+    let tasksHTML = '';
     cat.tasks.forEach(t => {
       const status = savedTasks[t.id] || 'open';
       let btnLabel = 'Stuur Bewijs via GSM 📱';
-      let btnClass = 'btn-primary';
+      let btnClass = '';
 
       if (status === 'pending') {
         btnLabel = 'Wacht op leiding... ⏳';
-        btnClass = 'btn-secondary';
+        btnClass = 'pending-btn';
       } else if (status === 'approved') {
         btnLabel = 'Goedgekeurd (+1 Token) ✓';
-        btnClass = 'btn-emerald';
+        btnClass = 'done-btn';
       }
 
-      const card = document.createElement('div');
-      card.className = `task-card ${status}`;
-      card.innerHTML = `
-        <div class="task-title">${t.code}: ${t.name}</div>
-        <div class="task-desc">${t.desc}</div>
-        <button class="btn ${btnClass}" onclick="openPhoneEvidence('${t.name}')" ${status === 'approved' ? 'disabled' : ''}>
-          ${btnLabel}
-        </button>
+      tasksHTML += `
+        <div class="task-card ${status}">
+          <div class="task-head">${t.code}: ${t.name}</div>
+          <p class="task-body">${t.desc}</p>
+          <button class="task-action-btn ${btnClass}" onclick="openPhoneEvidence('${cat.title}', '${t.id}', '${t.code}: ${t.name}')" ${status === 'approved' ? 'disabled' : ''}>
+            ${btnLabel}
+          </button>
+        </div>
       `;
-      container.appendChild(card);
     });
+
+    card.innerHTML = `
+      <h3 class="sec-title">${cat.title}</h3>
+      <div class="sec-spot">📍 ${cat.location}</div>
+      <div class="task-list">${tasksHTML}</div>
+    `;
+
+    container.appendChild(card);
   });
 
   updateTeamStats();
 }
 
-function openPhoneEvidence(taskName) {
-  activePendingTask = { taskName, teamKey: authenticatedTeam };
+function openPhoneEvidence(sectorTitle, taskId, taskName) {
+  playBeep(480, 0.05);
+  activePendingTask = { sectorTitle, taskId, taskName, teamKey: authenticatedTeam };
   const teamName = TEAMS_INFO[authenticatedTeam].name;
 
-  document.getElementById('evidenceTaskLabel').innerText = taskName;
+  document.getElementById('evidenceTaskLabel').innerText = `${taskName}`;
   document.getElementById('evidenceMessageTemplate').innerText = `${teamName} - ${taskName}`;
   document.getElementById('evidenceModal').style.display = 'flex';
 }
@@ -254,41 +350,34 @@ function closeEvidenceModal() {
 
 function confirmEvidenceSent() {
   if (!activePendingTask) return;
+  const key = getStorageKey(activePendingTask.teamKey, 'tasks');
+  const savedTasks = JSON.parse(localStorage.getItem(key) || '{}');
   
-  // Zoek taak ID
-  let taskId = null;
-  SECTORS_DATA.forEach(cat => {
-    const found = cat.tasks.find(t => t.name === activePendingTask.taskName);
-    if (found) taskId = found.id;
-  });
+  savedTasks[activePendingTask.taskId] = 'pending';
+  localStorage.setItem(key, JSON.stringify(savedTasks));
 
-  if (taskId) {
-    const key = getStorageKey(activePendingTask.teamKey, 'tasks');
-    const savedTasks = JSON.parse(localStorage.getItem(key) || '{}');
-    savedTasks[taskId] = 'pending';
-    localStorage.setItem(key, JSON.stringify(savedTasks));
+  const subs = JSON.parse(localStorage.getItem('aibattle_widescreen_6col_submissions') || '[]');
+  const existing = subs.findIndex(s => s.teamKey === activePendingTask.teamKey && s.taskId === activePendingTask.taskId);
+  const entry = {
+    teamKey: activePendingTask.teamKey,
+    taskId: activePendingTask.taskId,
+    taskName: activePendingTask.taskName,
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    status: 'pending'
+  };
 
-    const subs = JSON.parse(localStorage.getItem('aibattle_clean_submissions') || '[]');
-    const existing = subs.findIndex(s => s.teamKey === activePendingTask.teamKey && s.taskId === taskId);
-    const entry = {
-      teamKey: activePendingTask.teamKey,
-      taskId: taskId,
-      taskName: activePendingTask.taskName,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      status: 'pending'
-    };
-
-    if (existing >= 0) subs[existing] = entry;
-    else subs.unshift(entry);
-    localStorage.setItem('aibattle_clean_submissions', JSON.stringify(subs));
-  }
+  if (existing >= 0) subs[existing] = entry;
+  else subs.unshift(entry);
+  localStorage.setItem('aibattle_widescreen_6col_submissions', JSON.stringify(subs));
 
   closeEvidenceModal();
   renderSectors();
   showToast("Doorgestuurd! De leiding kijkt ernaar.");
 }
 
-// MASTERMIND (6 SLOTS)
+// =======================================================
+// FASE 5: MASTERMIND LOGICA (6 SLOTS PER RIJ)
+// =======================================================
 function getTeamCredits(teamKey) {
   return parseInt(localStorage.getItem(getStorageKey(teamKey, 'credits')) || '0', 10);
 }
@@ -299,8 +388,9 @@ function setTeamCredits(teamKey, count) {
 }
 
 function selectColor(colorName) {
+  playBeep(520, 0.04);
   currentlySelectedColor = colorName;
-  document.querySelectorAll('.color-btn').forEach(btn => {
+  document.querySelectorAll('.pal-btn').forEach(btn => {
     btn.classList.toggle('active', btn.classList.contains(colorName));
   });
 }
@@ -319,20 +409,22 @@ function initMastermind() {
     const isLocked = (r < currentActiveRow || rowObj.status === 'evaluated');
 
     const rowCard = document.createElement('div');
-    rowCard.className = `mm-row ${isCurrentActive ? 'active-row' : ''}`;
+    rowCard.className = `mm-row-item ${isCurrentActive ? 'active-row' : ''}`;
 
-    let slotsHTML = '<div class="mm-slots">';
+    // 6 Slots per rij
+    let slotsHTML = '<div class="mm-slots-container">';
     for (let c = 0; c < 6; c++) {
       const col = rowObj.colors[c] || 'none';
       slotsHTML += `
-        <div class="mm-slot ${col !== 'none' ? 'filled' : ''}" 
+        <div class="mm-slot-dot ${col !== 'none' ? 'filled' : ''}" 
              data-color="${col}" 
              onclick="handleSlotClick(${r}, ${c}, ${isCurrentActive && !isLocked})">
         </div>`;
     }
     slotsHTML += '</div>';
 
-    let actionHTML = '<div class="mm-feedback">';
+    // Feedback & Submit knop
+    let actionHTML = '<div class="mm-feedback-col">';
     if (rowObj.status === 'evaluated') {
       let pinsHTML = '<div class="pins-grid">';
       rowObj.pins.forEach(pin => {
@@ -344,19 +436,19 @@ function initMastermind() {
       pinsHTML += '</div>';
       actionHTML += pinsHTML;
     } else if (rowObj.status === 'pending_validation') {
-      actionHTML += `<span style="font-size:0.85rem; color:var(--amber); font-weight:bold;">⏳ Bij Centrale Post</span>`;
+      actionHTML += `<span style="font-size:0.85rem; color:var(--amber); font-weight:bold;">⏳ Ren naar Centrale Post!</span>`;
     } else if (isCurrentActive) {
-      const allFilled = rowObj.colors.every(c => c !== 'none');
+      const allFilled = rowObj.colors.length === 6 && rowObj.colors.every(c => c !== 'none');
       if (allFilled) {
-        actionHTML += `<button class="btn btn-emerald btn-sm" onclick="submitRowForValidation(${r})">Test bij Post 🚀</button>`;
+        actionHTML += `<button class="mm-submit-btn" onclick="submitRowForValidation(${r})">Test bij Post 🚀</button>`;
       } else {
-        actionHTML += `<span style="font-size:0.85rem; color:var(--text-muted);">Vul 6 bollen</span>`;
+        actionHTML += `<span style="font-size:0.85rem; color:var(--text-muted);">Kleur 6 bollen</span>`;
       }
     }
     actionHTML += '</div>';
 
     rowCard.innerHTML = `
-      <span class="mm-label">Rij ${r}</span>
+      <span class="mm-row-label">Rij ${r}</span>
       ${slotsHTML}
       ${actionHTML}
     `;
@@ -378,11 +470,13 @@ function handleSlotClick(row, slotIndex, isAllowed) {
 
   if (currentColor === 'none') {
     if (credits <= 0) {
-      return alert("Je hebt 0 tokens! Doe eerst een opdracht om tokens te verdienen.");
+      return alert("Je hebt 0 tokens! Doe eerst een opdracht op een post om nieuwe tokens te verdienen.");
     }
+    playBeep(640, 0.05);
     mmData[row].colors[slotIndex] = currentlySelectedColor;
     setTeamCredits(authenticatedTeam, credits - 1);
   } else {
+    playBeep(580, 0.05);
     mmData[row].colors[slotIndex] = currentlySelectedColor;
   }
 
@@ -394,10 +488,11 @@ function submitRowForValidation(row) {
   const mmData = JSON.parse(localStorage.getItem(getStorageKey(authenticatedTeam, 'mastermind_state')) || '{}');
   if (!mmData[row]) return;
 
+  playBeep(750, 0.08);
   mmData[row].status = 'pending_validation';
   localStorage.setItem(getStorageKey(authenticatedTeam, 'mastermind_state'), JSON.stringify(mmData));
 
-  const submissions = JSON.parse(localStorage.getItem('aibattle_clean_mm_submissions') || '[]');
+  const submissions = JSON.parse(localStorage.getItem('aibattle_widescreen_6col_mm_submissions') || '[]');
   submissions.push({
     id: `${authenticatedTeam}_row_${row}_${Date.now()}`,
     teamKey: authenticatedTeam,
@@ -405,10 +500,10 @@ function submitRowForValidation(row) {
     colors: mmData[row].colors,
     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   });
-  localStorage.setItem('aibattle_clean_mm_submissions', JSON.stringify(submissions));
+  localStorage.setItem('aibattle_widescreen_6col_mm_submissions', JSON.stringify(submissions));
 
   initMastermind();
-  showToast("Ingezonden! Ren naar de Centrale Post!");
+  showToast("Ingezonden! Ren nu naar de Centrale Post!");
 }
 
 function updateTeamStats() {
@@ -417,15 +512,18 @@ function updateTeamStats() {
   document.getElementById('headerCreditsCount').innerText = credits;
 }
 
+// =======================================================
 // TABS & TIMER
+// =======================================================
 function switchTab(tabId) {
+  playBeep(420, 0.03);
   document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
 
   const target = document.getElementById(`tab-${tabId}`);
   if (target) target.classList.add('active');
 
-  const btn = Array.from(document.querySelectorAll('.tab-button')).find(b => b.getAttribute('onclick').includes(`'${tabId}'`));
+  const btn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(`'${tabId}'`));
   if (btn) btn.classList.add('active');
 }
 
@@ -435,7 +533,7 @@ let timerRunning = true;
 function tickTimer() {
   if (timerRunning && totalSeconds > 0) {
     totalSeconds--;
-    localStorage.setItem('aibattle_clean_timer', totalSeconds);
+    localStorage.setItem('aibattle_widescreen_6col_timer', totalSeconds);
   }
 
   const h = Math.floor(totalSeconds / 3600);
@@ -449,7 +547,9 @@ function startTimer() { timerRunning = true; }
 function pauseTimer() { timerRunning = false; }
 function resetTimer(mins = 120) { totalSeconds = mins * 60; tickTimer(); }
 
-// NOODBERICHT OVERLAY
+// =======================================================
+// EMERGENCY NOODBEVEL (LOCKDOWN)
+// =======================================================
 function sendEmergencyLockdown() {
   const title = document.getElementById('adminEmergencyTitle').value.trim() || "🚨 NOODBEVEL VAN DE LEIDING";
   const text = document.getElementById('adminEmergencyText').value.trim();
@@ -474,23 +574,24 @@ function publishEmergencyPayload(title, text, audioUrl) {
   const payload = {
     id: Date.now(),
     title,
-    text: text || "Beluister het audiobericht hieronder.",
+    text: text || "Luister naar het meegestuurde audiobericht hieronder.",
     audioUrl
   };
 
-  localStorage.setItem('aibattle_clean_emergency', JSON.stringify(payload));
-  showToast("Noodbericht verzonden!");
+  localStorage.setItem('aibattle_widescreen_6col_emergency', JSON.stringify(payload));
+  showToast("Noodbevel verzonden!");
   checkEmergencyLockdown();
 }
 
 function checkEmergencyLockdown() {
-  const raw = localStorage.getItem('aibattle_clean_emergency');
+  const raw = localStorage.getItem('aibattle_widescreen_6col_emergency');
   if (!raw) return;
 
   const payload = JSON.parse(raw);
-  const dismissedId = sessionStorage.getItem('aibattle_clean_dismissed_lockdown_id');
+  const dismissedId = sessionStorage.getItem('aibattle_widescreen_6col_dismissed_lockdown_id');
 
   if (dismissedId !== String(payload.id)) {
+    playGlitchNoise();
     document.getElementById('lockdownTitle').innerText = payload.title;
     document.getElementById('lockdownText').innerText = payload.text;
 
@@ -511,10 +612,10 @@ function checkEmergencyLockdown() {
 }
 
 function dismissLockdown() {
-  const raw = localStorage.getItem('aibattle_clean_emergency');
+  const raw = localStorage.getItem('aibattle_widescreen_6col_emergency');
   if (raw) {
     const payload = JSON.parse(raw);
-    sessionStorage.setItem('aibattle_clean_dismissed_lockdown_id', String(payload.id));
+    sessionStorage.setItem('aibattle_widescreen_6col_dismissed_lockdown_id', String(payload.id));
   }
   document.getElementById('lockdownAudioPlayer').pause();
   document.getElementById('lockdownModal').style.display = 'none';
@@ -524,8 +625,11 @@ function closeVictoryModal() {
   document.getElementById('victoryModal').style.display = 'none';
 }
 
-// SYSADMIN LEIDING CONTROLE (6-KLEURENCODE)
+// =======================================================
+// SYSADMIN LEIDING PANEEL & 6-KLEURENCODE ALGORITME
+// =======================================================
 function openAdminModal() {
+  playBeep(400, 0.05);
   document.getElementById('adminModal').style.display = 'flex';
 }
 
@@ -536,6 +640,7 @@ function closeAdminModal() {
 function loginAdmin() {
   const p = document.getElementById('adminPasswordInput').value;
   if (p === 'admin123' || p === 'core2026') {
+    playVictoryFanfare();
     document.getElementById('adminAuthSection').style.display = 'none';
     document.getElementById('adminControlsSection').style.display = 'block';
     loadSecretCode();
@@ -556,12 +661,12 @@ function saveSecretCode() {
     document.getElementById('secretSlot5').value,
     document.getElementById('secretSlot6').value
   ];
-  localStorage.setItem('aibattle_clean_secret_code', JSON.stringify(secret));
-  showToast("Code van de kist opgeslagen!");
+  localStorage.setItem('aibattle_widescreen_6col_secret_code', JSON.stringify(secret));
+  showToast("6-Kleurencode van de kist opgeslagen!");
 }
 
 function loadSecretCode() {
-  const raw = localStorage.getItem('aibattle_clean_secret_code');
+  const raw = localStorage.getItem('aibattle_widescreen_6col_secret_code');
   const secret = raw ? JSON.parse(raw) : ['green', 'red', 'yellow', 'blue', 'orange', 'purple'];
   document.getElementById('secretSlot1').value = secret[0] || 'green';
   document.getElementById('secretSlot2').value = secret[1] || 'red';
@@ -572,10 +677,11 @@ function loadSecretCode() {
 }
 
 function getSecretCode() {
-  const raw = localStorage.getItem('aibattle_clean_secret_code');
+  const raw = localStorage.getItem('aibattle_widescreen_6col_secret_code');
   return raw ? JSON.parse(raw) : ['green', 'red', 'yellow', 'blue', 'orange', 'purple'];
 }
 
+// 6-KLEUREN EVALUATOR ALGORITME (Zwart/Wit pinnen)
 function evaluateGuess(guessColors, secretColors) {
   let blackPins = 0;
   let whitePins = 0;
@@ -583,6 +689,7 @@ function evaluateGuess(guessColors, secretColors) {
   let secretCopy = [...secretColors];
   let guessCopy = [...guessColors];
 
+  // 1. Exacte matches (Zwart)
   for (let i = 0; i < 6; i++) {
     if (guessCopy[i] === secretCopy[i]) {
       blackPins++;
@@ -591,6 +698,7 @@ function evaluateGuess(guessColors, secretColors) {
     }
   }
 
+  // 2. Kleur matches op verkeerde positie (Wit)
   for (let i = 0; i < 6; i++) {
     if (guessCopy[i] !== null) {
       const matchIdx = secretCopy.indexOf(guessCopy[i]);
@@ -611,7 +719,7 @@ function evaluateGuess(guessColors, secretColors) {
 function renderAdminMastermindSubmissions() {
   const tbody = document.getElementById('adminMastermindSubmissionsBody');
   tbody.innerHTML = '';
-  const submissions = JSON.parse(localStorage.getItem('aibattle_clean_mm_submissions') || '[]');
+  const submissions = JSON.parse(localStorage.getItem('aibattle_widescreen_6col_mm_submissions') || '[]');
 
   if (submissions.length === 0) {
     tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Geen teams bij de Centrale Post.</td></tr>';
@@ -635,7 +743,7 @@ function renderAdminMastermindSubmissions() {
 }
 
 function adminEvaluateMastermind(submissionIndex) {
-  const submissions = JSON.parse(localStorage.getItem('aibattle_clean_mm_submissions') || '[]');
+  const submissions = JSON.parse(localStorage.getItem('aibattle_widescreen_6col_mm_submissions') || '[]');
   const sub = submissions[submissionIndex];
   if (!sub) return;
 
@@ -654,8 +762,9 @@ function adminEvaluateMastermind(submissionIndex) {
     localStorage.setItem(getStorageKey(sub.teamKey, 'active_row'), sub.row + 1);
   }
 
+  // 6x Zwart = Overwinning!
   if (evaluation.blackPins === 6) {
-    localStorage.setItem('aibattle_clean_winner', JSON.stringify({
+    localStorage.setItem('aibattle_widescreen_6col_winner', JSON.stringify({
       teamKey: sub.teamKey,
       teamName: TEAMS_INFO[sub.teamKey].name,
       secret: secret
@@ -663,7 +772,7 @@ function adminEvaluateMastermind(submissionIndex) {
   }
 
   submissions.splice(submissionIndex, 1);
-  localStorage.setItem('aibattle_clean_mm_submissions', JSON.stringify(submissions));
+  localStorage.setItem('aibattle_widescreen_6col_mm_submissions', JSON.stringify(submissions));
 
   renderAdminMastermindSubmissions();
   renderAdminTeamsManager();
@@ -673,7 +782,7 @@ function adminEvaluateMastermind(submissionIndex) {
 function renderAdminSubmissions() {
   const tbody = document.getElementById('adminSubmissionsBody');
   tbody.innerHTML = '';
-  const subs = JSON.parse(localStorage.getItem('aibattle_clean_submissions') || '[]');
+  const subs = JSON.parse(localStorage.getItem('aibattle_widescreen_6col_submissions') || '[]');
 
   if (subs.length === 0) {
     tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Geen openstaande opdrachten.</td></tr>';
@@ -684,7 +793,7 @@ function renderAdminSubmissions() {
     const tInfo = TEAMS_INFO[s.teamKey];
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td><strong>${tInfo.icon} ${tInfo.name}</strong></td>
+      <td><strong>${tInfo.icon} ${tInfo.name}</strong><br><small style="color:var(--text-muted);">${s.time}</small></td>
       <td>${s.taskName}</td>
       <td><span style="color:${s.status === 'approved' ? 'var(--emerald)' : 'var(--amber)'}">${s.status === 'approved' ? '✓ Goedgekeurd' : '⏳ Wacht op check'}</span></td>
       <td>
@@ -706,9 +815,9 @@ function adminApproveTask(teamKey, taskId, subIndex) {
   const curCredits = getTeamCredits(teamKey);
   setTeamCredits(teamKey, curCredits + 1);
 
-  const subs = JSON.parse(localStorage.getItem('aibattle_clean_submissions') || '[]');
+  const subs = JSON.parse(localStorage.getItem('aibattle_widescreen_6col_submissions') || '[]');
   if (subs[subIndex]) subs[subIndex].status = 'approved';
-  localStorage.setItem('aibattle_clean_submissions', JSON.stringify(subs));
+  localStorage.setItem('aibattle_widescreen_6col_submissions', JSON.stringify(subs));
 
   renderAdminSubmissions();
   renderAdminTeamsManager();
@@ -750,11 +859,11 @@ function adminAddCredits(tKey) {
 }
 
 function adminResetTeamAuth(tKey) {
-  const action = confirm(`Wil je het wachtwoord van ${TEAMS_INFO[tKey].name} resetten?`);
+  const action = confirm(`Wil je het wachtwoord van ${TEAMS_INFO[tKey].name} resetten zodat ze opnieuw de 6-cijferige kamer-code moeten invoeren?`);
   if (action) {
-    localStorage.removeItem(`aibattle_clean_personal_pw_${tKey}`);
+    localStorage.removeItem(`aibattle_widescreen_6col_personal_pw_${tKey}`);
     renderAdminTeamsManager();
-    showToast(`Wachtwoord gereset.`);
+    showToast(`Wachtwoord van ${TEAMS_INFO[tKey].name} gereset.`);
   }
 }
 
@@ -773,23 +882,24 @@ window.addEventListener('keydown', function(e) {
   }
 });
 
-// INITIALISATIE
+// INITIALISATIE BIJ OPSTARTEN
 window.onload = function() {
-  const savedTimer = localStorage.getItem('aibattle_clean_timer');
+  const savedTimer = localStorage.getItem('aibattle_widescreen_6col_timer');
   if (savedTimer) totalSeconds = parseInt(savedTimer, 10);
   setInterval(tickTimer, 1000);
   tickTimer();
 
   window.addEventListener('storage', function(e) {
-    if (e.key === 'aibattle_clean_emergency') {
+    if (e.key === 'aibattle_widescreen_6col_emergency') {
       checkEmergencyLockdown();
     }
-    if (e.key === 'aibattle_clean_winner') {
+    if (e.key === 'aibattle_widescreen_6col_winner') {
       const winner = JSON.parse(e.newValue || '{}');
       if (winner && winner.teamName) {
         document.getElementById('victoryTeamName').innerText = winner.teamName;
         document.getElementById('victoryCodeDisplay').innerText = winner.secret.map(c => COLOR_MAP[c]).join(' ');
         document.getElementById('victoryModal').style.display = 'flex';
+        playVictoryFanfare();
       }
     }
     if (e.key && (e.key.includes('mastermind') || e.key.includes('credits') || e.key.includes('tasks'))) {
@@ -799,11 +909,13 @@ window.onload = function() {
     }
   });
 
-  const active = sessionStorage.getItem('aibattle_clean_active_team');
+  const active = sessionStorage.getItem('aibattle_widescreen_6col_active_team');
   if (active) {
-    loginSuccess(active);
+    launchCockpit(active);
   } else {
-    document.getElementById('introModal').style.display = 'flex';
-    onTeamSelectChange();
+    // Toon startscherm (De toespraak van de moni)
+    document.getElementById('screenIntro').style.display = 'flex';
+    document.getElementById('screenRoomCode').style.display = 'none';
+    document.getElementById('screenSetPassword').style.display = 'none';
   }
 };
