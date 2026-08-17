@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TER DUINEN // AI RESCUE PROTOCOL</title>
+  <title>AETHER_OS // DEFCON-1 MASTER COCKPIT</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
@@ -11,7 +11,7 @@
 </head>
 <body class="cyber-theme">
 
-  <!-- FLOATING SYSADMIN KNOP (ALTIJD BEREIKBAAR) -->
+  <!-- FLOATING SYSADMIN KNOP (ALTIJD ZICHTBAAR) -->
   <button class="floating-admin-btn" onclick="openAdminModal()" title="SysAdmin Leiding Paneel (Ctrl+Shift+A)">
     ⚙️ SYSADMIN ROOT
   </button>
@@ -22,7 +22,7 @@
       <div class="danger-tag">🚨 NOODSITUATIE TER DUINEN // SYSTEEM GEGIJZELD</div>
       <h1 class="card-title">HET NETWERK LIGT PLAT!</h1>
       <p class="card-text">
-        Virus <strong>GLITCH</strong> heeft de servers, de lichten en de <strong>muziekinstallatie van de bar</strong> gegijzeld! Zonder jullie AI gaat de bar vanavond NOOIT open.
+        Virus <strong>GLITCH</strong> heeft de centrale servers, de verlichting én de <strong>muziekinstallatie voor de bar</strong> gegijzeld. Zonder jullie AI gaat het feest vanavond NIET door!
       </p>
       <div class="boot-prompt-box">
         ⚠️ <em>Moni-bevel: "JULLIE MOETEN DEZE AI REDDEN EN ALS EERSTE WEER ONLINE KRIJGEN!"</em>
@@ -37,15 +37,15 @@
   <div class="modal-layer" id="glitchScreen" style="display: none;">
     <div class="center-card glitch-border">
       <div class="hud-header-line">
-        <span class="danger-tag">🚨 DEFCON-1: SYSTEEM OVERNAME TER DUINEN</span>
-        <span class="source-tag">SRC: 0xGLITCH_ROOT // NETWORK_HIJACK</span>
+        <span class="danger-tag">🚨 DEFCON-1: INKOMENDE GLITCH INVASIE</span>
+        <span class="source-tag">SRC: 0xGLITCH_ROOT // TER_DUINEN_HIJACK</span>
       </div>
 
       <div class="glitch-title-row">
         <div class="glitch-avatar">👾</div>
         <div>
           <h2 class="glitch-sender">VIRUS GLITCH v4.0</h2>
-          <span class="glitch-sub">MUZIEK & SERVERS VERGRENDELD</span>
+          <span class="glitch-sub">CENTRALE KERN OVERGENOMEN // 6-KLEUREN DECRYPTION MATRIX</span>
         </div>
       </div>
 
@@ -59,7 +59,7 @@
     </div>
   </div>
 
-  <!-- 2. DATABUNKER ESCAPE (6-CIJFERIGE CODE + EIGEN PW) -->
+  <!-- 2. DATABUNKER ESCAPE MODAL (6-CIJFERIGE CODE + EIGEN PW) -->
   <div class="modal-layer" id="bunkerAuthModal" style="display: none;">
     <div class="center-card bunker-border">
       <div class="danger-tag">🔒 LOKAAL VERGRENDELD // OMEGA PROTOCOL</div>
@@ -68,7 +68,7 @@
       <div id="authStep1">
         <h2 class="card-title">ONTGRENDEL JULLIE AI KERN</h2>
         <p class="card-text">
-          GLITCH heeft deze laptop vergrendeld. Zoek de <strong>3 raadsels in dit lokaal</strong> om de 6-cijferige opstartcode te kraken!
+          GLITCH heeft deze terminal vergrendeld. Los de <strong>3 fysieke puzzels in deze kamer</strong> op om de 6-cijferige opstartcode te vormen!
         </p>
 
         <div class="form-row">
@@ -107,7 +107,7 @@
         <div class="success-tag">✓ 6-CIJFERIGE CODE IS JUIST!</div>
         <h2 class="card-title">KIES EEN EIGEN WACHTWOORD</h2>
         <p class="card-text">
-          Geweldig gedaan! Kies nu een <strong>eigen geheim wachtwoord</strong> voor jullie team. Hiermee loggen jullie opnieuw in als de laptop herstart.
+          Bunker ontgrendeld! Kies nu een <strong>eigen geheim wachtwoord</strong> voor jullie team. Hiermee loggen jullie opnieuw in als de laptop herstart.
         </p>
 
         <div class="form-group">
@@ -128,7 +128,7 @@
   <div class="modal-layer" id="lockdownModal" style="display: none;">
     <div class="center-card emergency-border">
       <div class="alert-icon-anim">🚨</div>
-      <h2 id="lockdownTitle" class="card-title">NOODBEVEL VAN DE CENTRALE BASIS</h2>
+      <h2 id="lockdownTitle" class="card-title">NOODBEVEL VAN DE CENTRALE POST</h2>
       <div class="emergency-content" id="lockdownText">Er is een belangrijk direct bevel binnengekomen.</div>
       <div id="lockdownAudioContainer" style="display: none; width: 100%;">
         <audio id="lockdownAudioPlayer" controls style="width: 100%; margin-top: 0.5rem;"></audio>
@@ -137,17 +137,17 @@
     </div>
   </div>
 
-  <!-- 4. OVERWINNINGSSCHERM (4X ZWART) -->
+  <!-- 4. OVERWINNINGSSCHERM (6X ZWART) -->
   <div class="modal-layer" id="victoryModal" style="display: none;">
     <div class="center-card victory-border">
       <div class="victory-icon-anim">🏆</div>
       <h2 class="card-title">MASTER CORE GEKRAAKT // MUZIEK ONLINE!</h2>
       <p class="card-text">
-        Supercluster <strong id="victoryTeamName">Jullie Team</strong> heeft de 4 geheime kleuren gekraakt en GLITCH verslagen! De muziekinstallatie en de bar zijn gered!
+        Supercluster <strong id="victoryTeamName">Jullie Team</strong> heeft de 6 geheime kleuren van de Master Core gekraakt en GLITCH verslagen! De muziekinstallatie en de bar zijn gered!
       </p>
-      <div class="victory-code-display" id="victoryCodeDisplay">🟢 🔴 🟡 🔵</div>
+      <div class="victory-code-display" id="victoryCodeDisplay">🟢 🔴 🟡 🔵 🟠 🟣</div>
       <p class="card-text" style="font-weight: bold; color: var(--emerald);">
-        Ren direct naar de fysieke kist op het Centrale Plein!
+        Ren direct naar de fysieke kist op het Centrale Plein om de kluis te openen!
       </p>
       <button class="btn btn-emerald btn-lg btn-block" onclick="closeVictoryModal()">Sluiten</button>
     </div>
@@ -180,14 +180,14 @@
     <div class="broadcast-banner" id="broadcastBanner">
       <span class="pulse-dot"></span>
       <span id="broadcastDisplay" class="broadcast-text">
-        Console Online. Ga op dropspel rond Ter Duinen en in de straat, stuur bewijs via GSM en kraak de code om de bar te redden!
+        Console Online. Ga op dropspel rond Ter Duinen en in de straat, stuur bewijs via GSM en kraak de 6-kleurencode!
       </span>
     </div>
 
     <!-- TABS NAVIGATIE -->
     <div class="tab-nav-bar">
       <button class="tab-btn active" onclick="switchTab('sectors')">1. Kies Dropspel Opdracht 🎯</button>
-      <button class="tab-btn" onclick="switchTab('mastermind')">2. Kleur & Kraak Code 🧩</button>
+      <button class="tab-btn" onclick="switchTab('mastermind')">2. Kleur & Kraak 6-Kleuren Code 🧩</button>
       <button class="tab-btn" onclick="switchTab('map')">3. Terrein & Zones Kaart 📍</button>
     </div>
 
@@ -208,11 +208,11 @@
       <div class="sectors-grid" id="sectorsContainer"></div>
     </main>
 
-    <!-- TAB 2: MASTERMIND -->
+    <!-- TAB 2: MASTERMIND (6 SLOTS) -->
     <main id="tab-mastermind" class="tab-pane">
       <div class="instruction-box">
-        <strong>Mastermind Regels:</strong> 
-        1. Kies hieronder een kleur. ➔ 2. Klik op een leeg bolletje in je actieve rij (kost 1 token). ➔ 3. Rij van 4 vol? Ren naar de Centrale Post om te testen!
+        <strong>Mastermind Regels (6 Kleuren):</strong> 
+        1. Kies hieronder een kleur. ➔ 2. Klik op een leeg bolletje in je actieve rij (kost 1 token). ➔ 3. <strong>Rij van 6 vol?</strong> Ren direct naar de Centrale Post om te laten testen!
       </div>
 
       <div class="mastermind-grid-layout">
@@ -247,7 +247,10 @@
           </div>
           <div class="legend-row">
             <div class="pin"></div>
-            <div><strong>Leeg</strong> = Deze kleur zit <u>niet</u> in de geheime code.</div>
+            <div><strong>Leeg</strong> = Deze kleur zit <u>niet</u> in de code.</div>
+          </div>
+          <div class="notice-callout">
+            💡 <em>Doel: Scoor 6x Zwart (⬛⬛⬛⬛⬛⬛) om de Master Core kist te openen!</em>
           </div>
         </div>
 
@@ -289,7 +292,7 @@
           <span class="loc-tag" style="background:var(--emerald); color:#000;">COMMAND HQ</span>
           <h3 class="loc-title">CENTRALE POST // MASTER CORE KIST</h3>
           <p class="loc-spot">📍 Centraal Plein</p>
-          <p class="loc-desc">Laat hier je Mastermind rij testen door de spelleiding en ontgrendel de fysieke kist met 4x Zwart!</p>
+          <p class="loc-desc">Laat hier je Mastermind rij testen door de spelleiding en ontgrendel de fysieke kist met 6x Zwart!</p>
         </div>
       </div>
     </main>
@@ -348,11 +351,11 @@
 
         <div id="adminControlsSection" style="display: none;">
           
-          <!-- Mastermind Validator -->
+          <!-- Mastermind Validator (6 Kleurencode) -->
           <div class="admin-block">
-            <h4 class="admin-block-title">🧩 1. Geheime Code van de Kist & Ingezonden Rijen</h4>
+            <h4 class="admin-block-title">🧩 1. Geheime 6-Kleurencode van de Kist & Ingezonden Rijen</h4>
             <div class="admin-secret-code-box">
-              <label><strong>Geheime Code van de Master Core (4 kleuren):</strong></label>
+              <label><strong>Geheime 6-Kleurencode van de Master Core:</strong></label>
               <div class="secret-code-selectors">
                 <select id="secretSlot1" class="modern-select mini-select" onchange="saveSecretCode()">
                   <option value="red">🔴 Rood</option><option value="blue">🔵 Blauw</option><option value="green" selected>🟢 Groen</option><option value="yellow">🟡 Geel</option><option value="orange">🟠 Oranje</option><option value="purple">🟣 Paars</option>
@@ -366,13 +369,19 @@
                 <select id="secretSlot4" class="modern-select mini-select" onchange="saveSecretCode()">
                   <option value="red">🔴 Rood</option><option value="blue" selected>🔵 Blauw</option><option value="green">🟢 Groen</option><option value="yellow">🟡 Geel</option><option value="orange">🟠 Oranje</option><option value="purple">🟣 Paars</option>
                 </select>
+                <select id="secretSlot5" class="modern-select mini-select" onchange="saveSecretCode()">
+                  <option value="red">🔴 Rood</option><option value="blue">🔵 Blauw</option><option value="green">🟢 Groen</option><option value="yellow">🟡 Geel</option><option value="orange" selected>🟠 Oranje</option><option value="purple">🟣 Paars</option>
+                </select>
+                <select id="secretSlot6" class="modern-select mini-select" onchange="saveSecretCode()">
+                  <option value="red">🔴 Rood</option><option value="blue">🔵 Blauw</option><option value="green">🟢 Groen</option><option value="yellow">🟡 Geel</option><option value="orange">🟠 Oranje</option><option value="purple" selected>🟣 Paars</option>
+                </select>
               </div>
             </div>
 
             <div class="table-wrap">
               <table class="modern-table">
                 <thead>
-                  <tr><th>Team</th><th>Rij</th><th>Kleuren</th><th>Actie</th></tr>
+                  <tr><th>Team</th><th>Rij</th><th>6 Kleuren Ingezonden</th><th>Actie</th></tr>
                 </thead>
                 <tbody id="adminMastermindSubmissionsBody"></tbody>
               </table>
