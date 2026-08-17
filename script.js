@@ -267,7 +267,11 @@ function savePasswordAndShowTutorial() {
   playVictoryFanfare();
   
   document.getElementById('screenSetPassword').style.display = 'none';
-  const teamInfo = TEAMS_INFO[authenticatedTeam];
+  openTutorialModal();
+}
+
+function openTutorialModal() {
+  const teamInfo = TEAMS_INFO[authenticatedTeam || 'chatgpt'];
   document.getElementById('tutorialTeamBadge').innerText = `TARGET: ${teamInfo.name.toUpperCase()}`;
   document.getElementById('screenTutorial').style.display = 'flex';
 }
@@ -275,7 +279,9 @@ function savePasswordAndShowTutorial() {
 function finishTutorialAndLaunchCockpit() {
   playBeep(600, 0.1);
   document.getElementById('screenTutorial').style.display = 'none';
-  launchCockpit(authenticatedTeam);
+  if (authenticatedTeam) {
+    launchCockpit(authenticatedTeam);
+  }
 }
 
 function launchCockpit(teamKey) {
