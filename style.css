@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AETHER_OS - RETRO CRT CYBER TERMINAL STYLING MET NATUURLIJKE SCROLL
+   AETHER_OS - RETRO CRT CYBER TERMINAL STYLING MET TUTORIAL KNOP
    ========================================================================== */
 
 :root {
@@ -62,7 +62,7 @@ body {
   z-index: 9999;
 }
 
-/* COCKPIT FULLSCREEN MET FLEX & AUTO SCROLL */
+/* COCKPIT FULLSCREEN MET AUTO SCROLL */
 .cockpit-container {
   width: 100%;
   max-width: 1400px;
@@ -160,6 +160,18 @@ body {
 @keyframes pulseGlow {
   from { box-shadow: 0 0 5px var(--emerald-glow); }
   to { box-shadow: 0 0 20px var(--emerald-glow); }
+}
+
+.btn-tutorial-link {
+  border-color: var(--emerald);
+  color: var(--emerald);
+  background: rgba(0, 255, 102, 0.08);
+}
+
+.btn-tutorial-link:hover {
+  background: var(--emerald);
+  color: #000;
+  box-shadow: 0 0 10px var(--emerald-glow);
 }
 
 /* TYPOGRAFIE */
@@ -635,6 +647,7 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
 }
 
 .retro-btn:hover {
