@@ -1,9 +1,9 @@
 /**
- * AETHER_OS - SOUND ENGINE, GAME FLOW & 6-COLOR MASTERMIND
+ * AETHER_OS - 16 DROPSPEL MISSIES, SYNTH SOUNDS & 6-COLOR MASTERMIND
  */
 
 const SECTORS_DATA = [
-  // Categorie A: Rondom de Gebouwen & Terrein Ter Duinen
+  // Categorie A: Terrein Ter Duinen
   {
     id: 'cat-a',
     categoryName: 'CATEGORIE A: TERREIN TER DUINEN',
@@ -16,7 +16,7 @@ const SECTORS_DATA = [
       { id: 't-4', code: 'Opdracht 4', name: 'De Stille Serverruimte', desc: 'Koelingsprocedure actief! Het hele team moet 45 seconden lang op een bankje of de stoep gaan liggen en muisstil \'opladen\'. Stuur een videofragment van 15 seconden waarin niemand beweegt of lacht.' }
     ]
   },
-  // Categorie B: De Directe Straat & Natuurrand
+  // Categorie B: Straat & Natuurrand
   {
     id: 'cat-b',
     categoryName: 'CATEGORIE B: STRAAT & NATUURRAND',
@@ -29,7 +29,7 @@ const SECTORS_DATA = [
       { id: 't-8', code: 'Opdracht 8', name: 'De Straat-Microchip', desc: 'Vind een riooldeksel, brandkraan-bordje of watermeter-plaatje op de stoep. Gebruik krijt, takjes of je vinger om het om te toveren tot een \'moederbord\' met lijnen eromheen.' }
     ]
   },
-  // Categorie C: Fysieke Team-Challenges
+  // Categorie C: Fysieke Challenges
   {
     id: 'cat-c',
     categoryName: 'CATEGORIE C: FYSIEKE TEAM CHALLENGES',
@@ -42,7 +42,7 @@ const SECTORS_DATA = [
       { id: 't-12', code: 'Opdracht 12', name: 'De Stoeprand-Balans', desc: 'Bandbreedte-test: Alle 10 de teamleden moeten tegelijk op de rand van het trottoir/stoeprand op één been balanceren gedurende 20 seconden. Stuur video van 10 sec.' }
     ]
   },
-  // Categorie D: Slimme Mini-Puzzels & Observatie
+  // Categorie D: Puzzels & Audio
   {
     id: 'cat-d',
     categoryName: 'CATEGORIE D: PUZZELS & OBSERVATIE',
@@ -128,34 +128,34 @@ function playVictoryFanfare() {
 
 // STORAGE HELPERS
 function getStorageKey(team, subkey) {
-  return `aibattle_widescreen_6col_${team}_${subkey}`;
+  return `aibattle_master_${team}_${subkey}`;
 }
 
 function getRoomEscapeCode(teamKey) {
-  return localStorage.getItem(`aibattle_widescreen_6col_roomcode_${teamKey}`) || '482619';
+  return localStorage.getItem(`aibattle_master_roomcode_${teamKey}`) || '482619';
 }
 
 function setRoomEscapeCode(teamKey, code) {
-  localStorage.setItem(`aibattle_widescreen_6col_roomcode_${teamKey}`, code);
+  localStorage.setItem(`aibattle_master_roomcode_${teamKey}`, code);
 }
 
 function getPersonalPassword(teamKey) {
-  return localStorage.getItem(`aibattle_widescreen_6col_personal_pw_${teamKey}`);
+  return localStorage.getItem(`aibattle_master_personal_pw_${teamKey}`);
 }
 
 function setPersonalPassword(teamKey, pw) {
-  localStorage.setItem(`aibattle_widescreen_6col_personal_pw_${teamKey}`, pw);
+  localStorage.setItem(`aibattle_master_personal_pw_${teamKey}`, pw);
 }
 
 // =======================================================
-// FASE 1: START SCREEN FLOW
+// FASE 1 & 2: INTRO EN KAMER-CODE FLOW
 // =======================================================
-function goToRoomCodeScreen() {
+function goFromIntroToRoomCode() {
   getAudioContext();
   playGlitchNoise();
   document.getElementById('screenIntro').style.display = 'none';
   document.getElementById('screenRoomCode').style.display = 'flex';
-  onTeamSelectionChange();
+  onTeamSelectChange();
 }
 
 function backToIntro() {
@@ -163,10 +163,7 @@ function backToIntro() {
   document.getElementById('screenIntro').style.display = 'flex';
 }
 
-// =======================================================
-// FASE 2: ROOM CODE VALIDATIE
-// =======================================================
-function onTeamSelectionChange() {
+function onTeamSelectChange() {
   const teamKey = document.getElementById('gateTeamSelect').value;
   const personalPw = getPersonalPassword(teamKey);
   const errorEl = document.getElementById('gateErrorMsg');
@@ -246,7 +243,7 @@ function savePasswordAndLaunchCockpit() {
 
 function launchCockpit(teamKey) {
   authenticatedTeam = teamKey;
-  sessionStorage.setItem('aibattle_widescreen_6col_active_team', teamKey);
+  sessionStorage.setItem('aibattle_master_active_team', teamKey);
   
   document.getElementById('screenIntro').style.display = 'none';
   document.getElementById('screenRoomCode').style.display = 'none';
@@ -263,7 +260,7 @@ function launchCockpit(teamKey) {
 }
 
 function logoutCurrentTeam() {
-  sessionStorage.removeItem('aibattle_widescreen_6col_active_team');
+  sessionStorage.removeItem('aibattle_master_active_team');
   authenticatedTeam = null;
   document.getElementById('screenIntro').style.display = 'flex';
   document.getElementById('screenRoomCode').style.display = 'none';
@@ -356,7 +353,7 @@ function confirmEvidenceSent() {
   savedTasks[activePendingTask.taskId] = 'pending';
   localStorage.setItem(key, JSON.stringify(savedTasks));
 
-  const subs = JSON.parse(localStorage.getItem('aibattle_widescreen_6col_submissions') || '[]');
+  const subs = JSON.parse(localStorage.getItem('aibattle_master_submissions') || '[]');
   const existing = subs.findIndex(s => s.teamKey === activePendingTask.teamKey && s.taskId === activePendingTask.taskId);
   const entry = {
     teamKey: activePendingTask.teamKey,
@@ -368,7 +365,7 @@ function confirmEvidenceSent() {
 
   if (existing >= 0) subs[existing] = entry;
   else subs.unshift(entry);
-  localStorage.setItem('aibattle_widescreen_6col_submissions', JSON.stringify(subs));
+  localStorage.setItem('aibattle_master_submissions', JSON.stringify(subs));
 
   closeEvidenceModal();
   renderSectors();
@@ -492,7 +489,7 @@ function submitRowForValidation(row) {
   mmData[row].status = 'pending_validation';
   localStorage.setItem(getStorageKey(authenticatedTeam, 'mastermind_state'), JSON.stringify(mmData));
 
-  const submissions = JSON.parse(localStorage.getItem('aibattle_widescreen_6col_mm_submissions') || '[]');
+  const submissions = JSON.parse(localStorage.getItem('aibattle_master_mm_submissions') || '[]');
   submissions.push({
     id: `${authenticatedTeam}_row_${row}_${Date.now()}`,
     teamKey: authenticatedTeam,
@@ -500,7 +497,7 @@ function submitRowForValidation(row) {
     colors: mmData[row].colors,
     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   });
-  localStorage.setItem('aibattle_widescreen_6col_mm_submissions', JSON.stringify(submissions));
+  localStorage.setItem('aibattle_master_mm_submissions', JSON.stringify(submissions));
 
   initMastermind();
   showToast("Ingezonden! Ren nu naar de Centrale Post!");
@@ -533,7 +530,7 @@ let timerRunning = true;
 function tickTimer() {
   if (timerRunning && totalSeconds > 0) {
     totalSeconds--;
-    localStorage.setItem('aibattle_widescreen_6col_timer', totalSeconds);
+    localStorage.setItem('aibattle_master_timer', totalSeconds);
   }
 
   const h = Math.floor(totalSeconds / 3600);
@@ -578,17 +575,17 @@ function publishEmergencyPayload(title, text, audioUrl) {
     audioUrl
   };
 
-  localStorage.setItem('aibattle_widescreen_6col_emergency', JSON.stringify(payload));
+  localStorage.setItem('aibattle_master_emergency', JSON.stringify(payload));
   showToast("Noodbevel verzonden!");
   checkEmergencyLockdown();
 }
 
 function checkEmergencyLockdown() {
-  const raw = localStorage.getItem('aibattle_widescreen_6col_emergency');
+  const raw = localStorage.getItem('aibattle_master_emergency');
   if (!raw) return;
 
   const payload = JSON.parse(raw);
-  const dismissedId = sessionStorage.getItem('aibattle_widescreen_6col_dismissed_lockdown_id');
+  const dismissedId = sessionStorage.getItem('aibattle_master_dismissed_lockdown_id');
 
   if (dismissedId !== String(payload.id)) {
     playGlitchNoise();
@@ -612,10 +609,10 @@ function checkEmergencyLockdown() {
 }
 
 function dismissLockdown() {
-  const raw = localStorage.getItem('aibattle_widescreen_6col_emergency');
+  const raw = localStorage.getItem('aibattle_master_emergency');
   if (raw) {
     const payload = JSON.parse(raw);
-    sessionStorage.setItem('aibattle_widescreen_6col_dismissed_lockdown_id', String(payload.id));
+    sessionStorage.setItem('aibattle_master_dismissed_lockdown_id', String(payload.id));
   }
   document.getElementById('lockdownAudioPlayer').pause();
   document.getElementById('lockdownModal').style.display = 'none';
@@ -661,12 +658,12 @@ function saveSecretCode() {
     document.getElementById('secretSlot5').value,
     document.getElementById('secretSlot6').value
   ];
-  localStorage.setItem('aibattle_widescreen_6col_secret_code', JSON.stringify(secret));
+  localStorage.setItem('aibattle_master_secret_code', JSON.stringify(secret));
   showToast("6-Kleurencode van de kist opgeslagen!");
 }
 
 function loadSecretCode() {
-  const raw = localStorage.getItem('aibattle_widescreen_6col_secret_code');
+  const raw = localStorage.getItem('aibattle_master_secret_code');
   const secret = raw ? JSON.parse(raw) : ['green', 'red', 'yellow', 'blue', 'orange', 'purple'];
   document.getElementById('secretSlot1').value = secret[0] || 'green';
   document.getElementById('secretSlot2').value = secret[1] || 'red';
@@ -677,7 +674,7 @@ function loadSecretCode() {
 }
 
 function getSecretCode() {
-  const raw = localStorage.getItem('aibattle_widescreen_6col_secret_code');
+  const raw = localStorage.getItem('aibattle_master_secret_code');
   return raw ? JSON.parse(raw) : ['green', 'red', 'yellow', 'blue', 'orange', 'purple'];
 }
 
@@ -719,7 +716,7 @@ function evaluateGuess(guessColors, secretColors) {
 function renderAdminMastermindSubmissions() {
   const tbody = document.getElementById('adminMastermindSubmissionsBody');
   tbody.innerHTML = '';
-  const submissions = JSON.parse(localStorage.getItem('aibattle_widescreen_6col_mm_submissions') || '[]');
+  const submissions = JSON.parse(localStorage.getItem('aibattle_master_mm_submissions') || '[]');
 
   if (submissions.length === 0) {
     tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Geen teams bij de Centrale Post.</td></tr>';
@@ -743,7 +740,7 @@ function renderAdminMastermindSubmissions() {
 }
 
 function adminEvaluateMastermind(submissionIndex) {
-  const submissions = JSON.parse(localStorage.getItem('aibattle_widescreen_6col_mm_submissions') || '[]');
+  const submissions = JSON.parse(localStorage.getItem('aibattle_master_mm_submissions') || '[]');
   const sub = submissions[submissionIndex];
   if (!sub) return;
 
@@ -762,9 +759,8 @@ function adminEvaluateMastermind(submissionIndex) {
     localStorage.setItem(getStorageKey(sub.teamKey, 'active_row'), sub.row + 1);
   }
 
-  // 6x Zwart = Overwinning!
   if (evaluation.blackPins === 6) {
-    localStorage.setItem('aibattle_widescreen_6col_winner', JSON.stringify({
+    localStorage.setItem('aibattle_master_winner', JSON.stringify({
       teamKey: sub.teamKey,
       teamName: TEAMS_INFO[sub.teamKey].name,
       secret: secret
@@ -772,7 +768,7 @@ function adminEvaluateMastermind(submissionIndex) {
   }
 
   submissions.splice(submissionIndex, 1);
-  localStorage.setItem('aibattle_widescreen_6col_mm_submissions', JSON.stringify(submissions));
+  localStorage.setItem('aibattle_master_mm_submissions', JSON.stringify(submissions));
 
   renderAdminMastermindSubmissions();
   renderAdminTeamsManager();
@@ -782,7 +778,7 @@ function adminEvaluateMastermind(submissionIndex) {
 function renderAdminSubmissions() {
   const tbody = document.getElementById('adminSubmissionsBody');
   tbody.innerHTML = '';
-  const subs = JSON.parse(localStorage.getItem('aibattle_widescreen_6col_submissions') || '[]');
+  const subs = JSON.parse(localStorage.getItem('aibattle_master_submissions') || '[]');
 
   if (subs.length === 0) {
     tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Geen openstaande opdrachten.</td></tr>';
@@ -793,7 +789,7 @@ function renderAdminSubmissions() {
     const tInfo = TEAMS_INFO[s.teamKey];
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td><strong>${tInfo.icon} ${tInfo.name}</strong><br><small style="color:var(--text-muted);">${s.time}</small></td>
+      <td><strong>${tInfo.icon} ${tInfo.name}</strong></td>
       <td>${s.taskName}</td>
       <td><span style="color:${s.status === 'approved' ? 'var(--emerald)' : 'var(--amber)'}">${s.status === 'approved' ? '✓ Goedgekeurd' : '⏳ Wacht op check'}</span></td>
       <td>
@@ -815,9 +811,9 @@ function adminApproveTask(teamKey, taskId, subIndex) {
   const curCredits = getTeamCredits(teamKey);
   setTeamCredits(teamKey, curCredits + 1);
 
-  const subs = JSON.parse(localStorage.getItem('aibattle_widescreen_6col_submissions') || '[]');
+  const subs = JSON.parse(localStorage.getItem('aibattle_master_submissions') || '[]');
   if (subs[subIndex]) subs[subIndex].status = 'approved';
-  localStorage.setItem('aibattle_widescreen_6col_submissions', JSON.stringify(subs));
+  localStorage.setItem('aibattle_master_submissions', JSON.stringify(subs));
 
   renderAdminSubmissions();
   renderAdminTeamsManager();
@@ -861,7 +857,7 @@ function adminAddCredits(tKey) {
 function adminResetTeamAuth(tKey) {
   const action = confirm(`Wil je het wachtwoord van ${TEAMS_INFO[tKey].name} resetten zodat ze opnieuw de 6-cijferige kamer-code moeten invoeren?`);
   if (action) {
-    localStorage.removeItem(`aibattle_widescreen_6col_personal_pw_${tKey}`);
+    localStorage.removeItem(`aibattle_master_personal_pw_${tKey}`);
     renderAdminTeamsManager();
     showToast(`Wachtwoord van ${TEAMS_INFO[tKey].name} gereset.`);
   }
@@ -882,18 +878,18 @@ window.addEventListener('keydown', function(e) {
   }
 });
 
-// INITIALISATIE BIJ OPSTARTEN
+// INITIALISATIE BIJ HET LADEN VAN DE PAGINA
 window.onload = function() {
-  const savedTimer = localStorage.getItem('aibattle_widescreen_6col_timer');
+  const savedTimer = localStorage.getItem('aibattle_master_timer');
   if (savedTimer) totalSeconds = parseInt(savedTimer, 10);
   setInterval(tickTimer, 1000);
   tickTimer();
 
   window.addEventListener('storage', function(e) {
-    if (e.key === 'aibattle_widescreen_6col_emergency') {
+    if (e.key === 'aibattle_master_emergency') {
       checkEmergencyLockdown();
     }
-    if (e.key === 'aibattle_widescreen_6col_winner') {
+    if (e.key === 'aibattle_master_winner') {
       const winner = JSON.parse(e.newValue || '{}');
       if (winner && winner.teamName) {
         document.getElementById('victoryTeamName').innerText = winner.teamName;
@@ -909,11 +905,10 @@ window.onload = function() {
     }
   });
 
-  const active = sessionStorage.getItem('aibattle_widescreen_6col_active_team');
+  const active = sessionStorage.getItem('aibattle_master_active_team');
   if (active) {
     launchCockpit(active);
   } else {
-    // Toon startscherm (De toespraak van de moni)
     document.getElementById('screenIntro').style.display = 'flex';
     document.getElementById('screenRoomCode').style.display = 'none';
     document.getElementById('screenSetPassword').style.display = 'none';
