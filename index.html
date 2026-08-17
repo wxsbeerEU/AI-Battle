@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AETHER_OS // Omega Protocol Edition</title>
+  <title>AI Core // Omega Protocol Edition</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
@@ -11,43 +11,68 @@
 </head>
 <body>
 
-  <!-- 1. INTRO / DATABUNKER ESCAPE VERGRENDELING -->
+  <!-- 1. BUNKER ESCAPE & AUTHENTICATIE OVERLAY -->
   <div class="bunker-overlay" id="bunkerAuthModal">
     <div class="bunker-card">
-      <div class="bunker-badge">🚨 OMEGA PROTOCOL // NOODVERGRENDELING</div>
-      <h1 class="bunker-title">DATABUNKER VERGRENDELD</h1>
+      <div class="bunker-badge">🚨 OMEGA PROTOCOL // DATABUNKER VERGRENDELD</div>
       
-      <p class="bunker-story">
-        <strong>ALARM:</strong> Virus <em>GLITCH</em> valt het centrale netwerk aan! Om jullie AI-systeem te beschermen, zijn jullie fysiek opgesloten in deze bunker. 
-        Zoek de <strong>3 raadsels in deze kamer</strong> om de 4-cijferige opstartcode van deze terminal te kraken!
-      </p>
+      <!-- STAP 1: 6-Cijferige Kamercode -->
+      <div id="authStep1">
+        <h1 class="bunker-title">KRAAK DE BUNKER</h1>
+        <p class="bunker-story">
+          Virus <strong>GLITCH</strong> valt het netwerk aan! Zoek de raadsels in deze kamer om de <strong>6-cijferige startcode</strong> van deze terminal te vinden.
+        </p>
 
-      <div class="form-group">
-        <label for="gateTeamSelect">Selecteer jullie AI Supercluster:</label>
-        <select id="gateTeamSelect" class="modern-select" onchange="onGateTeamChange()">
-          <option value="chatgpt">🟢 Team ChatGPT (GPT-4o)</option>
-          <option value="midjourney">🎨 Team Midjourney (v6.1)</option>
-          <option value="gemini">✨ Team Gemini (1.5 Pro)</option>
-          <option value="claude">🧠 Team Claude (3.5 Sonnet)</option>
-          <option value="sora">🎬 Team Sora (Diffusion)</option>
-          <option value="copilot">⚡ Team Copilot (Neural Auto)</option>
-        </select>
+        <div class="form-group">
+          <label for="gateTeamSelect">Selecteer jullie AI Team:</label>
+          <select id="gateTeamSelect" class="modern-select" onchange="onGateTeamChange()">
+            <option value="chatgpt">🟢 Team ChatGPT (GPT-4o)</option>
+            <option value="midjourney">🎨 Team Midjourney (v6.1)</option>
+            <option value="gemini">✨ Team Gemini (1.5 Pro)</option>
+            <option value="claude">🧠 Team Claude (3.5 Sonnet)</option>
+            <option value="sora">🎬 Team Sora (Diffusion)</option>
+            <option value="copilot">⚡ Team Copilot (Neural Auto)</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="bunkerCodeGroup">
+          <label for="bunker6DigitInput">Voer de 6-cijferige kamer-code in:</label>
+          <input type="text" id="bunker6DigitInput" class="modern-input code-input" placeholder="000000" maxlength="6" inputmode="numeric">
+        </div>
+
+        <!-- Terugkerend team inloggen met eigen wachtwoord -->
+        <div class="form-group" id="returningLoginGroup" style="display: none;">
+          <label for="teamPersonalPasswordInput">Jullie eigen team-wachtwoord:</label>
+          <input type="password" id="teamPersonalPasswordInput" class="modern-input" placeholder="Voer wachtwoord in...">
+        </div>
+
+        <p id="gateErrorMsg" class="auth-error"></p>
+
+        <button class="btn btn-primary btn-lg btn-block" id="btnSubmitBunker" onclick="handleAuthSubmit()">
+          BUNKER ONTGRENDELEN 🔓
+        </button>
       </div>
 
-      <div class="form-group">
-        <label for="gatePasswordInput" id="gatePassLabel">4-Cijferige Bunker Pincode:</label>
-        <input type="password" id="gatePasswordInput" class="modern-input bunker-code-input" placeholder="Bijv. 4826" maxlength="8">
+      <!-- STAP 2: Eigen wachtwoord instellen na ontsnapping -->
+      <div id="authStep2" style="display: none;">
+        <div class="bunker-badge" style="color:var(--emerald);">✓ 6-CIJFERIGE CODE JUIST!</div>
+        <h1 class="bunker-title">KIES EIGEN WACHTWOORD</h1>
+        <p class="bunker-story">
+          Super gedaan! Kies nu een <strong>eigen geheim wachtwoord</strong> voor jullie team. Hiermee loggen jullie opnieuw in als de laptop herstart.
+        </p>
+
+        <div class="form-group">
+          <label for="newTeamPasswordInput">Kies jullie geheime wachtwoord / pincode:</label>
+          <input type="password" id="newTeamPasswordInput" class="modern-input" placeholder="Bijv. turbo2026">
+        </div>
+
+        <p id="step2ErrorMsg" class="auth-error"></p>
+
+        <button class="btn btn-emerald btn-lg btn-block" onclick="savePersonalPasswordAndStart()">
+          BEVESTIG & START HET SPEL 🚀
+        </button>
       </div>
 
-      <p id="gateErrorMsg" class="auth-error"></p>
-
-      <button class="btn btn-primary btn-lg btn-block" onclick="submitTeamAuth()">
-        ⚡ INITIALISEER & START MISSIE →
-      </button>
-
-      <div class="bunker-hint">
-        💡 <em>Hebben jullie de 3 envelop-raadsels in deze kamer al gevonden?</em>
-      </div>
     </div>
   </div>
 
@@ -60,11 +85,11 @@
       <div id="lockdownAudioContainer" style="display: none; width: 100%;">
         <audio id="lockdownAudioPlayer" controls style="width: 100%; margin-top: 0.5rem;"></audio>
       </div>
-      <button class="btn btn-primary btn-lg" onclick="dismissLockdown()">✓ BEGREPEN & CONSOLE ONTGRENDELEN</button>
+      <button class="btn btn-primary btn-lg btn-block" onclick="dismissLockdown()">✓ BEGREPEN & SCHERM VRIJGEVEN</button>
     </div>
   </div>
 
-  <!-- 3. WINNAARS SCHERM (4X ZWART) -->
+  <!-- 3. OVERWINNINGSSCHERM (4X ZWART) -->
   <div class="lockdown-overlay victory-overlay" id="victoryModal">
     <div class="lockdown-card victory-card">
       <div class="alert-icon">🏆</div>
@@ -73,12 +98,12 @@
         Geweldig gedaan <strong id="victoryTeamName">Jullie Team</strong>!<br>Jullie hebben 4 zwarte pinnen gehaald en virus GLITCH verslagen!
       </p>
       <div class="victory-code-display" id="victoryCodeDisplay">🟢 🔴 🟡 🔵</div>
-      <p style="color: #cbd5e1; font-weight: bold;">Ren direct naar de kist van de Centrale Post om de Master Core fysiek te openen!</p>
-      <button class="btn btn-emerald btn-lg" onclick="closeVictoryModal()">Sluiten</button>
+      <p style="color: #cbd5e1; font-weight: bold;">Ren direct naar de fysieke kist op het Centrale Plein!</p>
+      <button class="btn btn-emerald btn-lg btn-block" onclick="closeVictoryModal()">Sluiten</button>
     </div>
   </div>
 
-  <!-- 4. HOOFD DASHBOARD (ZICHTBAAR NA ESCAPE) -->
+  <!-- 4. HOOFDCOCKPIT -->
   <div class="app-shell">
     
     <!-- HEADER -->
@@ -93,14 +118,17 @@
         <span class="timer-val" id="gameTimer">02:00:00</span>
       </div>
 
-      <div class="credits-pill">
-        ⭐ Kleur-Tokens: <strong id="headerCreditsCount">0</strong>
+      <div class="header-right">
+        <div class="credits-pill">
+          ⭐ Kleur-Tokens: <strong id="headerCreditsCount">0</strong>
+        </div>
+        <button class="btn-text" onclick="logoutCurrentTeam()">Vergrendelen 🔒</button>
       </div>
     </header>
 
-    <!-- LIVE BERICHT -->
+    <!-- LIVE LEIDING BERICHT -->
     <div class="broadcast-bar" id="broadcastBanner">
-      📢 <span id="broadcastDisplay">Bunker succesvol ontgrendeld! Ga naar de posten, verdien tokens en kraak de Master Core!</span>
+      📢 <span id="broadcastDisplay">Bunker ontgrendeld! Ga naar de posten, verdien kleur-tokens en kraak de Master Core!</span>
     </div>
 
     <!-- 3 HOOFDTABS -->
@@ -113,7 +141,7 @@
     <!-- TAB 1: OPDRACHTEN -->
     <main id="tab-sectors" class="tab-content active">
       <div class="info-banner">
-        <strong>Hoe werkt het?</strong> Ga fysiek naar een post ➔ Doe de opdracht ➔ Stuur bewijs door via GSM. De leiding geeft je dan <strong>+1 Kleur-Token</strong>!
+        <strong>Hoe werkt het?</strong> Ga fysiek naar een post ➔ Doe de opdracht ➔ Stuur bewijs via de GSM. De leiding geeft je dan <strong>+1 Kleur-Token</strong>!
       </div>
       <div class="sectors-grid" id="sectorsContainer"></div>
     </main>
@@ -203,7 +231,7 @@
     <!-- FOOTER -->
     <footer class="app-footer">
       <button class="btn-text" onclick="openAdminModal()">⚙️ Leiding Controle Scherm</button>
-      <button class="btn-text" onclick="logoutCurrentTeam()">Vergrendel Bunker 🔒</button>
+      <button class="btn-text" onclick="logoutCurrentTeam()">Bunker Vergrendelen 🔒</button>
     </footer>
 
   </div>
@@ -245,7 +273,7 @@
         <div id="adminAuthSection">
           <p>Wachtwoord voor leiding:</p>
           <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-            <input type="password" id="adminPasswordInput" class="modern-input" placeholder="Wachtwoord (standaard: admin123)">
+            <input type="password" id="adminPasswordInput" class="modern-input" placeholder="Wachtwoord (admin123)">
             <button class="btn btn-primary" onclick="loginAdmin()">Inloggen</button>
           </div>
           <p id="adminAuthError" class="auth-error" style="display:none;">Verkeerd wachtwoord.</p>
@@ -302,20 +330,20 @@
           <div class="admin-section">
             <h4>🚨 3. Noodbericht / Audio naar alle schermen sturen</h4>
             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-              <input type="text" id="adminEmergencyTitle" class="modern-input" placeholder="Titel (bijv. NOODALERT / VERZAMELEN)">
+              <input type="text" id="adminEmergencyTitle" class="modern-input" placeholder="Titel (bijv. IEDEREEN NAAR HET PLEIN)">
               <textarea id="adminEmergencyText" rows="2" class="modern-input" placeholder="Tekst van het bericht..."></textarea>
               <input type="file" id="adminAudioFileInput" accept="audio/*" class="modern-input">
               <button class="btn btn-primary" onclick="sendEmergencyLockdown()">🚨 Blokkeer Schermen met dit Bericht</button>
             </div>
           </div>
 
-          <!-- Overzicht Teams & Pincodes -->
+          <!-- Overzicht Teams, Pincodes & Kamercodes -->
           <div class="admin-section">
-            <h4>👥 4. Teams, Tokens & Pincodes</h4>
+            <h4>👥 4. Teams, Tokens & Wachtwoorden</h4>
             <div class="table-wrap">
               <table class="modern-table">
                 <thead>
-                  <tr><th>Team</th><th>Tokens</th><th>Rij</th><th>Bunker Pincode</th><th>Reset</th></tr>
+                  <tr><th>Team</th><th>Tokens</th><th>Rij</th><th>Kamer-Code</th><th>Eigen PW</th><th>Actie</th></tr>
                 </thead>
                 <tbody id="adminTeamsManagerBody"></tbody>
               </table>
