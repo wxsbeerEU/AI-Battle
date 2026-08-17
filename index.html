@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AETHER_OS // DEFCON-1 EMERGENCY TERMINAL</title>
+  <title>AETHER_OS // DEFCON-1 TERMINAL (FIREBASE LIVE)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 
-  <!-- FIREBASE SDKs -->
+  <!-- FIREBASE SDKs (COMPAT) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 </head>
@@ -18,33 +18,28 @@
   <div class="crt-overlay"></div>
   <div class="crt-scanlines"></div>
 
-  <!-- FLOATING SYSADMIN KNOP -->
-  <button class="sysadmin-floating-btn" onclick="openAdminModal()" title="SysAdmin Leiding Paneel (Ctrl+Shift+A)">
-    ⚙️ SYSADMIN ROOT
-  </button>
-
   <!-- =======================================================
-       FASE 1: OPENINGSSCHERM - DE ONTHULLING IN DE BRONNE
+       FASE 1: OPENINGSSCHERM - DE NOODOPROEP (MONI SPEECH)
        ======================================================= -->
   <div class="terminal-screen" id="screenIntro">
     <div class="retro-box alert-box">
       <div class="box-header danger">
-        <span>🚨 DEFCON-1: DEKMANTEL VERVALLEN // SECTOR DE BRONNE</span>
-        <span class="blink" id="dbStatusIndicator">● DATABASE KOPPELEN...</span>
+        <span>🚨 DEFCON-1: NOODSITUATIE TER DUINEN</span>
+        <span class="blink" id="dbStatusIndicator">● VERBINDEN MET DATABASE...</span>
       </div>
       
-      <h1 class="retro-title danger-glow">DE AI-SERVERS ONTSPOREN!</h1>
+      <h1 class="retro-title danger-glow">HET NETWERK LIGT PLAT!</h1>
       
       <p class="retro-text">
-        De brandoefening was een dekmantel! De AI-systemen breken uit en dringen de keuken, de stroom en de voorraden binnen.<br>
-        Als we de ontspoorde AI niet binnen <strong>2 uur</strong> uitschakelen, crashen de koelcellen en is de <strong>barbecue van woensdag</strong> volledig naar de vaantjes!
+        De brandoefening was een dekmantel! Virus <strong>GLITCH</strong> breekt uit en heeft alle servers, de koelcellen én de <strong>muziekinstallatie voor de bar</strong> gegijzeld!<br>
+        Als we de ontspoorde AI niet binnen <strong>2 uur</strong> uitschakelen, is de barbecue van woensdag volledig naar de vaantjes!
       </p>
 
       <div class="moni-terminal-box">
         <div class="moni-tag">> MONI_INVAL_DIRECTIVE:</div>
         <p>
-          "Jullie missie: Jullie moeten één specifieke ontspoorde AI opsporen en vernietigen! 
-          Vind de 6-cijferige kamer-code in dit lokaal, ontgrendel het systeem en start de tegenaanval!"
+          "Jullie missie: Jullie moeten jullie eigen AI-systeem opsporen en uitschakelen! 
+          Vind de 6-cijferige code in dit lokaal van De Bronne, ontgrendel het systeem en start de tegenaanval!"
         </p>
       </div>
 
@@ -67,19 +62,19 @@
       <h2 class="retro-title">DECRYPTIE NOODTERMINAL</h2>
       
       <p class="retro-text">
-        Los de <strong>3 fysieke puzzels in dit lokaal van De Bronne</strong> op om de 6-cijferige opstartcode van jullie terminal te vormen!
+        Los de <strong>3 fysieke puzzels in dit lokaal</strong> op om de 6-cijferige opstartcode van jullie terminal te vormen!
       </p>
 
       <div class="form-grid">
         <div class="form-group">
-          <label for="gateTeamSelect">> WELKE ONTSPOORDE AI MOETEN JULLIE STOPPEN?</label>
+          <label for="gateTeamSelect">> SELECTEER AI TEAM:</label>
           <select id="gateTeamSelect" class="retro-select" onchange="onTeamSelectChange()">
-            <option value="chatgpt">🟢 Target: ChatGPT (GPT-4o)</option>
-            <option value="midjourney">🎨 Target: Midjourney (v6.1)</option>
-            <option value="gemini">✨ Target: Gemini (1.5 Pro)</option>
-            <option value="claude">🧠 Target: Claude (3.5 Sonnet)</option>
-            <option value="sora">🎬 Target: Sora (Diffusion)</option>
-            <option value="copilot">⚡ Target: Copilot (Neural Auto)</option>
+            <option value="chatgpt">🟢 Team ChatGPT (GPT-4o)</option>
+            <option value="midjourney">🎨 Team Midjourney (v6.1)</option>
+            <option value="gemini">✨ Team Gemini (1.5 Pro)</option>
+            <option value="claude">🧠 Team Claude (3.5 Sonnet)</option>
+            <option value="sora">🎬 Team Sora (Diffusion)</option>
+            <option value="copilot">⚡ Team Copilot (Neural Auto)</option>
           </select>
         </div>
 
@@ -120,7 +115,7 @@
       
       <p class="retro-text">
         Terminal ontgrendeld! Kies nu een <strong>eigen geheim wachtwoord</strong> voor jullie team. 
-        Hiermee loggen jullie direct weer in als de laptop herstart of vergrendelt.
+        Hiermee loggen jullie direct weer in als de laptop herstart of als jullie overschakelen naar een GSM.
       </p>
 
       <div class="form-group">
@@ -137,7 +132,7 @@
   </div>
 
   <!-- =======================================================
-       FASE 4: INTERACTIEVE MISSIE BRIEFING & TUTORIAL
+       FASE 4: MISSIE BRIEFING & TUTORIAL
        ======================================================= -->
   <div class="terminal-screen" id="screenTutorial" style="display: none;">
     <div class="retro-box tutorial-box">
@@ -229,9 +224,9 @@
   </div>
 
   <!-- =======================================================
-       FASE 5: HOOFD COCKPIT (VOLLEDIG SCHERM)
+       FASE 5: HOOFD COCKPIT (VOLLEDIG SCHERM MET NATUURLIJKE SCROLL)
        ======================================================= -->
-  <div class="cockpit-container">
+  <div class="cockpit-container" id="mainCockpit" style="display: none;">
     
     <header class="top-nav">
       <div class="team-identity">
@@ -259,16 +254,16 @@
     </div>
 
     <nav class="main-tabs-nav">
-      <button class="tab-btn active" onclick="switchTab('sectors')">[ 1. ACTIEVE MISSIES 🎯 ]</button>
-      <button class="tab-btn" onclick="switchTab('mastermind')">[ 2. DECRYPTIE KERN (6 KLEUREN) 🧩 ]</button>
+      <button class="tab-btn active" id="tabBtnSectors" onclick="switchTab('sectors')">[ 1. ACTIEVE MISSIES 🎯 ]</button>
+      <button class="tab-btn" id="tabBtnMastermind" onclick="switchTab('mastermind')">[ 2. DECRYPTIE KERN (6 KLEUREN) 🧩 ]</button>
     </nav>
 
     <!-- TAB 1: ACTIEVE OPDRACHTEN -->
     <main id="tab-sectors" class="tab-panel active">
       <div class="instruction-box">
         <span class="info-tag">> MISSIE PROTOCOL:</span> 
-        Voltooi een van de onderstaande actieve opdrachten ➔ Stuur bewijs naar <strong>0475 84 89 83</strong> ➔ Klik op "Verstuur". 
-        Zodra de leiding goedkeurt, ontgrendelt er een token én een nieuwe opdracht!
+        Voltooi een van de actieve opdrachten ➔ Stuur bewijs naar <strong>0475 84 89 83</strong> ➔ Klik op "Transmissie Verzonden". 
+        Zodra de leiding goedkeurt, ontgrendelt er live via de server een token én een nieuwe opdracht!
       </div>
 
       <div class="mission-progress-bar">
