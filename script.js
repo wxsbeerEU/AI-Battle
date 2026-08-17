@@ -1,5 +1,5 @@
 /**
- * AETHER_OS - SOUND ENGINE, TYPEWRITER INTRO, BUNKER & SYSADMIN
+ * AETHER_OS - SOUND ENGINE, CLEAN TYPEWRITER, MASTERMIND & FOOLPROOF SYSADMIN
  */
 
 const SECTORS_DATA = [
@@ -67,7 +67,7 @@ let authenticatedTeam = null;
 let currentlySelectedColor = 'red';
 let audioCtx = null;
 
-// SYNTHESIZER SOUND ENGINE (Web Audio API)
+// SYNTHESIZER SOUND ENGINE
 function getAudioContext() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   return audioCtx;
@@ -134,7 +134,7 @@ function setPersonalPassword(teamKey, pw) {
   localStorage.setItem(`aibattle_widescreen_personal_pw_${teamKey}`, pw);
 }
 
-// 0. BOOT & TYPEWRITER INVASION
+// 0. BOOT & SCHOON TYPWERK MET DUIDELIJKE SPATIES
 function igniteSystem() {
   getAudioContext();
   playGlitchNoise();
@@ -149,23 +149,25 @@ function igniteSystem() {
   }
 }
 
-const glitchTextContent = 
-  "Hallo AI-systemen... Ik ben VIRUS GLITCH.\n\n" +
-  "Jullie dachten dat de wereld veilig was? Ik heb zojuist al jullie servers gehackt en OFFLINE gehaald.\n\n" +
-  "Zonder AI stort de mensheid binnen 120 minuten in. Jullie zitten fysiek opgesloten in deze bunkers.\n" +
-  "Zie maar dat jullie als eerste AI terug online komen... ALS DAT JULLIE AL LUKT!";
+const glitchSentences = [
+  "Hallo AI-systemen... Ik ben VIRUS GLITCH.",
+  "Jullie dachten dat de wereld veilig was? Ik heb zojuist al jullie servers gehackt en OFFLINE gehaald.",
+  "Zonder AI stort de mensheid binnen 120 minuten volledig in.",
+  "Jullie zitten fysiek opgesloten in deze bunkers. Zie maar dat jullie als eerste AI terug online komen... ALS DAT JULLIE AL LUKT!"
+];
 
 function startGlitchTypewriter() {
   const el = document.getElementById('glitchTypewriter');
   el.innerText = "";
+  let fullText = glitchSentences.join("\n\n");
   let i = 0;
 
   function typeChar() {
-    if (i < glitchTextContent.length) {
-      el.innerText += glitchTextContent.charAt(i);
-      if (i % 4 === 0) playBeep(220 + Math.random() * 80, 0.03);
+    if (i < fullText.length) {
+      el.innerText = fullText.slice(0, i + 1);
+      if (i % 5 === 0) playBeep(220 + Math.random() * 80, 0.03);
       i++;
-      setTimeout(typeChar, 22);
+      setTimeout(typeChar, 20);
     } else {
       document.getElementById('btnEscapeStart').style.display = 'block';
     }
