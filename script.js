@@ -115,32 +115,32 @@ function playVictoryFanfare() {
 
 // STORAGE HELPERS
 function getStorageKey(team, subkey) {
-  return `aibattle_v5_${team}_${subkey}`;
+  return `aibattle_widescreen_${team}_${subkey}`;
 }
 
 function getRoomEscapeCode(teamKey) {
-  return localStorage.getItem(`aibattle_v5_roomcode_${teamKey}`) || '482619';
+  return localStorage.getItem(`aibattle_widescreen_roomcode_${teamKey}`) || '482619';
 }
 
 function setRoomEscapeCode(teamKey, code) {
-  localStorage.setItem(`aibattle_v5_roomcode_${teamKey}`, code);
+  localStorage.setItem(`aibattle_widescreen_roomcode_${teamKey}`, code);
 }
 
 function getPersonalPassword(teamKey) {
-  return localStorage.getItem(`aibattle_v5_personal_pw_${teamKey}`);
+  return localStorage.getItem(`aibattle_widescreen_personal_pw_${teamKey}`);
 }
 
 function setPersonalPassword(teamKey, pw) {
-  localStorage.setItem(`aibattle_v5_personal_pw_${teamKey}`, pw);
+  localStorage.setItem(`aibattle_widescreen_personal_pw_${teamKey}`, pw);
 }
 
-// 0. BOOT & TYPWERITER INVASION
+// 0. BOOT & TYPEWRITER INVASION
 function igniteSystem() {
   getAudioContext();
   playGlitchNoise();
   document.getElementById('bootLayer').style.display = 'none';
 
-  const active = sessionStorage.getItem('aibattle_v5_active_team');
+  const active = sessionStorage.getItem('aibattle_widescreen_active_team');
   if (active) {
     loginSuccess(active);
   } else {
@@ -258,7 +258,7 @@ function savePersonalPasswordAndStart() {
 
 function loginSuccess(teamKey) {
   authenticatedTeam = teamKey;
-  sessionStorage.setItem('aibattle_v5_active_team', teamKey);
+  sessionStorage.setItem('aibattle_widescreen_active_team', teamKey);
   document.getElementById('glitchScreen').style.display = 'none';
   document.getElementById('bunkerAuthModal').style.display = 'none';
 
@@ -273,7 +273,7 @@ function loginSuccess(teamKey) {
 }
 
 function logoutCurrentTeam() {
-  sessionStorage.removeItem('aibattle_v5_active_team');
+  sessionStorage.removeItem('aibattle_widescreen_active_team');
   authenticatedTeam = null;
   document.getElementById('authStep1').style.display = 'block';
   document.getElementById('authStep2').style.display = 'none';
@@ -293,7 +293,7 @@ function renderSectors() {
 
   SECTORS_DATA.forEach(sec => {
     const card = document.createElement('div');
-    card.className = 'card sector-card';
+    card.className = 'panel-box sector-card';
 
     let tasksHTML = '';
     sec.tasks.forEach(t => {
@@ -310,10 +310,10 @@ function renderSectors() {
       }
 
       tasksHTML += `
-        <div class="task-item ${status}">
-          <div class="task-top">${t.code}: ${t.name}</div>
-          <p class="task-desc">${t.desc}</p>
-          <button class="task-btn ${btnClass}" onclick="openPhoneEvidence('${sec.title}', '${t.id}', '${t.code}: ${t.name}')" ${status === 'approved' ? 'disabled' : ''}>
+        <div class="task-card ${status}">
+          <div class="task-head">${t.code}: ${t.name}</div>
+          <p class="task-body">${t.desc}</p>
+          <button class="task-action-btn ${btnClass}" onclick="openPhoneEvidence('${sec.title}', '${t.id}', '${t.code}: ${t.name}')" ${status === 'approved' ? 'disabled' : ''}>
             ${btnLabel}
           </button>
         </div>
@@ -321,8 +321,8 @@ function renderSectors() {
     });
 
     card.innerHTML = `
-      <h3>${sec.title}</h3>
-      <div class="sec-loc">📍 ${sec.location}</div>
+      <h3 class="sec-title">${sec.title}</h3>
+      <div class="sec-spot">📍 ${sec.location}</div>
       <div class="task-list">${tasksHTML}</div>
     `;
 
@@ -354,7 +354,7 @@ function confirmEvidenceSent() {
   savedTasks[activePendingTask.taskId] = 'pending';
   localStorage.setItem(key, JSON.stringify(savedTasks));
 
-  const subs = JSON.parse(localStorage.getItem('aibattle_v5_submissions') || '[]');
+  const subs = JSON.parse(localStorage.getItem('aibattle_widescreen_submissions') || '[]');
   const existing = subs.findIndex(s => s.teamKey === activePendingTask.teamKey && s.taskId === activePendingTask.taskId);
   const entry = {
     teamKey: activePendingTask.teamKey,
@@ -366,7 +366,7 @@ function confirmEvidenceSent() {
 
   if (existing >= 0) subs[existing] = entry;
   else subs.unshift(entry);
-  localStorage.setItem('aibattle_v5_submissions', JSON.stringify(subs));
+  localStorage.setItem('aibattle_widescreen_submissions', JSON.stringify(subs));
 
   closeEvidenceModal();
   renderSectors();
@@ -405,22 +405,22 @@ function initMastermind() {
     const isLocked = (r < currentActiveRow || rowObj.status === 'evaluated');
 
     const rowCard = document.createElement('div');
-    rowCard.className = `mm-row-card ${isCurrentActive ? 'active-row' : ''}`;
+    rowCard.className = `mm-row-item ${isCurrentActive ? 'active-row' : ''}`;
 
-    let slotsHTML = '<div class="mm-dots-row">';
+    let slotsHTML = '<div class="mm-slots-container">';
     for (let c = 0; c < 4; c++) {
       const col = rowObj.colors[c] || 'none';
       slotsHTML += `
-        <div class="mm-slot ${col !== 'none' ? 'filled' : ''}" 
+        <div class="mm-slot-dot ${col !== 'none' ? 'filled' : ''}" 
              data-color="${col}" 
              onclick="handleSlotClick(${r}, ${c}, ${isCurrentActive && !isLocked})">
         </div>`;
     }
     slotsHTML += '</div>';
 
-    let actionHTML = '<div class="mm-row-actions">';
+    let actionHTML = '<div class="mm-feedback-col">';
     if (rowObj.status === 'evaluated') {
-      let pinsHTML = '<div class="mm-feedback-pins-grid">';
+      let pinsHTML = '<div class="pins-grid">';
       rowObj.pins.forEach(pin => {
         pinsHTML += `<div class="pin pin-${pin}"></div>`;
       });
@@ -430,19 +430,19 @@ function initMastermind() {
       pinsHTML += '</div>';
       actionHTML += pinsHTML;
     } else if (rowObj.status === 'pending_validation') {
-      actionHTML += `<span style="font-size:0.75rem; color:var(--amber); font-weight:bold;">⏳ Ren naar Centrale Post!</span>`;
+      actionHTML += `<span style="font-size:0.8rem; color:var(--amber); font-weight:bold;">⏳ Ren naar Centrale Post!</span>`;
     } else if (isCurrentActive) {
       const allFilled = rowObj.colors.every(c => c !== 'none');
       if (allFilled) {
         actionHTML += `<button class="mm-submit-btn" onclick="submitRowForValidation(${r})">Test bij Post 🚀</button>`;
       } else {
-        actionHTML += `<span style="font-size:0.75rem; color:var(--text-muted);">Kleur 4 bollen</span>`;
+        actionHTML += `<span style="font-size:0.8rem; color:var(--text-muted);">Kleur 4 bollen</span>`;
       }
     }
     actionHTML += '</div>';
 
     rowCard.innerHTML = `
-      <span class="mm-row-lbl">Rij ${r}</span>
+      <span class="mm-row-label">Rij ${r}</span>
       ${slotsHTML}
       ${actionHTML}
     `;
@@ -486,7 +486,7 @@ function submitRowForValidation(row) {
   mmData[row].status = 'pending_validation';
   localStorage.setItem(getStorageKey(authenticatedTeam, 'mastermind_state'), JSON.stringify(mmData));
 
-  const submissions = JSON.parse(localStorage.getItem('aibattle_v5_mm_submissions') || '[]');
+  const submissions = JSON.parse(localStorage.getItem('aibattle_widescreen_mm_submissions') || '[]');
   submissions.push({
     id: `${authenticatedTeam}_row_${row}_${Date.now()}`,
     teamKey: authenticatedTeam,
@@ -494,7 +494,7 @@ function submitRowForValidation(row) {
     colors: mmData[row].colors,
     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   });
-  localStorage.setItem('aibattle_v5_mm_submissions', JSON.stringify(submissions));
+  localStorage.setItem('aibattle_widescreen_mm_submissions', JSON.stringify(submissions));
 
   initMastermind();
   showToast("Ingezonden! Ren naar de Centrale Post!");
@@ -509,7 +509,7 @@ function updateTeamStats() {
 // 4. TABS & TIMER
 function switchTab(tabId) {
   playBeep(420, 0.03);
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
 
   const target = document.getElementById(`tab-${tabId}`);
@@ -525,7 +525,7 @@ let timerRunning = true;
 function tickTimer() {
   if (timerRunning && totalSeconds > 0) {
     totalSeconds--;
-    localStorage.setItem('aibattle_v5_timer', totalSeconds);
+    localStorage.setItem('aibattle_widescreen_timer', totalSeconds);
   }
 
   const h = Math.floor(totalSeconds / 3600);
@@ -568,17 +568,17 @@ function publishEmergencyPayload(title, text, audioUrl) {
     audioUrl
   };
 
-  localStorage.setItem('aibattle_v5_emergency', JSON.stringify(payload));
+  localStorage.setItem('aibattle_widescreen_emergency', JSON.stringify(payload));
   showToast("Noodbevel verzonden!");
   checkEmergencyLockdown();
 }
 
 function checkEmergencyLockdown() {
-  const raw = localStorage.getItem('aibattle_v5_emergency');
+  const raw = localStorage.getItem('aibattle_widescreen_emergency');
   if (!raw) return;
 
   const payload = JSON.parse(raw);
-  const dismissedId = sessionStorage.getItem('aibattle_v5_dismissed_lockdown_id');
+  const dismissedId = sessionStorage.getItem('aibattle_widescreen_dismissed_lockdown_id');
 
   if (dismissedId !== String(payload.id)) {
     playGlitchNoise();
@@ -602,10 +602,10 @@ function checkEmergencyLockdown() {
 }
 
 function dismissLockdown() {
-  const raw = localStorage.getItem('aibattle_v5_emergency');
+  const raw = localStorage.getItem('aibattle_widescreen_emergency');
   if (raw) {
     const payload = JSON.parse(raw);
-    sessionStorage.setItem('aibattle_v5_dismissed_lockdown_id', String(payload.id));
+    sessionStorage.setItem('aibattle_widescreen_dismissed_lockdown_id', String(payload.id));
   }
   document.getElementById('lockdownAudioPlayer').pause();
   document.getElementById('lockdownModal').style.display = 'none';
@@ -647,12 +647,12 @@ function saveSecretCode() {
     document.getElementById('secretSlot3').value,
     document.getElementById('secretSlot4').value
   ];
-  localStorage.setItem('aibattle_v5_secret_code', JSON.stringify(secret));
+  localStorage.setItem('aibattle_widescreen_secret_code', JSON.stringify(secret));
   showToast("Code van de kist opgeslagen!");
 }
 
 function loadSecretCode() {
-  const raw = localStorage.getItem('aibattle_v5_secret_code');
+  const raw = localStorage.getItem('aibattle_widescreen_secret_code');
   const secret = raw ? JSON.parse(raw) : ['green', 'red', 'yellow', 'blue'];
   document.getElementById('secretSlot1').value = secret[0] || 'green';
   document.getElementById('secretSlot2').value = secret[1] || 'red';
@@ -661,7 +661,7 @@ function loadSecretCode() {
 }
 
 function getSecretCode() {
-  const raw = localStorage.getItem('aibattle_v5_secret_code');
+  const raw = localStorage.getItem('aibattle_widescreen_secret_code');
   return raw ? JSON.parse(raw) : ['green', 'red', 'yellow', 'blue'];
 }
 
@@ -700,7 +700,7 @@ function evaluateGuess(guessColors, secretColors) {
 function renderAdminMastermindSubmissions() {
   const tbody = document.getElementById('adminMastermindSubmissionsBody');
   tbody.innerHTML = '';
-  const submissions = JSON.parse(localStorage.getItem('aibattle_v5_mm_submissions') || '[]');
+  const submissions = JSON.parse(localStorage.getItem('aibattle_widescreen_mm_submissions') || '[]');
 
   if (submissions.length === 0) {
     tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Geen teams bij de Centrale Post.</td></tr>';
@@ -724,7 +724,7 @@ function renderAdminMastermindSubmissions() {
 }
 
 function adminEvaluateMastermind(submissionIndex) {
-  const submissions = JSON.parse(localStorage.getItem('aibattle_v5_mm_submissions') || '[]');
+  const submissions = JSON.parse(localStorage.getItem('aibattle_widescreen_mm_submissions') || '[]');
   const sub = submissions[submissionIndex];
   if (!sub) return;
 
@@ -744,7 +744,7 @@ function adminEvaluateMastermind(submissionIndex) {
   }
 
   if (evaluation.blackPins === 4) {
-    localStorage.setItem('aibattle_v5_winner', JSON.stringify({
+    localStorage.setItem('aibattle_widescreen_winner', JSON.stringify({
       teamKey: sub.teamKey,
       teamName: TEAMS_INFO[sub.teamKey].name,
       secret: secret
@@ -752,7 +752,7 @@ function adminEvaluateMastermind(submissionIndex) {
   }
 
   submissions.splice(submissionIndex, 1);
-  localStorage.setItem('aibattle_v5_mm_submissions', JSON.stringify(submissions));
+  localStorage.setItem('aibattle_widescreen_mm_submissions', JSON.stringify(submissions));
 
   renderAdminMastermindSubmissions();
   renderAdminTeamsManager();
@@ -762,7 +762,7 @@ function adminEvaluateMastermind(submissionIndex) {
 function renderAdminSubmissions() {
   const tbody = document.getElementById('adminSubmissionsBody');
   tbody.innerHTML = '';
-  const subs = JSON.parse(localStorage.getItem('aibattle_v5_submissions') || '[]');
+  const subs = JSON.parse(localStorage.getItem('aibattle_widescreen_submissions') || '[]');
 
   if (subs.length === 0) {
     tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Geen openstaande opdrachten.</td></tr>';
@@ -795,9 +795,9 @@ function adminApproveTask(teamKey, taskId, subIndex) {
   const curCredits = getTeamCredits(teamKey);
   setTeamCredits(teamKey, curCredits + 1);
 
-  const subs = JSON.parse(localStorage.getItem('aibattle_v5_submissions') || '[]');
+  const subs = JSON.parse(localStorage.getItem('aibattle_widescreen_submissions') || '[]');
   if (subs[subIndex]) subs[subIndex].status = 'approved';
-  localStorage.setItem('aibattle_v5_submissions', JSON.stringify(subs));
+  localStorage.setItem('aibattle_widescreen_submissions', JSON.stringify(subs));
 
   renderAdminSubmissions();
   renderAdminTeamsManager();
@@ -841,7 +841,7 @@ function adminAddCredits(tKey) {
 function adminResetTeamAuth(tKey) {
   const action = confirm(`Wil je het wachtwoord van ${TEAMS_INFO[tKey].name} resetten zodat ze opnieuw de 6-cijferige kamer-code moeten invoeren?`);
   if (action) {
-    localStorage.removeItem(`aibattle_v5_personal_pw_${tKey}`);
+    localStorage.removeItem(`aibattle_widescreen_personal_pw_${tKey}`);
     renderAdminTeamsManager();
     showToast(`Wachtwoord van ${TEAMS_INFO[tKey].name} gereset.`);
   }
@@ -864,16 +864,16 @@ window.addEventListener('keydown', function(e) {
 
 // AUTO SYNC & INITIALISATIE
 window.onload = function() {
-  const savedTimer = localStorage.getItem('aibattle_v5_timer');
+  const savedTimer = localStorage.getItem('aibattle_widescreen_timer');
   if (savedTimer) totalSeconds = parseInt(savedTimer, 10);
   setInterval(tickTimer, 1000);
   tickTimer();
 
   window.addEventListener('storage', function(e) {
-    if (e.key === 'aibattle_v5_emergency') {
+    if (e.key === 'aibattle_widescreen_emergency') {
       checkEmergencyLockdown();
     }
-    if (e.key === 'aibattle_v5_winner') {
+    if (e.key === 'aibattle_widescreen_winner') {
       const winner = JSON.parse(e.newValue || '{}');
       if (winner && winner.teamName) {
         document.getElementById('victoryTeamName').innerText = winner.teamName;
