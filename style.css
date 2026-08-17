@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AI CORE - MODERN DARK UI MET 6-DIGIT BUNKER ESCAPE
+   AETHER_OS - GLITCH INTRO, BUNKER ESCAPE & CLEAN TERMINAL UI
    ========================================================================== */
 
 :root {
@@ -48,7 +48,64 @@ body {
   padding: 1.25rem;
 }
 
-/* BUNKER OVERLAY */
+/* 0. GLITCH INTRO INBRAAKSCHERM */
+.glitch-intro-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #240a17 0%, #060913 100%);
+  z-index: 6000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.glitch-intro-card {
+  background: #111827;
+  border: 3px solid var(--rose);
+  box-shadow: 0 0 50px rgba(244, 63, 94, 0.4);
+  border-radius: var(--radius);
+  padding: 2.25rem;
+  max-width: 580px;
+  width: 100%;
+  text-align: left;
+}
+
+.glitch-alert-badge {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--rose);
+  letter-spacing: 1px;
+  margin-bottom: 0.75rem;
+}
+
+.glitch-avatar-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(244, 63, 94, 0.08);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  padding: 0.85rem;
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
+}
+
+.glitch-avatar-icon { font-size: 2.2rem; }
+.glitch-sender-info h3 { font-size: 1.15rem; color: var(--rose); font-weight: 800; }
+.glitch-sender-info p { font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); }
+
+.glitch-speech-bubble {
+  background: rgba(0, 0, 0, 0.5);
+  border-left: 4px solid var(--rose);
+  padding: 1.2rem;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--text-main);
+  margin-bottom: 1.5rem;
+}
+
+/* 1. BUNKER ESCAPE OVERLAY */
 .bunker-overlay {
   position: fixed;
   inset: 0;
@@ -164,7 +221,7 @@ body {
   font-weight: 600;
 }
 
-/* 3 GROTE HOOFDTABS */
+/* TABS */
 .nav-tabs {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -507,9 +564,10 @@ body {
 .victory-text { font-size: 1.1rem; line-height: 1.5; }
 .victory-code-display { font-size: 2rem; letter-spacing: 6px; margin: 0.5rem 0; }
 
-/* ADMIN BACKSITE */
+/* ADMIN BACKSITE & SYSADMIN PORTAL BUTTON */
 .admin-section { border-bottom: 2px solid var(--card-border); padding-bottom: 1rem; margin-bottom: 1rem; }
 .admin-section h4 { color: var(--primary); font-size: 0.95rem; margin-bottom: 0.5rem; }
+.admin-hint { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.35rem; }
 .admin-secret-code-box { background: #0b1120; padding: 0.75rem; border-radius: 8px; }
 .secret-code-selectors { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 0.35rem; }
 .mini-select { padding: 0.4rem; font-size: 0.85rem; }
@@ -519,7 +577,31 @@ body {
 .modern-table th { padding: 0.5rem; color: var(--text-muted); border-bottom: 1px solid var(--card-border); }
 .modern-table td { padding: 0.55rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
 
-.app-footer { display: flex; justify-content: space-between; padding-top: 0.5rem; }
+.app-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--card-border);
+}
+
+.sysadmin-portal-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sysadmin-portal-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(56, 189, 248, 0.08);
+}
 
 .toast {
   position: fixed;
