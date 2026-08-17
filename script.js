@@ -1,5 +1,5 @@
 /**
- * AETHER_OS - FIREBASE REALTIME DATABASE ENGINE & MISSION FLOW
+ * AETHER_OS - FIREBASE REALTIME DATABASE ENGINE & AUTOMATED MASTERMIND
  */
 
 // =========================================================================
@@ -276,12 +276,16 @@ function openTutorialModal() {
   document.getElementById('screenTutorial').style.display = 'flex';
 }
 
-function finishTutorialAndLaunchCockpit() {
-  playBeep(600, 0.1);
+function closeTutorialModal() {
+  playBeep(500, 0.08);
   document.getElementById('screenTutorial').style.display = 'none';
   if (authenticatedTeam) {
     launchCockpit(authenticatedTeam);
   }
+}
+
+function finishTutorialAndLaunchCockpit() {
+  closeTutorialModal();
 }
 
 function launchCockpit(teamKey) {
@@ -401,7 +405,9 @@ function confirmEvidenceSent() {
   showToast("Doorgestuurd! De leiding kijkt ernaar.");
 }
 
-// MASTERMIND ENGINE (6 KLEUREN)
+// =======================================================
+// AUTOMATISCHE MASTERMIND ENGINE (6 KLEUREN)
+// =======================================================
 function getTeamCredits(teamKey) {
   return parseInt(localStorage.getItem(getLocalKey(teamKey, 'credits')) || '0', 10);
 }
@@ -458,12 +464,10 @@ function initMastermind() {
       }
       pinsHTML += '</div>';
       actionHTML += pinsHTML;
-    } else if (rowObj.status === 'pending_validation') {
-      actionHTML += `<span style="font-size:0.8rem; color:var(--amber);">⏳ Bij Post</span>`;
     } else if (isCurrentActive) {
       const allFilled = rowObj.colors.every(c => c !== 'none');
       if (allFilled) {
-        actionHTML += `<button class="retro-btn btn-sm btn-emerald" onclick="submitRowForValidation(${r})">[ TEST 🚀 ]</button>`;
+        actionHTML += `<button class="retro-btn btn-sm btn-emerald" onclick="submitRowForValidation(${r})">[ TEST CODE 🚀 ]</button>`;
       } else {
         actionHTML += `<span style="font-size:0.75rem; color:var(--text-muted);">Vul 6 bollen</span>`;
       }
@@ -493,7 +497,7 @@ function handleSlotClick(row, slotIndex, isAllowed) {
 
   if (currentColor === 'none') {
     if (credits <= 0) {
-      return alert("Je hebt 0 tokens! Doe eerst een opdracht op een post om nieuwe tokens te verdienen.");
+      return alert("Je hebt 0 tokens! Doe eerst een opdracht om nieuwe tokens te verdienen.");
     }
     playBeep(640, 0.05);
     mmData[row].colors[slotIndex] = currentlySelectedColor;
@@ -508,26 +512,50 @@ function handleSlotClick(row, slotIndex, isAllowed) {
   initMastermind();
 }
 
+// AUTOMATISCHE DIRECTE EVALUATIE TEGEN FIREBASE CODE
 function submitRowForValidation(row) {
   const mmData = JSON.parse(localStorage.getItem(getLocalKey(authenticatedTeam, 'mastermind_state')) || '{}');
   if (!mmData[row]) return;
 
+  const secret = getSecretCode();
+  const evaluation = evaluateGuess(mmData[row].colors, secret);
+
   playBeep(750, 0.08);
-  mmData[row].status = 'pending_validation';
+
+  mmData[row].pins = evaluation.pins;
+  mmData[row].status = 'evaluated';
   localStorage.setItem(getLocalKey(authenticatedTeam, 'mastermind_state'), JSON.stringify(mmData));
 
+  // Volgende rij activeren mits niet 6x zwart
+  if (row < 6 && evaluation.blackPins < 6) {
+    localStorage.setItem(getLocalKey(authenticatedTeam, 'active_row'), row + 1);
+    if (isFirebaseReady) db.ref(`teams/${authenticatedTeam}/active_row`).set(row + 1);
+  }
+
   if (isFirebaseReady) {
-    db.ref(`teams/${authenticatedTeam}/mastermind/${row}/status`).set('pending_validation');
-    db.ref(`submissions/mastermind/${authenticatedTeam}_row_${row}`).set({
+    db.ref(`teams/${authenticatedTeam}/mastermind/${row}`).set(mmData[row]);
+  }
+
+  // 6x Zwart = Direct Winst!
+  if (evaluation.blackPins === 6) {
+    const winnerData = {
       teamKey: authenticatedTeam,
-      row: row,
-      colors: mmData[row].colors,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    });
+      teamName: TEAMS_INFO[authenticatedTeam].name,
+      secret: secret
+    };
+    if (isFirebaseReady) {
+      db.ref('gameState/winner').set(winnerData);
+    } else {
+      document.getElementById('victoryTeamName').innerText = winnerData.teamName;
+      document.getElementById('victoryCodeDisplay').innerText = secret.map(c => COLOR_MAP[c]).join(' ');
+      document.getElementById('victoryModal').style.display = 'flex';
+      playVictoryFanfare();
+    }
+  } else {
+    showToast(`Feedback: ${evaluation.blackPins}x Zwart, ${evaluation.whitePins}x Wit`);
   }
 
   initMastermind();
-  showToast("Ingezonden! Ren nu naar de Centrale Post!");
 }
 
 function updateTeamStats() {
@@ -656,7 +684,7 @@ function closeVictoryModal() {
   document.getElementById('victoryModal').style.display = 'none';
 }
 
-// SYSADMIN LEIDING PANEEL & SLUITEN
+// SYSADMIN LEIDING PANEEL (6-KLEURENCODE)
 function openAdminModal() {
   playBeep(400, 0.05);
   document.getElementById('adminModal').style.display = 'flex';
@@ -674,7 +702,6 @@ function loginAdmin() {
     document.getElementById('adminAuthSection').style.display = 'none';
     document.getElementById('adminControlsSection').style.display = 'block';
     loadSecretCode();
-    renderAdminMastermindSubmissions();
     renderAdminSubmissions();
     renderAdminTeamsManager();
   } else {
@@ -741,66 +768,6 @@ function evaluateGuess(guessColors, secretColors) {
   for (let w = 0; w < whitePins; w++) pins.push('white');
 
   return { blackPins, whitePins, pins };
-}
-
-function renderAdminMastermindSubmissions() {
-  const tbody = document.getElementById('adminMastermindSubmissionsBody');
-  tbody.innerHTML = '';
-
-  if (isFirebaseReady) {
-    db.ref('submissions/mastermind').once('value', snapshot => {
-      const submissions = snapshot.val() || {};
-      const entries = Object.entries(submissions);
-      if (entries.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Geen teams bij de Centrale Post.</td></tr>';
-        return;
-      }
-      entries.forEach(([subKey, sub]) => {
-        const tInfo = TEAMS_INFO[sub.teamKey];
-        const colorsText = (sub.colors || []).map(c => COLOR_MAP[c] || c).join(' - ');
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><strong>${tInfo.icon} ${tInfo.name}</strong></td>
-          <td>Rij ${sub.row}</td>
-          <td>${colorsText}</td>
-          <td>
-            <button class="retro-btn btn-sm btn-primary" onclick="adminEvaluateMastermindFB('${subKey}', '${sub.teamKey}', ${sub.row}, ${JSON.stringify(sub.colors).replace(/"/g, '&quot;')})">[ GEEF FEEDBACK ]</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    });
-  }
-}
-
-function adminEvaluateMastermindFB(subKey, teamKey, row, colors) {
-  const secret = getSecretCode();
-  const evaluation = evaluateGuess(colors, secret);
-
-  if (isFirebaseReady) {
-    db.ref(`teams/${teamKey}/mastermind/${row}`).set({
-      colors: colors,
-      pins: evaluation.pins,
-      status: 'evaluated'
-    });
-
-    if (row < 6 && evaluation.blackPins < 6) {
-      db.ref(`teams/${teamKey}/active_row`).set(row + 1);
-    }
-
-    if (evaluation.blackPins === 6) {
-      db.ref('gameState/winner').set({
-        teamKey: teamKey,
-        teamName: TEAMS_INFO[teamKey].name,
-        secret: secret
-      });
-    }
-
-    db.ref(`submissions/mastermind/${subKey}`).remove();
-  }
-
-  showToast(`Feedback verstuurd: ${evaluation.blackPins}x Zwart, ${evaluation.whitePins}x Wit`);
-  setTimeout(renderAdminMastermindSubmissions, 400);
 }
 
 function renderAdminSubmissions() {
@@ -966,6 +933,7 @@ window.addEventListener('keydown', function(e) {
   } else if (e.key === 'Escape') {
     closeAdminModal();
     closeEvidenceModal();
+    closeTutorialModal();
   }
 });
 
@@ -1000,6 +968,14 @@ function setupFirebaseGlobalListeners() {
 
   const statusEl = document.getElementById('dbStatusIndicator');
   if (statusEl) statusEl.innerText = "● DATABASE ONLINE (FIREBASE SYNC)";
+
+  // Secret code realtime sync
+  db.ref('gameState/secretCode').on('value', snapshot => {
+    const code = snapshot.val();
+    if (code && Array.isArray(code)) {
+      localStorage.setItem('aether_fb_secret_code', JSON.stringify(code));
+    }
+  });
 
   db.ref('gameState/emergency').on('value', snapshot => {
     const data = snapshot.val();
