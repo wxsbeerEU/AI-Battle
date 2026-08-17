@@ -8,26 +8,22 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+
+  <!-- FIREBASE SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 </head>
 <body>
 
-  <!-- CRT SCANLINE & GLOW EFFECTS -->
   <div class="crt-overlay"></div>
   <div class="crt-scanlines"></div>
 
-  <!-- FLOATING SYSADMIN KNOP -->
-  <button class="sysadmin-floating-btn" onclick="openAdminModal()" title="SysAdmin Leiding Paneel (Ctrl+Shift+A)">
-    [ ⚙️ SYSADMIN_ROOT ]
-  </button>
-
-  <!-- =======================================================
-       FASE 1: OPENINGSSCHERM - DE NOODOPROEP (MONI SPEECH)
-       ======================================================= -->
+  <!-- FASE 1: NOODSITUATIE / MONI TOESPRAAK -->
   <div class="terminal-screen" id="screenIntro">
     <div class="retro-box alert-box">
       <div class="box-header danger">
         <span>🚨 DEFCON-1: NOODSITUATIE TER DUINEN</span>
-        <span class="blink">● ONLINE</span>
+        <span class="blink" id="dbStatusIndicator">● ONLINE</span>
       </div>
       
       <h1 class="retro-title danger-glow">HET NETWERK LIGT PLAT!</h1>
@@ -45,15 +41,13 @@
         </p>
       </div>
 
-      <button class="retro-btn btn-emerald" onclick="goFromIntroToRoomCode()">
+      <button class="retro-btn btn-emerald btn-block" onclick="goFromIntroToRoomCode()">
         [ START TERMINAL BOOTSTRAP ▶ ]
       </button>
     </div>
   </div>
 
-  <!-- =======================================================
-       FASE 2: KRAAK DE KAMER (6-CIJFERIGE CODE)
-       ======================================================= -->
+  <!-- FASE 2: 6-CIJFERIGE KAMERCODE INVOEREN -->
   <div class="terminal-screen" id="screenRoomCode" style="display: none;">
     <div class="retro-box">
       <div class="box-header danger">
@@ -93,7 +87,7 @@
 
       <p id="gateErrorMsg" class="error-text"></p>
 
-      <button class="retro-btn btn-primary" id="btnSubmitBunker" onclick="handleRoomCodeSubmit()">
+      <button class="retro-btn btn-primary btn-block" id="btnSubmitBunker" onclick="handleRoomCodeSubmit()">
         [ VERIFIEER CODE & ONTGRENDEL 🔓 ]
       </button>
 
@@ -103,9 +97,7 @@
     </div>
   </div>
 
-  <!-- =======================================================
-       FASE 3: EIGEN WACHTWOORD KIEZEN
-       ======================================================= -->
+  <!-- FASE 3: EIGEN WACHTWOORD KIEZEN -->
   <div class="terminal-screen" id="screenSetPassword" style="display: none;">
     <div class="retro-box">
       <div class="box-header success">
@@ -127,15 +119,13 @@
 
       <p id="step2ErrorMsg" class="error-text"></p>
 
-      <button class="retro-btn btn-emerald" onclick="savePasswordAndLaunchCockpit()">
+      <button class="retro-btn btn-emerald btn-block" onclick="savePasswordAndLaunchCockpit()">
         [ BEVESTIG & START HET SPEL 🚀 ]
       </button>
     </div>
   </div>
 
-  <!-- =======================================================
-       NOODALARM / LIVE AUDIO OVERRIDE
-       ======================================================= -->
+  <!-- NOODALARM / LIVE AUDIO BROADCAST -->
   <div class="terminal-screen" id="lockdownModal" style="display: none;">
     <div class="retro-box alert-box text-center">
       <div class="box-header danger">
@@ -150,13 +140,11 @@
         <audio id="lockdownAudioPlayer" controls style="width: 100%;"></audio>
       </div>
 
-      <button class="retro-btn btn-primary" onclick="dismissLockdown()">[ ✓ BEGREPEN & HERVAT ]</button>
+      <button class="retro-btn btn-primary btn-block" onclick="dismissLockdown()">[ ✓ BEGREPEN & HERVAT ]</button>
     </div>
   </div>
 
-  <!-- =======================================================
-       OVERWINNINGSSCHERM (6X ZWART)
-       ======================================================= -->
+  <!-- OVERWINNINGSSCHERM -->
   <div class="terminal-screen" id="victoryModal" style="display: none;">
     <div class="retro-box victory-box text-center">
       <div class="box-header success">
@@ -174,16 +162,13 @@
         Ren direct naar de fysieke kist op het Centrale Plein om het slot te openen!
       </p>
       
-      <button class="retro-btn btn-emerald" onclick="closeVictoryModal()">[ SLUITEN ]</button>
+      <button class="retro-btn btn-emerald btn-block" onclick="closeVictoryModal()">[ SLUITEN ]</button>
     </div>
   </div>
 
-  <!-- =======================================================
-       FASE 4: HOOFD COCKPIT (VOLLEDIG SCHERM)
-       ======================================================= -->
+  <!-- FASE 4: HOOFD COCKPIT -->
   <div class="cockpit-container">
     
-    <!-- TOP NAVIGATION -->
     <header class="top-nav">
       <div class="team-identity">
         <span id="headerTeamIcon" class="team-ico">🤖</span>
@@ -199,11 +184,9 @@
         <div class="tokens-pill">
           ⚡ TOKENS: <strong id="headerCreditsCount">0</strong>
         </div>
-        <button class="retro-btn btn-sm" onclick="openAdminModal()">[ ⚙️ SYSADMIN ]</button>
       </div>
     </header>
 
-    <!-- LIVE BROADCAST -->
     <div class="broadcast-banner" id="broadcastBanner">
       <span class="prompt-arrow">></span>
       <span id="broadcastDisplay" class="broadcast-text">
@@ -211,17 +194,16 @@
       </span>
     </div>
 
-    <!-- TABS -->
     <nav class="main-tabs-nav">
       <button class="tab-btn active" onclick="switchTab('sectors')">[ 1. ACTIEVE OPDRACHTEN 🎯 ]</button>
       <button class="tab-btn" onclick="switchTab('mastermind')">[ 2. MASTERMIND KERN (6 KLEUREN) 🧩 ]</button>
     </nav>
 
-    <!-- TAB 1: GEFASEERDE DROPSPEL OPDRACHTEN -->
+    <!-- TAB 1: ACTIEVE OPDRACHTEN -->
     <main id="tab-sectors" class="tab-panel active">
       <div class="instruction-box">
         <span class="info-tag">> MISSIE PROTOCOL:</span> 
-        Voltooi een van de onderstaande actieve opdrachten ➔ Stuur bewijs naar <strong>0475 84 89 83</strong> ➔ Klik op "Verstuur". 
+        Voltooi een van de actieve opdrachten ➔ Stuur bewijs naar <strong>0475 84 89 83</strong> ➔ Klik op "Verstuur". 
         Zodra de leiding goedkeurt, ontgrendelt er een token én een nieuwe opdracht!
       </div>
 
@@ -242,7 +224,6 @@
 
       <div class="mastermind-grid-layout">
         
-        <!-- Speelbord -->
         <div class="retro-box mm-board-card">
           <div class="palette-picker-bar">
             <span class="palette-title">> FREQUENTIE SELECTIE:</span>
@@ -259,7 +240,6 @@
           <div class="mm-rows-container" id="mastermindBoard"></div>
         </div>
 
-        <!-- Uitleg Paneel -->
         <div class="retro-box mm-legend-card">
           <h3 class="panel-title">> TELEMETRIE SLEUTEL</h3>
           
@@ -286,7 +266,6 @@
       </div>
     </main>
 
-    <!-- FOOTER -->
     <footer class="bottom-footer">
       <button class="sysadmin-link-btn" onclick="openAdminModal()">[ ROOT://SYSADMIN_CONSOLE ]</button>
       <button class="retro-link-btn" onclick="logoutCurrentTeam()">[ SLUIT SESSIE 🔒 ]</button>
@@ -336,7 +315,7 @@
 
         <div id="adminControlsSection" style="display: none;">
           
-          <!-- Mastermind Validator (6 Kleurencode) -->
+          <!-- Mastermind 6-Kleuren Validator -->
           <div class="admin-block">
             <h4 class="admin-block-title">🧩 1. Geheime 6-Kleurencode van de Kist & Ingezonden Rijen</h4>
             <div class="admin-secret-code-box">
