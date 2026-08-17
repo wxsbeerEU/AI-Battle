@@ -1,46 +1,58 @@
 /**
- * AETHER_OS - SOUND ENGINE, CLEAN TYPEWRITER, MASTERMIND & FOOLPROOF SYSADMIN
+ * AETHER_OS - 16 DROPSPEL MISSIES, SYNTH SOUNDS & MASTERMIND ENGINE
  */
 
 const SECTORS_DATA = [
+  // Categorie A: Rondom de Gebouwen & Terrein Ter Duinen
   {
-    id: '1',
-    title: 'POST 1: PROMPT ENGINEERING',
-    location: 'Achter de Hoofdtent',
+    id: 'cat-a',
+    categoryName: 'CATEGORIE A: TERREIN TER DUINEN',
+    title: 'Zone A: Gebouwen & Parking Ter Duinen',
+    location: 'Rondom Ingang, Trappen & Parking',
     tasks: [
-      { id: 's1-a', code: 'Opdracht A', name: 'LEGO Nabouwen', desc: '1 teamlid praat via de walkietalkie en legt uit hoe het LEGO-bouwsel in elkaar zit.' },
-      { id: 's1-b', code: 'Opdracht B', name: 'Blinddoek Robot', desc: 'Blinddoek 1 teamlid en stuur hem/haar met stap-commando\'s door het veld.' },
-      { id: 's1-c', code: 'Opdracht C', name: 'Verboden Woorden', desc: 'Lees het verhaal voor zonder de 8 verboden woorden te zeggen.' }
+      { id: 't-1', code: 'Opdracht 1', name: 'De Masterchef Brigade', desc: 'AI-keukensimulatie vereist. Zoek een buitentrap of ingang van Ter Duinen. Maak een groepsfoto waarbij iedereen een specifieke restaurantfunctie uitbeeldt (bijv. 1 boze chef-kok, 2 obers met onzichtbare borden, 3 afwassers, 4 hongerige gasten).' },
+      { id: 't-2', code: 'Opdracht 2', name: 'Parkeerplaats Datamining', desc: 'Zoek op de parking of in de straat naar nummerplaten. Vind 3 auto\'s waarvan de nummerplaat een A, een I of het cijfer 4 bevat. Maak een collage of stuur de 3 foto\'s door.' },
+      { id: 't-3', code: 'Opdracht 3', name: 'Het Verborgen Wifi-Wachtwoord', desc: 'Vind een officieel uithangbord, openingsuren-bord of verkeersbord aan de school. Maak een woord van minstens 6 letters met enkel letters die op dit bord staan.' },
+      { id: 't-4', code: 'Opdracht 4', name: 'De Stille Serverruimte', desc: 'Koelingsprocedure actief! Het hele team moet 45 seconden lang op een bankje of de stoep gaan liggen en muisstil \'opladen\'. Stuur een videofragment van 15 seconden waarin niemand beweegt of lacht.' }
     ]
   },
+  // Categorie B: De Directe Straat & Natuurrand
   {
-    id: '2',
-    title: 'POST 2: CREATIVE NET',
-    location: 'Bij het Open Veld',
+    id: 'cat-b',
+    categoryName: 'CATEGORIE B: STRAAT & NATUURRAND',
+    title: 'Zone B: Straat & Bermen (Binnen 200-300m)',
+    location: 'Openbare Weg & Groenstroken',
     tasks: [
-      { id: 's2-a', code: 'Opdracht A', name: 'Tekening Raden', desc: '1 teamlid tekent een geheime opdracht. Het team moet het binnen 2 minuten raden.' },
-      { id: 's2-b', code: 'Opdracht B', name: 'Robotdans', desc: 'Kijk naar de dans van de posthouder en doe hem synchroon na met heel je team.' },
-      { id: 's2-c', code: 'Opdracht C', name: 'Deepfake Detector', desc: 'Bekijk de 10 foto\'s en zoek de 5 foto\'s die door AI gemaakt zijn.' }
+      { id: 't-5', code: 'Opdracht 5', name: 'De AI Kleurenpalet Scan', desc: 'Hardware-calibratie: Verzamel in de berm/tuinen binnen 3 minuten 4 natuurlijke voorwerpen met exact de 4 basiskleuren: iets groens (blad), iets bruins (takje), iets wit/grijs (steentje/schelpje) en iets geels/roods (bloem/bes).' },
+      { id: 't-6', code: 'Opdracht 6', name: 'Huisnummer Rekensom', desc: 'Vind in de straat 2 verschillende huisnummers die samen opgeteld exact 50 (of een ander getal naar keuze) vormen. Maak een selfie van 2 teamleden bij elk van die twee huizen.' },
+      { id: 't-7', code: 'Opdracht 7', name: 'Binaire Boomknuffel', desc: 'Data-aarding vereist: Vind de dikste boom in de directe omgeving van de straat. Hoeveel teamleden zijn er nodig om met gespreide armen de stam helemaal te omcirkelen? Stuur foto + aantal.' },
+      { id: 't-8', code: 'Opdracht 8', name: 'De Straat-Microchip', desc: 'Vind een riooldeksel, brandkraan-bordje of watermeter-plaatje op de stoep. Gebruik krijt, takjes of je vinger om het om te toveren tot een \'moederbord\' met lijnen eromheen.' }
     ]
   },
+  // Categorie C: Fysieke Team-Challenges
   {
-    id: '3',
-    title: 'POST 3: CYBERSECURITY',
-    location: 'In het Bos',
+    id: 'cat-c',
+    categoryName: 'CATEGORIE C: FYSIEKE TEAM CHALLENGES',
+    title: 'Zone C: Fysieke Challenges (Ter Plekke)',
+    location: 'Grasveld of Vlakke Ondergrond',
     tasks: [
-      { id: 's3-a', code: 'Opdracht A', name: 'Trefbal Veld', desc: 'Steek over zonder geraakt te worden. Minstens 6 kinderen moeten heelhuids overkomen.' },
-      { id: 's3-b', code: 'Opdracht B', name: 'Belletjes Web', desc: 'Kruip door het touwenweb. De belletjes mogen maximaal 1 keer rinkelen.' },
-      { id: 's3-c', code: 'Opdracht C', name: 'Chopsticks Vissen', desc: 'Haal 5 houten blokjes uit de modder/waterbak met enkel eetstokjes.' }
+      { id: 't-9', code: 'Opdracht 9', name: 'De Menselijke QR-Code', desc: 'Vorm met minimaal 8 kinderen liggend op het gras/de grond een perfect vierkant met een \'stip\' in het midden (zoals een hoekpunt van een QR-code).' },
+      { id: 't-10', code: 'Opdracht 10', name: 'Het 10-Seconden Slowmotion Protocol', desc: 'Systeemvertraging! Maak een video van 10 seconden waarin het hele team een sprintje trekt, maar dan in extreem overdreven slow-motion zónder te lachen.' },
+      { id: 't-11', code: 'Opdracht 11', name: 'Data-Transportketting', desc: 'Ga allemaal op een rij staan met 1 meter tussenafstand. Geef een voorwerp (bijv. een dennenappel of schoen) van voor naar achter door via de ellebogen of knieën (handen op de rug!).' },
+      { id: 't-12', code: 'Opdracht 12', name: 'De Stoeprand-Balans', desc: 'Bandbreedte-test: Alle 10 de teamleden moeten tegelijk op de rand van het trottoir/stoeprand op één been balanceren gedurende 20 seconden. Stuur video van 10 sec.' }
     ]
   },
+  // Categorie D: Slimme Mini-Puzzels & Observatie
   {
-    id: '4',
-    title: 'POST 4: LOGICA & AI',
-    location: 'Bij het Kampvuur',
+    id: 'cat-d',
+    categoryName: 'CATEGORIE D: PUZZELS & OBSERVATIE',
+    title: 'Zone D: Observatie & Audio Transmissie',
+    location: 'Vrije Zone rondom Kampterrein',
     tasks: [
-      { id: 's4-a', code: 'Opdracht A', name: 'Kaarten Sorteren', desc: 'Ontdek binnen 2 pogingen volgens welke geheime regel de kaarten liggen.' },
-      { id: 's4-b', code: 'Opdracht B', name: 'Handenknoop', desc: 'Ontwar de armen van je team tot een grote cirkel zonder elkaars handen los te laten.' },
-      { id: 's4-c', code: 'Opdracht C', name: 'Geheimschrift', desc: 'Vertaal de binaire getallen (zoals 01000001 = A) naar het geheime woord.' }
+      { id: 't-13', code: 'Opdracht 13', name: 'Het AI-Portret met Natuur', desc: 'Maak op de grond met takjes, steentjes, zand en bladeren een \'robotgezicht\' van minstens 50 cm breed.' },
+      { id: 't-14', code: 'Opdracht 14', name: 'Verkeersbord Decoder', desc: 'Zoek het dichtstbijzijnde driehoekige of ronde verkeersbord in de straat. Bedenk als team een compleet nieuwe, maffe betekenis gerelateerd aan AI (bijv. \'Pas op voor overstekende robots\').' },
+      { id: 't-15', code: 'Opdracht 15', name: 'Lengte-Algoritme', desc: 'Ga binnen 30 seconden op een rij staan, exact gesorteerd van klein naar groot, met de ruggen tegen een muur/hek. Iedereen moet een robot-saluut geven.' },
+      { id: 't-16', code: 'Opdracht 16', name: 'Geluidsfragment Hack (Audio-Opname)', desc: 'Neem een spraakbericht op van 10 seconden via WhatsApp waarin het hele team tegelijk een bizar robot- of computergeluid maakt (piepjes, storingen, lasers).' }
     ]
   }
 ];
@@ -65,6 +77,7 @@ const COLOR_MAP = {
 
 let authenticatedTeam = null;
 let currentlySelectedColor = 'red';
+let currentCategoryFilter = 'all';
 let audioCtx = null;
 
 // SYNTHESIZER SOUND ENGINE
@@ -134,7 +147,7 @@ function setPersonalPassword(teamKey, pw) {
   localStorage.setItem(`aibattle_widescreen_personal_pw_${teamKey}`, pw);
 }
 
-// 0. BOOT & SCHOON TYPWERK MET DUIDELIJKE SPATIES
+// 0. BOOT & TYPEWRITER INVASION MET VOLLEDIGE SPATIES
 function igniteSystem() {
   getAudioContext();
   playGlitchNoise();
@@ -151,9 +164,9 @@ function igniteSystem() {
 
 const glitchSentences = [
   "Hallo AI-systemen... Ik ben VIRUS GLITCH.",
-  "Jullie dachten dat de wereld veilig was? Ik heb zojuist al jullie servers gehackt en OFFLINE gehaald.",
-  "Zonder AI stort de mensheid binnen 120 minuten volledig in.",
-  "Jullie zitten fysiek opgesloten in deze bunkers. Zie maar dat jullie als eerste AI terug online komen... ALS DAT JULLIE AL LUKT!"
+  "Jullie dachten dat Ter Duinen veilig was? Ik heb zojuist al jullie servers gehackt, de lichten gedoofd én de muziekinstallatie voor vanavond vergrendeld!",
+  "Zonder AI stort de bar en het hele feest vanavond in.",
+  "Jullie zitten fysiek opgesloten in deze kamers bij Ter Duinen. Zie maar dat jullie als eerste AI terug online komen... ALS DAT JULLIE AL LUKT!"
 ];
 
 function startGlitchTypewriter() {
@@ -167,7 +180,7 @@ function startGlitchTypewriter() {
       el.innerText = fullText.slice(0, i + 1);
       if (i % 5 === 0) playBeep(220 + Math.random() * 80, 0.03);
       i++;
-      setTimeout(typeChar, 20);
+      setTimeout(typeChar, 18);
     } else {
       document.getElementById('btnEscapeStart').style.display = 'block';
     }
@@ -238,7 +251,7 @@ function handleAuthSubmit() {
       document.getElementById('authStep1').style.display = 'none';
       document.getElementById('authStep2').style.display = 'block';
     } else {
-      errorEl.innerText = "Onjuiste 6-cijferige code! Controleer jullie 3 raadsels.";
+      errorEl.innerText = "Onjuiste 6-cijferige code! Controleer jullie 3 raadsels in de kamer.";
     }
   }
 }
@@ -283,8 +296,17 @@ function logoutCurrentTeam() {
   onGateTeamChange();
 }
 
-// 2. OPDRACHTEN & GSM BEWIJS
+// 2. 16 DROPSPEL OPDRACHTEN RENDERING & FILTERS
 let activePendingTask = null;
+
+function filterSectors(categoryId) {
+  playBeep(450, 0.04);
+  currentCategoryFilter = categoryId;
+  document.querySelectorAll('.cat-filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${categoryId}'`));
+  });
+  renderSectors();
+}
 
 function renderSectors() {
   if (!authenticatedTeam) return;
@@ -293,12 +315,14 @@ function renderSectors() {
 
   const savedTasks = JSON.parse(localStorage.getItem(getStorageKey(authenticatedTeam, 'tasks')) || '{}');
 
-  SECTORS_DATA.forEach(sec => {
+  SECTORS_DATA.forEach(cat => {
+    if (currentCategoryFilter !== 'all' && cat.id !== currentCategoryFilter) return;
+
     const card = document.createElement('div');
     card.className = 'panel-box sector-card';
 
     let tasksHTML = '';
-    sec.tasks.forEach(t => {
+    cat.tasks.forEach(t => {
       const status = savedTasks[t.id] || 'open';
       let btnLabel = 'Stuur Bewijs via GSM 📱';
       let btnClass = '';
@@ -315,7 +339,7 @@ function renderSectors() {
         <div class="task-card ${status}">
           <div class="task-head">${t.code}: ${t.name}</div>
           <p class="task-body">${t.desc}</p>
-          <button class="task-action-btn ${btnClass}" onclick="openPhoneEvidence('${sec.title}', '${t.id}', '${t.code}: ${t.name}')" ${status === 'approved' ? 'disabled' : ''}>
+          <button class="task-action-btn ${btnClass}" onclick="openPhoneEvidence('${cat.title}', '${t.id}', '${t.code}: ${t.name}')" ${status === 'approved' ? 'disabled' : ''}>
             ${btnLabel}
           </button>
         </div>
@@ -323,8 +347,8 @@ function renderSectors() {
     });
 
     card.innerHTML = `
-      <h3 class="sec-title">${sec.title}</h3>
-      <div class="sec-spot">📍 ${sec.location}</div>
+      <h3 class="sec-title">${cat.title}</h3>
+      <div class="sec-spot">📍 ${cat.location}</div>
       <div class="task-list">${tasksHTML}</div>
     `;
 
@@ -339,7 +363,7 @@ function openPhoneEvidence(sectorTitle, taskId, taskName) {
   activePendingTask = { sectorTitle, taskId, taskName, teamKey: authenticatedTeam };
   const teamName = TEAMS_INFO[authenticatedTeam].name;
 
-  document.getElementById('evidenceTaskLabel').innerText = `${sectorTitle} - ${taskName}`;
+  document.getElementById('evidenceTaskLabel').innerText = `${taskName}`;
   document.getElementById('evidenceMessageTemplate').innerText = `${teamName} - ${taskName}`;
   document.getElementById('evidenceModal').style.display = 'flex';
 }
@@ -432,13 +456,13 @@ function initMastermind() {
       pinsHTML += '</div>';
       actionHTML += pinsHTML;
     } else if (rowObj.status === 'pending_validation') {
-      actionHTML += `<span style="font-size:0.8rem; color:var(--amber); font-weight:bold;">⏳ Ren naar Centrale Post!</span>`;
+      actionHTML += `<span style="font-size:0.85rem; color:var(--amber); font-weight:bold;">⏳ Ren naar Centrale Post!</span>`;
     } else if (isCurrentActive) {
       const allFilled = rowObj.colors.every(c => c !== 'none');
       if (allFilled) {
         actionHTML += `<button class="mm-submit-btn" onclick="submitRowForValidation(${r})">Test bij Post 🚀</button>`;
       } else {
-        actionHTML += `<span style="font-size:0.8rem; color:var(--text-muted);">Kleur 4 bollen</span>`;
+        actionHTML += `<span style="font-size:0.85rem; color:var(--text-muted);">Kleur 4 bollen</span>`;
       }
     }
     actionHTML += '</div>';
