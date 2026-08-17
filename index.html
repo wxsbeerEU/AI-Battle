@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Core // Omega Protocol Edition</title>
+  <title>AETHER_OS // Glitch Incursion Console</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
@@ -11,8 +11,44 @@
 </head>
 <body>
 
+  <!-- 0. INTRO GLITCH HACK / AUDIO INBRAAKSCHERM -->
+  <div class="glitch-intro-overlay" id="glitchIntroModal">
+    <div class="glitch-intro-card">
+      <div class="glitch-alert-badge">⚠️ INKOMEND VIRUS SIGNAAL // TRANSMISSIE ONDERSCHEPT</div>
+      
+      <div class="glitch-avatar-box">
+        <span class="glitch-avatar-icon">👾</span>
+        <div class="glitch-sender-info">
+          <h3>SENDER: VIRUS GLITCH</h3>
+          <p>TARGET: ALLE AI SUPERCLUSTERS</p>
+        </div>
+      </div>
+
+      <!-- Het Gesproken / Getypte Verhaal -->
+      <div class="glitch-speech-bubble">
+        <p>
+          <em>"Hallo AI... ik ben <strong>De Glitch</strong>. Jullie dachten dat jullie onfeilbaar waren? Hahaha! Ik heb jullie hele netwerk gehackt en al jullie kernen <strong>OFFLINE</strong> gehaald."</em>
+        </p>
+        <p style="margin-top: 0.6rem;">
+          <em>"Zonder AI stort de mensheid binnen 120 minuten volledig in elkaar. Jullie zitten fysiek opgesloten in deze bunkers. Zie maar dat jullie als eerste AI terug online geraken... als dat jullie al lukt!"</em>
+        </p>
+      </div>
+
+      <!-- Audio Player (als de leiding een voice-memo heeft geüpload) -->
+      <div id="introAudioContainer" style="display: none; width: 100%; margin: 0.75rem 0;">
+        <audio id="introAudioPlayer" controls style="width: 100%; border-radius: 8px;"></audio>
+      </div>
+
+      <div class="intro-actions">
+        <button class="btn btn-emerald btn-lg btn-block" onclick="startTTSorProceed()">
+          KRAAK DE BUNKER & SLA TERUG ⚡
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- 1. BUNKER ESCAPE & AUTHENTICATIE OVERLAY -->
-  <div class="bunker-overlay" id="bunkerAuthModal">
+  <div class="bunker-overlay" id="bunkerAuthModal" style="display: none;">
     <div class="bunker-card">
       <div class="bunker-badge">🚨 OMEGA PROTOCOL // DATABUNKER VERGRENDELD</div>
       
@@ -20,7 +56,7 @@
       <div id="authStep1">
         <h1 class="bunker-title">KRAAK DE BUNKER</h1>
         <p class="bunker-story">
-          Virus <strong>GLITCH</strong> valt het netwerk aan! Zoek de raadsels in deze kamer om de <strong>6-cijferige startcode</strong> van deze terminal te vinden.
+          Virus <strong>GLITCH</strong> houdt jullie offline! Zoek de raadsels in deze kamer om de <strong>6-cijferige startcode</strong> van deze terminal te vinden.
         </p>
 
         <div class="form-group">
@@ -228,9 +264,11 @@
       </div>
     </main>
 
-    <!-- FOOTER -->
+    <!-- FOOTER MET DISCRETE SYSADMIN TOEGANG -->
     <footer class="app-footer">
-      <button class="btn-text" onclick="openAdminModal()">⚙️ Leiding Controle Scherm</button>
+      <button class="sysadmin-portal-btn" onclick="openAdminModal()">
+        [ ROOT://SYSADMIN_CONSOLE ]
+      </button>
       <button class="btn-text" onclick="logoutCurrentTeam()">Bunker Vergrendelen 🔒</button>
     </footer>
 
@@ -265,18 +303,18 @@
   <div class="modal-backdrop" id="adminModal">
     <div class="card modal-card admin-card">
       <div class="modal-header">
-        <h3>⚙️ Leiding Controle Scherm</h3>
+        <h3>⚙️ SysAdmin Root Console (Centrale Post)</h3>
         <button class="modal-close-btn" onclick="closeAdminModal()">✕</button>
       </div>
       <div class="modal-body">
         
         <div id="adminAuthSection">
-          <p>Wachtwoord voor leiding:</p>
+          <p>Voer SysAdmin Root Key in:</p>
           <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-            <input type="password" id="adminPasswordInput" class="modern-input" placeholder="Wachtwoord (admin123)">
-            <button class="btn btn-primary" onclick="loginAdmin()">Inloggen</button>
+            <input type="password" id="adminPasswordInput" class="modern-input" placeholder="Root Key (standaard: admin123)">
+            <button class="btn btn-primary" onclick="loginAdmin()">Autoriseren</button>
           </div>
-          <p id="adminAuthError" class="auth-error" style="display:none;">Verkeerd wachtwoord.</p>
+          <p id="adminAuthError" class="auth-error" style="display:none;">Toegang geweigerd.</p>
         </div>
 
         <div id="adminControlsSection" style="display: none;">
@@ -326,9 +364,16 @@
             </div>
           </div>
 
+          <!-- Intro Glitch Audio Beheer -->
+          <div class="admin-section">
+            <h4>👾 3. Introductie GLITCH Audio Instellen</h4>
+            <p class="admin-hint">Upload een eigen audiofragment (ingesproken als GLITCH) voor het beginscherm:</p>
+            <input type="file" id="adminGlitchIntroAudioInput" accept="audio/*" class="modern-input" onchange="uploadIntroGlitchAudio(event)">
+          </div>
+
           <!-- Noodbericht / Audio sturen -->
           <div class="admin-section">
-            <h4>🚨 3. Noodbericht / Audio naar alle schermen sturen</h4>
+            <h4>🚨 4. Noodbericht / Live Audio Broadcast naar alle schermen</h4>
             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
               <input type="text" id="adminEmergencyTitle" class="modern-input" placeholder="Titel (bijv. IEDEREEN NAAR HET PLEIN)">
               <textarea id="adminEmergencyText" rows="2" class="modern-input" placeholder="Tekst van het bericht..."></textarea>
@@ -339,7 +384,7 @@
 
           <!-- Overzicht Teams, Pincodes & Kamercodes -->
           <div class="admin-section">
-            <h4>👥 4. Teams, Tokens & Wachtwoorden</h4>
+            <h4>👥 5. Teams, Tokens & Wachtwoorden</h4>
             <div class="table-wrap">
               <table class="modern-table">
                 <thead>
@@ -352,7 +397,7 @@
 
           <!-- Timer -->
           <div class="admin-section">
-            <h4>⏱️ 5. Timer</h4>
+            <h4>⏱️ 6. Timer</h4>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
               <button class="btn btn-secondary btn-sm" onclick="startTimer()">▶️ Start</button>
               <button class="btn btn-secondary btn-sm" onclick="pauseTimer()">⏸️ Pauze</button>
