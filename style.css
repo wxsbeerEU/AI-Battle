@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AETHER_OS - FLUID WIDESCREEN COCKPIT DESIGN SYSTEM
+   AETHER_OS - WIDESCREEN COCKPIT STYLING
    ========================================================================== */
 
 :root {
@@ -41,7 +41,7 @@ body {
 }
 
 /* FLOATING SYSADMIN KNOP */
-.floating-admin-btn {
+.sysadmin-floating-btn {
   position: fixed;
   bottom: 1.25rem;
   right: 1.25rem;
@@ -59,14 +59,14 @@ body {
   transition: all 0.2s ease;
 }
 
-.floating-admin-btn:hover {
+.sysadmin-floating-btn:hover {
   background: var(--primary);
   color: #000;
   box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
   transform: translateY(-2px);
 }
 
-/* WIDESCREEN COCKPIT CONTAINER */
+/* FULLSCREEN COCKPIT LAYOUT */
 .cockpit-container {
   width: 100%;
   min-height: 100vh;
@@ -76,8 +76,8 @@ body {
   gap: 1.25rem;
 }
 
-/* OVERLAYS & MODALS */
-.flow-overlay {
+/* MODAL / SCREEN LAYERS */
+.screen-layer {
   position: fixed;
   inset: 0;
   background: rgba(4, 7, 18, 0.96);
@@ -90,7 +90,7 @@ body {
   overflow-y: auto;
 }
 
-.flow-card {
+.modal-card {
   background: var(--card-bg);
   border: 2px solid var(--card-border);
   border-radius: var(--radius);
@@ -102,22 +102,22 @@ body {
   gap: 1.25rem;
 }
 
-.alert-theme {
+.alert-card {
   border-color: var(--rose);
   box-shadow: 0 0 50px rgba(244, 63, 94, 0.25);
 }
 
-.bunker-theme {
+.bunker-card {
   border-color: var(--rose);
   box-shadow: 0 0 50px rgba(244, 63, 94, 0.25);
 }
 
-.victory-theme {
+.victory-card {
   border-color: var(--emerald);
   box-shadow: 0 0 50px rgba(16, 185, 129, 0.3);
 }
 
-.moni-quote-box {
+.moni-box {
   background: rgba(244, 63, 94, 0.08);
   border-left: 4px solid var(--rose);
   padding: 1.1rem 1.25rem;
@@ -127,28 +127,28 @@ body {
   line-height: 1.6;
 }
 
-/* TYPOGRAPHY */
-.flow-title {
+/* TYPOGRAFIE */
+.card-heading {
   font-size: 1.6rem;
   font-weight: 800;
   color: #fff;
   line-height: 1.3;
 }
 
-.flow-desc {
+.card-paragraph {
   font-size: 1rem;
   color: var(--text-sub);
   line-height: 1.7;
 }
 
-.danger-badge {
+.badge-danger {
   font-size: 0.8rem;
   font-weight: 800;
   color: var(--rose);
   letter-spacing: 1px;
 }
 
-.success-badge {
+.badge-success {
   font-size: 0.8rem;
   font-weight: 800;
   color: var(--emerald);
@@ -159,7 +159,7 @@ body {
   text-align: center;
 }
 
-/* FORMS */
+/* FORMULIEREN */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -182,7 +182,7 @@ body {
   color: var(--text-sub);
 }
 
-.modern-input, .modern-select {
+.form-control {
   width: 100%;
   background-color: #1e293b;
   color: #ffffff;
@@ -194,12 +194,12 @@ body {
   outline: none;
 }
 
-.modern-select option {
+.form-control option {
   background-color: #1e293b;
   color: #ffffff;
 }
 
-.code-input {
+.code-control {
   font-family: var(--font-mono);
   font-size: 1.4rem !important;
   letter-spacing: 6px;
@@ -214,7 +214,7 @@ body {
 }
 
 /* TOP NAVBAR */
-.top-navbar {
+.top-nav {
   background: var(--card-bg);
   border: 2px solid var(--card-border);
   border-radius: var(--radius);
@@ -279,7 +279,7 @@ body {
   font-size: 1.4rem;
 }
 
-/* BROADCAST BANNER */
+/* BROADCAST BALK */
 .broadcast-banner {
   background: #131d33;
   border-left: 4px solid var(--primary);
@@ -306,10 +306,10 @@ body {
   line-height: 1.5;
 }
 
-/* TAB NAVIGATION */
+/* TAB NAVIGATIE */
 .main-tabs-nav {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
 }
 
@@ -351,7 +351,7 @@ body {
   line-height: 1.6;
 }
 
-/* CATEGORY FILTERS */
+/* CATEGORIE FILTERS */
 .category-filters {
   display: flex;
   gap: 0.5rem;
@@ -382,7 +382,7 @@ body {
   color: #000;
 }
 
-/* PANEL CARDS */
+/* PANEL KAARTEN */
 .panel-card {
   background: var(--card-bg);
   border: 2px solid var(--card-border);
@@ -607,7 +607,7 @@ body {
   cursor: pointer;
 }
 
-/* LEGEND */
+/* LEGENDA */
 .panel-title {
   font-size: 1.15rem;
   font-weight: 800;
@@ -631,7 +631,7 @@ body {
   margin-top: 0.75rem;
 }
 
-/* LOCATIONS */
+/* LOCATIES */
 .locations-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -671,7 +671,7 @@ body {
   border-color: var(--emerald);
 }
 
-/* BUTTONS */
+/* KNOPPEN */
 .btn {
   font-family: inherit;
   font-size: 1rem;
@@ -693,8 +693,8 @@ body {
 .btn-lg { padding: 0.95rem 1.6rem; font-size: 1.1rem; }
 .btn-block { width: 100%; }
 .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
-.btn-link { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; }
-.btn-link:hover { color: #fff; }
+.btn-text-link { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; }
+.btn-text-link:hover { color: #fff; }
 
 /* POPUPS */
 .modal-popup {
@@ -754,11 +754,17 @@ body {
   font-family: var(--font-mono);
 }
 
-.phone-tag {
-  font-size: 0.9rem;
-  color: var(--amber);
+.phone-sub {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+.phone-template {
+  font-size: 1rem;
   font-weight: 700;
-  margin-top: 0.35rem;
+  color: var(--primary);
+  margin-top: 0.25rem;
 }
 
 .phone-instruction {
@@ -773,6 +779,7 @@ body {
 .alert-icon-big { font-size: 3.5rem; animation: pulse 1s infinite alternate; }
 .victory-icon-big { font-size: 4rem; }
 .victory-code-display { font-size: 2.4rem; letter-spacing: 8px; margin: 0.85rem 0; }
+.victory-notice { font-weight: 800; color: #fff; font-size: 1.1rem; margin-bottom: 1rem; }
 
 .emergency-content {
   font-size: 1.15rem;
@@ -780,7 +787,7 @@ body {
   line-height: 1.6;
 }
 
-/* ADMIN SECTIONS */
+/* ADMIN SECTIES */
 .admin-block {
   border-bottom: 2px solid var(--card-border);
   padding-bottom: 1.25rem;
@@ -809,6 +816,11 @@ body {
 
 @media (max-width: 800px) {
   .secret-code-selectors { grid-template-columns: repeat(3, 1fr); }
+}
+
+.mini-select {
+  padding: 0.4rem;
+  font-size: 0.85rem;
 }
 
 .table-wrap { overflow-x: auto; margin-top: 0.6rem; }
