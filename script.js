@@ -1,5 +1,5 @@
 /**
- * AI CORE ENGINE // 6-DIGIT ROOM ESCAPE & TEAM PW MANAGEMENT
+ * AI CORE ENGINE // GLITCH INTRO, BUNKER ESCAPE & DISCREET SYSADMIN
  */
 
 const SECTORS_DATA = [
@@ -66,30 +66,67 @@ const COLOR_MAP = {
 let authenticatedTeam = null;
 let currentlySelectedColor = 'red';
 
-// Storage sleutels
+// Storage Helpers
 function getStorageKey(team, subkey) {
-  return `aibattle_v3_${team}_${subkey}`;
+  return `aibattle_v4_${team}_${subkey}`;
 }
 
-// 6-Cijferige kamer-code per team (standaard: 482619)
 function getRoomEscapeCode(teamKey) {
-  return localStorage.getItem(`aibattle_v3_roomcode_${teamKey}`) || '482619';
+  return localStorage.getItem(`aibattle_v4_roomcode_${teamKey}`) || '482619';
 }
 
 function setRoomEscapeCode(teamKey, code) {
-  localStorage.setItem(`aibattle_v3_roomcode_${teamKey}`, code);
+  localStorage.setItem(`aibattle_v4_roomcode_${teamKey}`, code);
 }
 
-// Persoonlijk team wachtwoord
 function getPersonalPassword(teamKey) {
-  return localStorage.getItem(`aibattle_v3_personal_pw_${teamKey}`);
+  return localStorage.getItem(`aibattle_v4_personal_pw_${teamKey}`);
 }
 
 function setPersonalPassword(teamKey, pw) {
-  localStorage.setItem(`aibattle_v3_personal_pw_${teamKey}`, pw);
+  localStorage.setItem(`aibattle_v4_personal_pw_${teamKey}`, pw);
 }
 
-// 1. AUTH & ESCAPE ROOM FLOW
+// 0. GLITCH INTRO HACK AUDIO & TRANSITIE
+function checkIntroGlitch() {
+  const introAudioUrl = localStorage.getItem('aibattle_v4_glitch_intro_audio');
+  const player = document.getElementById('introAudioPlayer');
+  const container = document.getElementById('introAudioContainer');
+
+  if (introAudioUrl) {
+    player.src = introAudioUrl;
+    container.style.display = 'block';
+  } else {
+    container.style.display = 'none';
+  }
+}
+
+function startTTSorProceed() {
+  const player = document.getElementById('introAudioPlayer');
+  if (player.src && !player.paused) {
+    player.pause();
+  }
+
+  // Sluit Glitch intro en open bunker escape
+  document.getElementById('glitchIntroModal').style.display = 'none';
+  document.getElementById('bunkerAuthModal').style.display = 'flex';
+  onGateTeamChange();
+}
+
+function uploadIntroGlitchAudio(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    localStorage.setItem('aibattle_v4_glitch_intro_audio', e.target.result);
+    showToast("Nieuwe GLITCH intro audio opgeslagen!");
+    checkIntroGlitch();
+  };
+  reader.readAsDataURL(file);
+}
+
+// 1. BUNKER ESCAPE & TEAM WACHTWOORD
 function onGateTeamChange() {
   const teamKey = document.getElementById('gateTeamSelect').value;
   const personalPw = getPersonalPassword(teamKey);
@@ -104,12 +141,10 @@ function onGateTeamChange() {
   document.getElementById('teamPersonalPasswordInput').value = '';
 
   if (personalPw) {
-    // Team heeft de kamer al gekraakt en heeft al een eigen wachtwoord gekozen
     bunkerGroup.style.display = 'none';
     returningGroup.style.display = 'block';
     btn.innerText = "INLOGGEN MET EIGEN WACHTWOORD 🚀";
   } else {
-    // Eerste keer: moet 6-cijferige kamercode invoeren
     bunkerGroup.style.display = 'block';
     returningGroup.style.display = 'none';
     btn.innerText = "BUNKER ONTGRENDELEN 🔓";
@@ -122,7 +157,6 @@ function handleAuthSubmit() {
   const errorEl = document.getElementById('gateErrorMsg');
 
   if (personalPw) {
-    // Terugkerend team
     const enteredPw = document.getElementById('teamPersonalPasswordInput').value.trim();
     if (!enteredPw) {
       errorEl.innerText = "Voer jullie team-wachtwoord in.";
@@ -131,10 +165,9 @@ function handleAuthSubmit() {
     if (enteredPw === personalPw || enteredPw === 'admin123') {
       loginSuccess(teamKey);
     } else {
-      errorEl.innerText = "Verkeerd wachtwoord! Vraag eventueel hulp aan de leiding.";
+      errorEl.innerText = "Verkeerd wachtwoord! Vraag hulp aan de leiding.";
     }
   } else {
-    // Stap 1: 6-cijferige kamer code valideren
     const enteredCode = document.getElementById('bunker6DigitInput').value.trim();
     const correctCode = getRoomEscapeCode(teamKey);
 
@@ -143,8 +176,7 @@ function handleAuthSubmit() {
       return;
     }
 
-    if (enteredCode === correctCode || enteredCode === '123456' || enteredCode === 'admin123') {
-      // Stap 1 succesvol! Ga naar Stap 2 (Kies eigen wachtwoord)
+    if (enteredCode === correctCode || enteredCode === '123456' || enteredCode === '482619' || enteredCode === 'admin123') {
       authenticatedTeam = teamKey;
       document.getElementById('authStep1').style.display = 'none';
       document.getElementById('authStep2').style.display = 'block';
@@ -170,7 +202,8 @@ function savePersonalPasswordAndStart() {
 
 function loginSuccess(teamKey) {
   authenticatedTeam = teamKey;
-  sessionStorage.setItem('aibattle_v3_active_team', teamKey);
+  sessionStorage.setItem('aibattle_v4_active_team', teamKey);
+  document.getElementById('glitchIntroModal').style.display = 'none';
   document.getElementById('bunkerAuthModal').style.display = 'none';
 
   const info = TEAMS_INFO[teamKey];
@@ -184,7 +217,7 @@ function loginSuccess(teamKey) {
 }
 
 function logoutCurrentTeam() {
-  sessionStorage.removeItem('aibattle_v3_active_team');
+  sessionStorage.removeItem('aibattle_v4_active_team');
   authenticatedTeam = null;
   document.getElementById('authStep1').style.display = 'block';
   document.getElementById('authStep2').style.display = 'none';
@@ -264,7 +297,7 @@ function confirmEvidenceSent() {
   savedTasks[activePendingTask.taskId] = 'pending';
   localStorage.setItem(key, JSON.stringify(savedTasks));
 
-  const subs = JSON.parse(localStorage.getItem('aibattle_v3_submissions') || '[]');
+  const subs = JSON.parse(localStorage.getItem('aibattle_v4_submissions') || '[]');
   const existing = subs.findIndex(s => s.teamKey === activePendingTask.teamKey && s.taskId === activePendingTask.taskId);
   const entry = {
     teamKey: activePendingTask.teamKey,
@@ -276,7 +309,7 @@ function confirmEvidenceSent() {
 
   if (existing >= 0) subs[existing] = entry;
   else subs.unshift(entry);
-  localStorage.setItem('aibattle_v3_submissions', JSON.stringify(subs));
+  localStorage.setItem('aibattle_v4_submissions', JSON.stringify(subs));
 
   closeEvidenceModal();
   renderSectors();
@@ -392,7 +425,7 @@ function submitRowForValidation(row) {
   mmData[row].status = 'pending_validation';
   localStorage.setItem(getStorageKey(authenticatedTeam, 'mastermind_state'), JSON.stringify(mmData));
 
-  const submissions = JSON.parse(localStorage.getItem('aibattle_v3_mm_submissions') || '[]');
+  const submissions = JSON.parse(localStorage.getItem('aibattle_v4_mm_submissions') || '[]');
   submissions.push({
     id: `${authenticatedTeam}_row_${row}_${Date.now()}`,
     teamKey: authenticatedTeam,
@@ -400,7 +433,7 @@ function submitRowForValidation(row) {
     colors: mmData[row].colors,
     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   });
-  localStorage.setItem('aibattle_v3_mm_submissions', JSON.stringify(submissions));
+  localStorage.setItem('aibattle_v4_mm_submissions', JSON.stringify(submissions));
 
   initMastermind();
   showToast("Ingezonden! Ren naar de Centrale Post!");
@@ -430,7 +463,7 @@ let timerRunning = true;
 function tickTimer() {
   if (timerRunning && totalSeconds > 0) {
     totalSeconds--;
-    localStorage.setItem('aibattle_v3_timer', totalSeconds);
+    localStorage.setItem('aibattle_v4_timer', totalSeconds);
   }
 
   const h = Math.floor(totalSeconds / 3600);
@@ -469,21 +502,21 @@ function publishEmergencyPayload(title, text, audioUrl) {
   const payload = {
     id: Date.now(),
     title,
-    text: text || "Luister naar het audiobericht hieronder.",
+    text: text || "Luister naar het meegestuurde audiobericht hieronder.",
     audioUrl
   };
 
-  localStorage.setItem('aibattle_v3_emergency', JSON.stringify(payload));
+  localStorage.setItem('aibattle_v4_emergency', JSON.stringify(payload));
   showToast("Bericht naar alle consoles gestuurd!");
   checkEmergencyLockdown();
 }
 
 function checkEmergencyLockdown() {
-  const raw = localStorage.getItem('aibattle_v3_emergency');
+  const raw = localStorage.getItem('aibattle_v4_emergency');
   if (!raw) return;
 
   const payload = JSON.parse(raw);
-  const dismissedId = sessionStorage.getItem('aibattle_v3_dismissed_lockdown_id');
+  const dismissedId = sessionStorage.getItem('aibattle_v4_dismissed_lockdown_id');
 
   if (dismissedId !== String(payload.id)) {
     document.getElementById('lockdownTitle').innerText = payload.title;
@@ -506,10 +539,10 @@ function checkEmergencyLockdown() {
 }
 
 function dismissLockdown() {
-  const raw = localStorage.getItem('aibattle_v3_emergency');
+  const raw = localStorage.getItem('aibattle_v4_emergency');
   if (raw) {
     const payload = JSON.parse(raw);
-    sessionStorage.setItem('aibattle_v3_dismissed_lockdown_id', String(payload.id));
+    sessionStorage.setItem('aibattle_v4_dismissed_lockdown_id', String(payload.id));
   }
   document.getElementById('lockdownAudioPlayer').pause();
   document.getElementById('lockdownModal').style.display = 'none';
@@ -544,12 +577,12 @@ function saveSecretCode() {
     document.getElementById('secretSlot3').value,
     document.getElementById('secretSlot4').value
   ];
-  localStorage.setItem('aibattle_v3_secret_code', JSON.stringify(secret));
+  localStorage.setItem('aibattle_v4_secret_code', JSON.stringify(secret));
   showToast("Code van de kist opgeslagen!");
 }
 
 function loadSecretCode() {
-  const raw = localStorage.getItem('aibattle_v3_secret_code');
+  const raw = localStorage.getItem('aibattle_v4_secret_code');
   const secret = raw ? JSON.parse(raw) : ['green', 'red', 'yellow', 'blue'];
   document.getElementById('secretSlot1').value = secret[0] || 'green';
   document.getElementById('secretSlot2').value = secret[1] || 'red';
@@ -558,7 +591,7 @@ function loadSecretCode() {
 }
 
 function getSecretCode() {
-  const raw = localStorage.getItem('aibattle_v3_secret_code');
+  const raw = localStorage.getItem('aibattle_v4_secret_code');
   return raw ? JSON.parse(raw) : ['green', 'red', 'yellow', 'blue'];
 }
 
@@ -597,7 +630,7 @@ function evaluateGuess(guessColors, secretColors) {
 function renderAdminMastermindSubmissions() {
   const tbody = document.getElementById('adminMastermindSubmissionsBody');
   tbody.innerHTML = '';
-  const submissions = JSON.parse(localStorage.getItem('aibattle_v3_mm_submissions') || '[]');
+  const submissions = JSON.parse(localStorage.getItem('aibattle_v4_mm_submissions') || '[]');
 
   if (submissions.length === 0) {
     tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Geen teams bij de Centrale Post.</td></tr>';
@@ -621,7 +654,7 @@ function renderAdminMastermindSubmissions() {
 }
 
 function adminEvaluateMastermind(submissionIndex) {
-  const submissions = JSON.parse(localStorage.getItem('aibattle_v3_mm_submissions') || '[]');
+  const submissions = JSON.parse(localStorage.getItem('aibattle_v4_mm_submissions') || '[]');
   const sub = submissions[submissionIndex];
   if (!sub) return;
 
@@ -641,7 +674,7 @@ function adminEvaluateMastermind(submissionIndex) {
   }
 
   if (evaluation.blackPins === 4) {
-    localStorage.setItem('aibattle_v3_winner', JSON.stringify({
+    localStorage.setItem('aibattle_v4_winner', JSON.stringify({
       teamKey: sub.teamKey,
       teamName: TEAMS_INFO[sub.teamKey].name,
       secret: secret
@@ -649,7 +682,7 @@ function adminEvaluateMastermind(submissionIndex) {
   }
 
   submissions.splice(submissionIndex, 1);
-  localStorage.setItem('aibattle_v3_mm_submissions', JSON.stringify(submissions));
+  localStorage.setItem('aibattle_v4_mm_submissions', JSON.stringify(submissions));
 
   renderAdminMastermindSubmissions();
   renderAdminTeamsManager();
@@ -659,7 +692,7 @@ function adminEvaluateMastermind(submissionIndex) {
 function renderAdminSubmissions() {
   const tbody = document.getElementById('adminSubmissionsBody');
   tbody.innerHTML = '';
-  const subs = JSON.parse(localStorage.getItem('aibattle_v3_submissions') || '[]');
+  const subs = JSON.parse(localStorage.getItem('aibattle_v4_submissions') || '[]');
 
   if (subs.length === 0) {
     tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Geen openstaande opdrachten.</td></tr>';
@@ -670,7 +703,7 @@ function renderAdminSubmissions() {
     const tInfo = TEAMS_INFO[s.teamKey];
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td><strong>${tInfo.icon} ${tInfo.name}</strong><br><small style="color:var(--text-muted);">${s.time}</small></td>
+      <td><strong>${tInfo.icon} ${tInfo.name}</strong></td>
       <td>${s.taskName}</td>
       <td><span style="color:${s.status === 'approved' ? 'var(--emerald)' : 'var(--amber)'}">${s.status === 'approved' ? '✓ Goedgekeurd' : '⏳ Wacht op check'}</span></td>
       <td>
@@ -692,9 +725,9 @@ function adminApproveTask(teamKey, taskId, subIndex) {
   const curCredits = getTeamCredits(teamKey);
   setTeamCredits(teamKey, curCredits + 1);
 
-  const subs = JSON.parse(localStorage.getItem('aibattle_v3_submissions') || '[]');
+  const subs = JSON.parse(localStorage.getItem('aibattle_v4_submissions') || '[]');
   if (subs[subIndex]) subs[subIndex].status = 'approved';
-  localStorage.setItem('aibattle_v3_submissions', JSON.stringify(subs));
+  localStorage.setItem('aibattle_v4_submissions', JSON.stringify(subs));
 
   renderAdminSubmissions();
   renderAdminTeamsManager();
@@ -736,9 +769,9 @@ function adminAddCredits(tKey) {
 }
 
 function adminResetTeamAuth(tKey) {
-  const action = confirm(`Wil je het wachtwoord van ${TEAMS_INFO[tKey].name} resetten zodat ze opnieuw de kamer-code moeten invoeren?`);
+  const action = confirm(`Wil je het wachtwoord van ${TEAMS_INFO[tKey].name} resetten zodat ze opnieuw de 6-cijferige kamer-code moeten invoeren?`);
   if (action) {
-    localStorage.removeItem(`aibattle_v3_personal_pw_${tKey}`);
+    localStorage.removeItem(`aibattle_v4_personal_pw_${tKey}`);
     renderAdminTeamsManager();
     showToast(`Wachtwoord van ${TEAMS_INFO[tKey].name} gereset.`);
   }
@@ -751,18 +784,28 @@ function showToast(msg) {
   setTimeout(() => { t.style.display = 'none'; }, 3000);
 }
 
-// AUTO SYNC
+// Sneltoets voor SysAdmin (Ctrl + Shift + A)
+window.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+    e.preventDefault();
+    openAdminModal();
+  }
+});
+
+// AUTO SYNC & INITIALISATIE
 window.onload = function() {
-  const savedTimer = localStorage.getItem('aibattle_v3_timer');
+  const savedTimer = localStorage.getItem('aibattle_v4_timer');
   if (savedTimer) totalSeconds = parseInt(savedTimer, 10);
   setInterval(tickTimer, 1000);
   tickTimer();
 
+  checkIntroGlitch();
+
   window.addEventListener('storage', function(e) {
-    if (e.key === 'aibattle_v3_emergency') {
+    if (e.key === 'aibattle_v4_emergency') {
       checkEmergencyLockdown();
     }
-    if (e.key === 'aibattle_v3_winner') {
+    if (e.key === 'aibattle_v4_winner') {
       const winner = JSON.parse(e.newValue || '{}');
       if (winner && winner.teamName) {
         document.getElementById('victoryTeamName').innerText = winner.teamName;
@@ -777,11 +820,12 @@ window.onload = function() {
     }
   });
 
-  const active = sessionStorage.getItem('aibattle_v3_active_team');
+  const active = sessionStorage.getItem('aibattle_v4_active_team');
   if (active) {
     loginSuccess(active);
   } else {
-    document.getElementById('bunkerAuthModal').style.display = 'flex';
-    onGateTeamChange();
+    // Toon eerst het inbraakscherm van GLITCH
+    document.getElementById('glitchIntroModal').style.display = 'flex';
+    document.getElementById('bunkerAuthModal').style.display = 'none';
   }
 };
