@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AETHER_OS // DEFCON-1 TERMINAL</title>
+  <title>AETHER_OS // DEFCON-1 EMERGENCY TERMINAL</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
@@ -19,37 +19,37 @@
   <div class="crt-scanlines"></div>
 
   <!-- FLOATING SYSADMIN KNOP -->
-  <button class="sysadmin-floating-btn" onclick="openAdminModal()" title="SysAdmin Leiding Paneel (Ctrl+Shift+A of klik hier)">
+  <button class="sysadmin-floating-btn" onclick="openAdminModal()" title="SysAdmin Leiding Paneel (Ctrl+Shift+A)">
     ⚙️ SYSADMIN ROOT
   </button>
 
   <!-- =======================================================
-       FASE 1: OPENINGSSCHERM - DE NOODOPROEP (MONI SPEECH)
+       FASE 1: OPENINGSSCHERM - DE ONTHULLING IN DE BRONNE
        ======================================================= -->
   <div class="terminal-screen" id="screenIntro">
     <div class="retro-box alert-box">
       <div class="box-header danger">
-        <span>🚨 DEFCON-1: NOODSITUATIE TER DUINEN</span>
+        <span>🚨 DEFCON-1: DEKMANTEL VERVALLEN // SECTOR DE BRONNE</span>
         <span class="blink" id="dbStatusIndicator">● DATABASE KOPPELEN...</span>
       </div>
       
-      <h1 class="retro-title danger-glow">HET NETWERK LIGT PLAT!</h1>
+      <h1 class="retro-title danger-glow">DE AI-SERVERS ONTSPOREN!</h1>
       
       <p class="retro-text">
-        Virus <strong>GLITCH</strong> heeft alle servers, de verlichting én de <strong>muziekinstallatie voor de bar</strong> gegijzeld!<br>
-        Zonder werkende AI gaat de bar vanavond <strong>NOOIT</strong> open!
+        De brandoefening was een dekmantel! De AI-systemen breken uit en dringen de keuken, de stroom en de voorraden binnen.<br>
+        Als we de ontspoorde AI niet binnen <strong>2 uur</strong> uitschakelen, crashen de koelcellen en is de <strong>barbecue van woensdag</strong> volledig naar de vaantjes!
       </p>
 
       <div class="moni-terminal-box">
-        <div class="moni-tag">> MONI_TRANSMISSIE_INCOMING:</div>
+        <div class="moni-tag">> MONI_INVAL_DIRECTIVE:</div>
         <p>
-          "Jullie missie: Red jullie eigen AI-systeem en krijg deze als eerste weer online! 
-          Zoek de 6-cijferige code in dit lokaal en versla GLITCH!"
+          "Jullie missie: Jullie moeten één specifieke ontspoorde AI opsporen en vernietigen! 
+          Vind de 6-cijferige kamer-code in dit lokaal, ontgrendel het systeem en start de tegenaanval!"
         </p>
       </div>
 
       <button class="retro-btn btn-emerald btn-block" onclick="goFromIntroToRoomCode()">
-        [ START TERMINAL BOOTSTRAP ▶ ]
+        [ OPEN NOODTERMINAL & START ONTGRENDELING ▶ ]
       </button>
     </div>
   </div>
@@ -60,31 +60,31 @@
   <div class="terminal-screen" id="screenRoomCode" style="display: none;">
     <div class="retro-box">
       <div class="box-header danger">
-        <span>🔒 OMEGA PROTOCOL // LOKAAL VERGRENDELD</span>
-        <span>NODE: #SEC-01</span>
+        <span>🔒 LOKAAL DE BRONNE // TERMINAL VERGRENDELD</span>
+        <span>NODE: #BRONNE-SEC</span>
       </div>
       
-      <h2 class="retro-title">DECRYPTIE KAMER-TERMINAL</h2>
+      <h2 class="retro-title">DECRYPTIE NOODTERMINAL</h2>
       
       <p class="retro-text">
-        GLITCH heeft deze laptop vergrendeld. Los de <strong>3 fysieke puzzels in dit lokaal</strong> op om de 6-cijferige opstartcode te vormen!
+        Los de <strong>3 fysieke puzzels in dit lokaal van De Bronne</strong> op om de 6-cijferige opstartcode van jullie terminal te vormen!
       </p>
 
       <div class="form-grid">
         <div class="form-group">
-          <label for="gateTeamSelect">> SELECTEER AI CLUSTER:</label>
+          <label for="gateTeamSelect">> WELKE ONTSPOORDE AI MOETEN JULLIE STOPPEN?</label>
           <select id="gateTeamSelect" class="retro-select" onchange="onTeamSelectChange()">
-            <option value="chatgpt">🟢 Team ChatGPT (GPT-4o)</option>
-            <option value="midjourney">🎨 Team Midjourney (v6.1)</option>
-            <option value="gemini">✨ Team Gemini (1.5 Pro)</option>
-            <option value="claude">🧠 Team Claude (3.5 Sonnet)</option>
-            <option value="sora">🎬 Team Sora (Diffusion)</option>
-            <option value="copilot">⚡ Team Copilot (Neural Auto)</option>
+            <option value="chatgpt">🟢 Target: ChatGPT (GPT-4o)</option>
+            <option value="midjourney">🎨 Target: Midjourney (v6.1)</option>
+            <option value="gemini">✨ Target: Gemini (1.5 Pro)</option>
+            <option value="claude">🧠 Target: Claude (3.5 Sonnet)</option>
+            <option value="sora">🎬 Target: Sora (Diffusion)</option>
+            <option value="copilot">⚡ Target: Copilot (Neural Auto)</option>
           </select>
         </div>
 
         <div class="form-group" id="bunkerCodeGroup">
-          <label for="bunker6DigitInput">> 6-CIJFERIGE KAMERCODE:</label>
+          <label for="bunker6DigitInput">> 6-CIJFERIGE LOKAALCODE:</label>
           <input type="text" id="bunker6DigitInput" class="retro-input code-input" placeholder="000000" maxlength="6" inputmode="numeric">
         </div>
 
@@ -97,7 +97,7 @@
       <p id="gateErrorMsg" class="error-text"></p>
 
       <button class="retro-btn btn-primary btn-block" id="btnSubmitBunker" onclick="handleRoomCodeSubmit()">
-        [ VERIFIEER CODE & ONTGRENDEL 🔓 ]
+        [ VERIFIEER CODE & ONTGRENDEL TERMINAL 🔓 ]
       </button>
 
       <div class="text-center" style="margin-top: 1rem;">
@@ -112,31 +112,80 @@
   <div class="terminal-screen" id="screenSetPassword" style="display: none;">
     <div class="retro-box">
       <div class="box-header success">
-        <span>✓ 6-CIJFERIGE CODE IS JUIST!</span>
-        <span>AUTH_LEVEL: ROOT</span>
+        <span>✓ LOKAALCODE GEACCEPTEERD</span>
+        <span>AUTH_LEVEL: OVERRIDE</span>
       </div>
       
-      <h2 class="retro-title success-glow">KIES EEN EIGEN WACHTWOORD</h2>
+      <h2 class="retro-title success-glow">KIES EEN EIGEN TEAMWACHTWOORD</h2>
       
       <p class="retro-text">
-        Geweldig gedaan! Kies nu een <strong>eigen geheim wachtwoord</strong> voor jullie team. 
-        Hiermee loggen jullie opnieuw in als de laptop per ongeluk herstart of vergrendelt.
+        Terminal ontgrendeld! Kies nu een <strong>eigen geheim wachtwoord</strong> voor jullie team. 
+        Hiermee loggen jullie direct weer in als de laptop herstart of vergrendelt.
       </p>
 
       <div class="form-group">
         <label for="newTeamPasswordInput">> EIGEN WACHTWOORD / PINCODE:</label>
-        <input type="password" id="newTeamPasswordInput" class="retro-input" placeholder="Bijv. turbo2026">
+        <input type="password" id="newTeamPasswordInput" class="retro-input" placeholder="Bijv. bbq2026">
       </div>
 
       <p id="step2ErrorMsg" class="error-text"></p>
 
-      <button class="retro-btn btn-emerald btn-block" onclick="savePasswordAndLaunchCockpit()">
-        [ BEVESTIG & START HET SPEL 🚀 ]
+      <button class="retro-btn btn-emerald btn-block" onclick="savePasswordAndShowTutorial()">
+        [ BEVESTIG & BEKIJK OPERATIE-INSTRUCTIES 📜 ]
       </button>
     </div>
   </div>
 
-  <!-- NOODALARM / LIVE AUDIO OVERRIDE -->
+  <!-- =======================================================
+       FASE 4: INTERACTIEVE MISSIE BRIEFING & TUTORIAL
+       ======================================================= -->
+  <div class="terminal-screen" id="screenTutorial" style="display: none;">
+    <div class="retro-box tutorial-box">
+      <div class="box-header success">
+        <span>⚡ OPERATIE BB-SHIELD // MISSIE PROTOCOL</span>
+        <span id="tutorialTeamBadge">TARGET: ONBEKEND</span>
+      </div>
+
+      <h2 class="retro-title success-glow">HOE REDDEN WE DE BARBECUE?</h2>
+      
+      <div class="tutorial-steps-container">
+        <div class="tutorial-step-card">
+          <div class="step-badge">STAP 1</div>
+          <div class="step-content">
+            <h3 class="step-title">🎯 Voer Dropspel Opdrachten Uit</h3>
+            <p>Trek met je team rond Ter Duinen en in de straat. Voer een actieve missie uit en stuur jullie foto/video via GSM naar <strong>0475 84 89 83</strong>. De leiding geeft jullie dan <strong>+1 Kleur-Token</strong> en ontgrendelt een nieuwe opdracht!</p>
+          </div>
+        </div>
+
+        <div class="tutorial-step-card">
+          <div class="step-badge">STAP 2</div>
+          <div class="step-content">
+            <h3 class="step-title">🧩 Kraak de 6-Kleuren Decryptiecode</h3>
+            <p>Gebruik jullie verdiende tokens om de bolletjes van een rij in te kleuren (<strong>1 token = 1 bolletje</strong>). Kies steeds strategisch uit de 6 kleuren tot een volledige rij van 6 bollen gevuld is.</p>
+          </div>
+        </div>
+
+        <div class="tutorial-step-card">
+          <div class="step-badge">STAP 3</div>
+          <div class="step-content">
+            <h3 class="step-title">🏆 Testen bij de Centrale Post & Overwinning</h3>
+            <p>Is jullie rij van 6 vol? Ren naar de Centrale Post! De leiding geeft feedback via pinnen:<br>
+            • <strong>Zwart (⬛)</strong> = Juiste kleur op de juiste positie.<br>
+            • <strong>Wit (⬜)</strong> = Juiste kleur, maar op de verkeerde positie.<br>
+            Het team dat als eerste <strong>6x Zwart</strong> scoort, vernietigt de AI, opent de kluis en redt de barbecue!</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="retro-btn btn-emerald btn-block btn-pulse" onclick="finishTutorialAndLaunchCockpit()">
+        [ BEGREPEN, START DE TEGENAANVAL! 🚀 ]
+      </button>
+    </div>
+  </div>
+
+  <!-- =======================================================
+       NOODALARM / LIVE AUDIO OVERRIDE
+       ======================================================= -->
   <div class="terminal-screen" id="lockdownModal" style="display: none;">
     <div class="retro-box alert-box text-center">
       <div class="box-header danger">
@@ -155,39 +204,43 @@
     </div>
   </div>
 
-  <!-- OVERWINNINGSSCHERM -->
+  <!-- =======================================================
+       OVERWINNINGSSCHERM (6X ZWART)
+       ======================================================= -->
   <div class="terminal-screen" id="victoryModal" style="display: none;">
     <div class="retro-box victory-box text-center">
       <div class="box-header success">
-        <span>🏆 SYSTEM BREACH SUCCESSFUL</span>
+        <span>🏆 SYSTEEM GENEUTRALISEERD // BARBECUE GERED</span>
         <span>STATUS: PURGED</span>
       </div>
       <div class="victory-icon-big">🔓</div>
-      <h1 class="retro-title success-glow">MASTER CORE GEKRAAKT!</h1>
+      <h1 class="retro-title success-glow">ONTSPOORDE AI UITGESCHAKELD!</h1>
       <p class="retro-text">
-        Supercluster <strong id="victoryTeamName" style="color:var(--emerald);">Jullie Team</strong> heeft de 6 geheime kleuren van de Master Core gekraakt en GLITCH verslagen! De muziek en de bar zijn gered!
+        Supercluster <strong id="victoryTeamName" style="color:var(--emerald);">Jullie Team</strong> heeft de 6 geheime kleuren gekraakt en de AI definitief offline gehaald! De koelcellen werken weer en de barbecue van woensdag is veiliggesteld!
       </p>
       
       <div class="victory-code-display" id="victoryCodeDisplay">🟢 🔴 🟡 🔵 🟠 🟣</div>
       <p class="victory-notice">
-        Ren direct naar de fysieke kist op het Centrale Plein om het slot te openen!
+        Ren direct naar de fysieke kist op het Centrale Plein om de kluis te ontgrendelen!
       </p>
       
       <button class="retro-btn btn-emerald btn-block" onclick="closeVictoryModal()">[ SLUITEN ]</button>
     </div>
   </div>
 
-  <!-- FASE 4: HOOFD COCKPIT -->
+  <!-- =======================================================
+       FASE 5: HOOFD COCKPIT (VOLLEDIG SCHERM)
+       ======================================================= -->
   <div class="cockpit-container">
     
     <header class="top-nav">
       <div class="team-identity">
         <span id="headerTeamIcon" class="team-ico">🤖</span>
-        <span id="headerTeamName">Team ChatGPT</span>
+        <span id="headerTeamName">Target: ChatGPT</span>
       </div>
 
       <div class="timer-display">
-        <span class="timer-lbl">MELTDOWN IN:</span>
+        <span class="timer-lbl">BBQ MELTDOWN IN:</span>
         <span class="timer-digits" id="gameTimer">02:00:00</span>
       </div>
 
@@ -206,8 +259,8 @@
     </div>
 
     <nav class="main-tabs-nav">
-      <button class="tab-btn active" onclick="switchTab('sectors')">[ 1. ACTIEVE OPDRACHTEN 🎯 ]</button>
-      <button class="tab-btn" onclick="switchTab('mastermind')">[ 2. MASTERMIND KERN (6 KLEUREN) 🧩 ]</button>
+      <button class="tab-btn active" onclick="switchTab('sectors')">[ 1. ACTIEVE MISSIES 🎯 ]</button>
+      <button class="tab-btn" onclick="switchTab('mastermind')">[ 2. DECRYPTIE KERN (6 KLEUREN) 🧩 ]</button>
     </nav>
 
     <!-- TAB 1: ACTIEVE OPDRACHTEN -->
@@ -270,7 +323,7 @@
           </div>
 
           <div class="notice-callout">
-            💡 <em>Doel: Behaal 6x Zwart (⬛⬛⬛⬛⬛⬛) om de kluis van de bar te openen!</em>
+            💡 <em>Doel: Behaal 6x Zwart (⬛⬛⬛⬛⬛⬛) om de AI te stoppen en de kluis te openen!</em>
           </div>
         </div>
 
@@ -411,11 +464,10 @@
             </div>
 
             <button class="retro-btn btn-danger btn-block" onclick="adminResetAllGameData()">
-              [ 💣 VOLLEDIG SPEL RESETTEN (ALLE TEAMS & GEGEVENS LEAGMAKEN) ]
+              [ 💣 VOLLEDIG SPEL RESETTEN (ALLE TEAMS & GEGEVENS LEEGMAKEN) ]
             </button>
           </div>
 
-          <!-- Extra Sluitknop Onderaan -->
           <div style="margin-top: 1.5rem; text-align: right;">
             <button class="retro-btn btn-danger btn-sm" onclick="closeAdminModal()">[ SLUIT LEIDINGPANEEL ✕ ]</button>
           </div>
