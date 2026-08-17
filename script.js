@@ -1,5 +1,5 @@
 /**
- * AETHER_OS - 16 DROPSPEL MISSIES, SYNTH SOUNDS & 6-COLOR MASTERMIND
+ * AETHER_OS - SOUND ENGINE, GAME FLOW & 6-COLOR MASTERMIND
  */
 
 const SECTORS_DATA = [
@@ -80,7 +80,7 @@ let currentlySelectedColor = 'red';
 let currentCategoryFilter = 'all';
 let audioCtx = null;
 
-// SYNTHESIZER SOUND ENGINE (Web Audio API)
+// SYNTHESIZER SOUND ENGINE
 function getAudioContext() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   return audioCtx;
@@ -759,6 +759,7 @@ function adminEvaluateMastermind(submissionIndex) {
     localStorage.setItem(getStorageKey(sub.teamKey, 'active_row'), sub.row + 1);
   }
 
+  // 6x Zwart = Overwinning!
   if (evaluation.blackPins === 6) {
     localStorage.setItem('aibattle_master_winner', JSON.stringify({
       teamKey: sub.teamKey,
@@ -878,7 +879,7 @@ window.addEventListener('keydown', function(e) {
   }
 });
 
-// INITIALISATIE BIJ HET LADEN VAN DE PAGINA
+// INITIALISATIE: GEGARANDEERDE STABIELE START OP HET HOOFDSCHERM
 window.onload = function() {
   const savedTimer = localStorage.getItem('aibattle_master_timer');
   if (savedTimer) totalSeconds = parseInt(savedTimer, 10);
@@ -905,12 +906,8 @@ window.onload = function() {
     }
   });
 
-  const active = sessionStorage.getItem('aibattle_master_active_team');
-  if (active) {
-    launchCockpit(active);
-  } else {
-    document.getElementById('screenIntro').style.display = 'flex';
-    document.getElementById('screenRoomCode').style.display = 'none';
-    document.getElementById('screenSetPassword').style.display = 'none';
-  }
+  // Altijd gegarandeerd starten op het openingsscherm
+  document.getElementById('screenIntro').style.display = 'flex';
+  document.getElementById('screenRoomCode').style.display = 'none';
+  document.getElementById('screenSetPassword').style.display = 'none';
 };
