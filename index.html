@@ -9,11 +9,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="cyber-theme">
 
   <!-- FLOATING SYSADMIN LEIDING KNOP -->
   <button class="sysadmin-floating-btn" onclick="openAdminModal()" title="Leiding Backsite (Ctrl+Shift+A)">
-    ⚙️ SysAdmin Root
+    ⚙️ SYSADMIN ROOT
   </button>
 
   <!-- =======================================================
@@ -34,7 +34,7 @@
         <em>"Jullie missie: Red jullie eigen AI-systeem en krijg deze als eerste weer online! Zoek de 6-cijferige code in dit lokaal en versla GLITCH!"</em>
       </div>
 
-      <button class="btn btn-emerald btn-lg" onclick="goFromIntroToRoomCode()">
+      <button class="btn btn-emerald btn-lg btn-block" onclick="goFromIntroToRoomCode()">
         START TERMINAL BOOTSTRAP ▶
       </button>
     </div>
@@ -78,7 +78,7 @@
 
       <p id="gateErrorMsg" class="error-text"></p>
 
-      <button class="btn btn-primary btn-lg" id="btnSubmitBunker" onclick="handleRoomCodeSubmit()">
+      <button class="btn btn-primary btn-lg btn-block" id="btnSubmitBunker" onclick="handleRoomCodeSubmit()">
         VERIFIEER CODE & ONTGRENDEL 🔓
       </button>
 
@@ -108,7 +108,7 @@
 
       <p id="step2ErrorMsg" class="error-text"></p>
 
-      <button class="btn btn-emerald btn-lg" onclick="savePasswordAndLaunchCockpit()">
+      <button class="btn btn-emerald btn-lg btn-block" onclick="savePasswordAndLaunchCockpit()">
         BEVESTIG & START HET SPEL 🚀
       </button>
     </div>
@@ -121,13 +121,13 @@
     <div class="modal-card alert-card text-center">
       <div class="alert-icon-big">🚨</div>
       <h2 id="lockdownTitle" class="card-heading">NOODBEVEL VAN DE CENTRALE BASIS</h2>
-      <div class="emergency-text" id="lockdownText">Er is een belangrijk direct bevel binnengekomen.</div>
+      <div class="emergency-content" id="lockdownText">Er is een belangrijk direct bevel binnengekomen.</div>
       
       <div id="lockdownAudioContainer" style="display: none; width: 100%; margin: 1rem 0;">
         <audio id="lockdownAudioPlayer" controls style="width: 100%;"></audio>
       </div>
 
-      <button class="btn btn-primary btn-lg" onclick="dismissLockdown()">✓ BEGREPEN</button>
+      <button class="btn btn-primary btn-lg btn-block" onclick="dismissLockdown()">✓ BEGREPEN</button>
     </div>
   </div>
 
@@ -147,7 +147,7 @@
         Ren direct naar de fysieke kist op het Centrale Plein om het slot te openen!
       </p>
       
-      <button class="btn btn-emerald btn-lg" onclick="closeVictoryModal()">Sluiten</button>
+      <button class="btn btn-emerald btn-lg btn-block" onclick="closeVictoryModal()">Sluiten</button>
     </div>
   </div>
 
@@ -285,7 +285,7 @@
           <div id="evidenceMessageTemplate" class="phone-template">[Teamnaam] Opdracht X</div>
         </div>
 
-        <button class="btn btn-primary btn-lg" onclick="confirmEvidenceSent()">✓ Ik heb het verstuurd!</button>
+        <button class="btn btn-primary btn-lg btn-block" onclick="confirmEvidenceSent()">✓ Ik heb het verstuurd!</button>
       </div>
     </div>
   </div>
@@ -367,7 +367,7 @@
               <input type="text" id="adminEmergencyTitle" class="form-control" placeholder="Titel (bijv. ALLE TEAMS NAAR HET PLEIN)">
               <textarea id="adminEmergencyText" rows="2" class="form-control" placeholder="Tekst van het bevel..."></textarea>
               <input type="file" id="adminAudioFileInput" accept="audio/*" class="form-control">
-              <button class="btn btn-danger" onclick="sendEmergencyLockdown()">🚨 Blokkeer Schermen met dit Bevel</button>
+              <button class="btn btn-danger btn-block" onclick="sendEmergencyLockdown()">🚨 Blokkeer Schermen met dit Bevel</button>
             </div>
           </div>
 
