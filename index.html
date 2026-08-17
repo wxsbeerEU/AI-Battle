@@ -3,377 +3,326 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AETHER_OS // Battle of the AIs</title>
+  <title>AI Core // Master Terminal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Glow Blobs Background -->
-  <div class="blob-bg blob-1"></div>
-  <div class="blob-bg blob-2"></div>
+  <!-- NOOD OVERLAY / LOCKDOWN (Activeert direct bij audio/bericht van leiding) -->
+  <div class="lockdown-overlay" id="lockdownModal">
+    <div class="lockdown-card">
+      <div class="lockdown-badge">🚨 DRINGEND BERICHT VAN DE CENTRALE POST</div>
+      <h2 id="lockdownTitle">Inkomend Bevel</h2>
+      
+      <div class="lockdown-content" id="lockdownText">
+        Er is een nieuw operationeel bevel binnengekomen.
+      </div>
 
-  <!-- AUTH / TEAM LOGIN OVERLAY -->
+      <!-- Audio Player indien leiding audio heeft meegestuurd -->
+      <div id="lockdownAudioContainer" style="display: none; width: 100%; margin: 1rem 0;">
+        <audio id="lockdownAudioPlayer" controls style="width: 100%; border-radius: 8px;"></audio>
+      </div>
+
+      <button class="btn btn-primary btn-block" onclick="dismissLockdown()">✓ BEGREPEN & ONTGRENDEL SCHERM</button>
+    </div>
+  </div>
+
+  <!-- TEAM AUTH / LOGIN -->
   <div class="auth-wrapper" id="authGateModal">
     <div class="auth-card">
-      <div class="auth-badge">AUTHENTICATIE VEREIST</div>
-      <h2 class="auth-title">Koppel AI Terminal</h2>
-      <p class="auth-subtitle">Selecteer jouw team en log in met jullie pincode of wachtwoord.</p>
+      <div class="auth-badge">TERMINAL TOEGANG</div>
+      <h2>Selecteer AI Team</h2>
+      <p class="auth-sub">Log in met de pincode of het wachtwoord van jouw team.</p>
 
       <div class="form-group">
-        <label for="gateTeamSelect">AI Systeem Cluster</label>
-        <select id="gateTeamSelect" class="modern-input" onchange="onGateTeamChange()">
-          <option value="chatgpt">🟢 Team ChatGPT (GPT-4o)</option>
-          <option value="midjourney">🎨 Team Midjourney (v6.1)</option>
-          <option value="gemini">✨ Team Gemini (1.5 Pro)</option>
-          <option value="sora">🎬 Team Sora (Diffusion)</option>
-          <option value="copilot">⚡ Team Copilot (Neural Auto)</option>
+        <label for="gateTeamSelect">Kies je AI Cluster:</label>
+        <select id="gateTeamSelect" class="modern-select" onchange="onGateTeamChange()">
+          <option value="chatgpt">🟢 Team ChatGPT</option>
+          <option value="midjourney">🎨 Team Midjourney</option>
+          <option value="gemini">✨ Team Gemini</option>
+          <option value="claude">🧠 Team Claude</option>
+          <option value="sora">🎬 Team Sora</option>
+          <option value="copilot">⚡ Team Copilot</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label id="gatePassLabel" for="gatePasswordInput">Toegangscode / Pincode</label>
+        <label id="gatePassLabel" for="gatePasswordInput">Toegangscode:</label>
         <input type="password" id="gatePasswordInput" class="modern-input" placeholder="Voer code in...">
       </div>
 
       <p id="gateErrorMsg" class="auth-error"></p>
 
-      <button class="btn btn-primary btn-block" onclick="submitTeamAuth()">Terminal Ontgrendelen →</button>
+      <button class="btn btn-primary btn-block" onclick="submitTeamAuth()">Inloggen →</button>
     </div>
   </div>
 
-  <!-- MAIN APP CONTAINER -->
+  <!-- HOOFD APPLICATIE -->
   <div class="app-shell">
     
-    <!-- TOP NAVIGATION & STATUS BAR -->
+    <!-- HEADER -->
     <header class="app-header">
-      <div class="header-brand">
-        <div class="brand-logo">AI</div>
-        <div>
-          <h1 class="brand-title">THE BATTLE OF THE AIs</h1>
-          <div class="brand-status">
-            <span class="status-indicator"></span>
-            <span id="activeNodeLabel">NODE CONNECTED</span>
-          </div>
+      <div class="header-left">
+        <div class="team-pill">
+          <span id="headerTeamIcon">🤖</span>
+          <span id="headerTeamName">Team ChatGPT</span>
         </div>
       </div>
 
-      <!-- Center Countdown & Threat -->
       <div class="header-center">
-        <div class="timer-badge">
-          <span class="timer-label">Resterende Tijd</span>
-          <span class="timer-value" id="gameTimer">02:00:00</span>
-        </div>
-        <div class="integrity-pill">
-          <div class="integrity-label-row">
-            <span>Systeem Integriteit</span>
-            <strong id="integrityVal">100%</strong>
-          </div>
-          <div class="integrity-track">
-            <div class="integrity-progress" id="integrityFill"></div>
-          </div>
+        <div class="timer-box">
+          <span class="timer-lbl">Resterende Tijd</span>
+          <span class="timer-val" id="gameTimer">02:00:00</span>
         </div>
       </div>
 
-      <!-- Right Actions -->
-      <div class="header-actions">
-        <button class="icon-btn" id="audioToggleBtn" title="Geluidseffecten">
-          🔊 SFX: <span id="sfxStatus">AAN</span>
-        </button>
-        <button class="btn btn-secondary btn-sm" onclick="logoutCurrentTeam()">Uitloggen 🔒</button>
+      <div class="header-right">
+        <div class="score-pill">
+          Score: <strong id="headerTeamScore">0 PTS</strong>
+        </div>
+        <button class="btn-text" onclick="logoutCurrentTeam()">Uitloggen</button>
       </div>
     </header>
 
-    <!-- SYSTEM BROADCAST NOTIFICATION -->
-    <div class="broadcast-banner" id="broadcastBanner">
-      <div class="broadcast-badge">LIVE COMMUNICATIE</div>
-      <div class="broadcast-text" id="broadcastDisplay">
-        ⚠️ Virus GLITCH heeft de Master Core vergrendeld. Voer de missies uit en stuur jullie bewijzen naar de WhatsApp server om de Mastermind codes te bemachtigen!
-      </div>
+    <!-- LIVE LEIDING BERICHT -->
+    <div class="broadcast-bar" id="broadcastBanner">
+      <span class="broadcast-tag">Bericht:</span>
+      <span class="broadcast-msg" id="broadcastDisplay">Virus GLITCH is actief. Voer opdrachten uit om Mastermind decryptie-sleutels te bemachtigen!</span>
     </div>
 
-    <!-- MAIN DASHBOARD CONTENT -->
-    <div class="dashboard-grid">
+    <!-- TABS NAVIGATIE -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('sectors')">🎯 Opdrachten & Sectoren</button>
+      <button class="tab-btn" onclick="switchTab('mastermind')">🧩 Mastermind Kladbord</button>
+      <button class="tab-btn" onclick="switchTab('map')">📍 Locaties</button>
+      <button class="tab-btn" onclick="switchTab('binary')">⚡ Binaire Decoder</button>
+    </nav>
+
+    <!-- TAB 1: OPDRACHTEN -->
+    <main id="tab-sectors" class="tab-content active">
       
-      <!-- LEFT SIDEBAR -->
-      <aside class="dashboard-sidebar">
-        
-        <!-- Team Card -->
-        <div class="glass-card team-card">
-          <div class="team-header">
-            <div class="team-avatar" id="teamAvatarIcon">🤖</div>
-            <div>
-              <h2 id="currentTeamTitle">Team ChatGPT</h2>
-              <span class="team-role" id="currentTeamSpec">Supercluster</span>
+      <div class="sub-header">
+        <div>
+          <h2>Overzicht Opdrachten</h2>
+          <p>Voer de opdrachten fysiek uit op de post en stuur het bewijs via je gsm.</p>
+        </div>
+        <div class="filters">
+          <button class="filter-btn active" onclick="filterSectors('all')">Alles</button>
+          <button class="filter-btn" onclick="filterSectors('1')">Sector 1</button>
+          <button class="filter-btn" onclick="filterSectors('2')">Sector 2</button>
+          <button class="filter-btn" onclick="filterSectors('3')">Sector 3</button>
+          <button class="filter-btn" onclick="filterSectors('4')">Sector 4</button>
+        </div>
+      </div>
+
+      <div class="sectors-grid" id="sectorsContainer">
+        <!-- Dynamisch ingeladen -->
+      </div>
+
+    </main>
+
+    <!-- TAB 2: MASTERMIND -->
+    <main id="tab-mastermind" class="tab-content">
+      <div class="sub-header">
+        <div>
+          <h2>Mastermind Kladbord</h2>
+          <p>Kleur bolletjes in per voltooide opdracht. Test codes voordat je naar de Centrale Post rent.</p>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="resetMastermindRows()">Kladbord Wissen</button>
+      </div>
+
+      <div class="mastermind-layout">
+        <div class="card mm-board-card">
+          <div class="palette-row">
+            <span>Beschikbare kleuren:</span>
+            <div class="colors-list">
+              <span class="badge-col" style="background:#ef4444;">🔴 Rood</span>
+              <span class="badge-col" style="background:#3b82f6;">🔵 Blauw</span>
+              <span class="badge-col" style="background:#10b981;">🟢 Groen</span>
+              <span class="badge-col" style="background:#f59e0b; color:#000;">🟡 Geel</span>
+              <span class="badge-col" style="background:#f97316; color:#000;">🟠 Oranje</span>
+              <span class="badge-col" style="background:#8b5cf6;">🟣 Paars</span>
             </div>
           </div>
 
-          <div class="stats-row">
-            <div class="stat-box">
-              <span class="stat-lbl">Punten</span>
-              <span class="stat-val" id="teamPointsScore">0 PTS</span>
-            </div>
-            <div class="stat-box">
-              <span class="stat-lbl">Voltooid</span>
-              <span class="stat-val" id="teamTasksCount">0 / 12</span>
-            </div>
-          </div>
+          <div class="mm-rows" id="mastermindBoard"></div>
+        </div>
 
-          <div class="core-status-box">
-            <span class="core-status-lbl">Master Core Status</span>
-            <span class="core-status-badge" id="teamCoreStatus">VERGRENDELD</span>
+        <div class="card mm-legend-card">
+          <h3>Feedback Betekenis</h3>
+          <div class="legend-item">
+            <div class="pin pin-black"></div>
+            <div><strong>Zwarte Pin (⬛)</strong>: Juiste kleur & juiste positie.</div>
+          </div>
+          <div class="legend-item">
+            <div class="pin pin-white"></div>
+            <div><strong>Witte Pin (⬜)</strong>: Juiste kleur, maar foute positie.</div>
+          </div>
+          <div class="tip-card">
+            💡 <strong>Volle rij van 4?</strong> Ren met je fysieke Hack-Kaart naar de Centrale Post voor officiële feedback!
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- TAB 3: LOCATIES -->
+    <main id="tab-map" class="tab-content">
+      <div class="sub-header">
+        <h2>Terrein Coördinaten</h2>
+      </div>
+      <div class="locations-list">
+        <div class="card loc-item">
+          <span class="loc-badge">SECTOR 1</span>
+          <h3>Prompt Engineering</h3>
+          <p class="loc-place">📍 Achter de Hoofdtent</p>
+          <p class="loc-desc">LEGO reconstructie via walkietalkie, blind navigatie & censuurprotocol.</p>
+        </div>
+        <div class="card loc-item">
+          <span class="loc-badge">SECTOR 2</span>
+          <h3>Creative Neural Net</h3>
+          <p class="loc-place">📍 Bij het Open Veld</p>
+          <p class="loc-desc">Generatieve hallucinaties tekenen, robotdans synchroniseren & deepfakes ontdekken.</p>
+        </div>
+        <div class="card loc-item">
+          <span class="loc-badge">SECTOR 3</span>
+          <h3>Cybersecurity Firewall</h3>
+          <p class="loc-place">📍 In het Bos</p>
+          <p class="loc-desc">DDoS ontwijken met trefballen, touwenparcours met belletjes & chip-extractie.</p>
+        </div>
+        <div class="card loc-item">
+          <span class="loc-badge">SECTOR 4</span>
+          <h3>Machine Learning Logic</h3>
+          <p class="loc-place">📍 Bij het Kampvuur</p>
+          <p class="loc-desc">Sorteeralgoritmes kraken, teamknopen ontwarren & binaire cryptografie.</p>
+        </div>
+        <div class="card loc-item central-card">
+          <span class="loc-badge" style="background:#10b981;">CENTRALE BASIS</span>
+          <h3>CENTRALE POST // MASTER CORE</h3>
+          <p class="loc-place">📍 Centraal Plein</p>
+          <p class="loc-desc">Hier valideert de leiding je Mastermind poging en open je de Master Core kluis!</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- TAB 4: BINAIR DECODER -->
+    <main id="tab-binary" class="tab-content">
+      <div class="sub-header">
+        <h2>Binaire Decoder (Sector 4 Opdracht C)</h2>
+      </div>
+      <div class="binary-grid">
+        <div class="card">
+          <label for="binaryInput" class="form-label">Voer 8-bit binaire code in (met spaties):</label>
+          <textarea id="binaryInput" rows="3" class="modern-input" placeholder="01000001 01001001..."></textarea>
+          <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+            <button class="btn btn-primary" onclick="decodeBinary()">Decoderen</button>
+            <button class="btn btn-secondary" onclick="clearBinary()">Wissen</button>
+          </div>
+          <div class="binary-result-box">
+            <span>Resultaat:</span>
+            <div id="binaryOutput">-- Geen invoer --</div>
           </div>
         </div>
 
-        <!-- Navigation Tabs -->
-        <nav class="side-nav">
-          <button class="nav-item active" onclick="switchTab('sectors')">
-            <span class="nav-icon">🎯</span> Missies & Sectoren
-          </button>
-          <button class="nav-item" onclick="switchTab('mastermind')">
-            <span class="nav-icon">🧩</span> Mastermind Simulator
-          </button>
-          <button class="nav-item" onclick="switchTab('map')">
-            <span class="nav-icon">📍</span> Locatie Kaart
-          </button>
-          <button class="nav-item" onclick="switchTab('binary')">
-            <span class="nav-icon">⚡</span> Binaire Decryptie
-          </button>
-        </nav>
-
-        <!-- Admin Access Button -->
-        <button class="admin-trigger-btn" onclick="openAdminModal()">
-          ⚙️ Centrale Post / Leiding Backsite
-        </button>
-
-      </aside>
-
-      <!-- MAIN CONTENT VIEWPORT -->
-      <main class="dashboard-main">
-        
-        <!-- TAB 1: SECTOREN & MISSIES -->
-        <div id="tab-sectors" class="tab-pane active">
-          
-          <div class="main-header">
-            <div>
-              <h2>Operaties & Sectoren</h2>
-              <p>Voer de opdrachten fysiek uit op de posten en stuur het bewijs door.</p>
-            </div>
-            <div class="filter-group">
-              <button class="filter-chip active" onclick="filterSectors('all')">Alles</button>
-              <button class="filter-chip" onclick="filterSectors('1')">Sector 1</button>
-              <button class="filter-chip" onclick="filterSectors('2')">Sector 2</button>
-              <button class="filter-chip" onclick="filterSectors('3')">Sector 3</button>
-              <button class="filter-chip" onclick="filterSectors('4')">Sector 4</button>
-            </div>
-          </div>
-
-          <div class="sectors-list" id="sectorsContainer">
-            <!-- Dynamisch gevuld via script.js -->
-          </div>
-
-        </div>
-
-        <!-- TAB 2: MASTERMIND -->
-        <div id="tab-mastermind" class="tab-pane">
-          <div class="main-header">
-            <div>
-              <h2>Mastermind Codebreaker</h2>
-              <p>Kleur bolletjes in na voltooide missies en test hypotheses voor de kluiscode.</p>
-            </div>
-            <button class="btn btn-secondary btn-sm" onclick="resetMastermindRows()">Kladbord Wissen</button>
-          </div>
-
-          <div class="mastermind-grid">
-            <div class="glass-card mm-board-card">
-              <div class="palette-bar">
-                <span>Selecteerbare Energie-Kleuren:</span>
-                <div class="color-tags">
-                  <span class="tag-color" style="background:#ef4444;">🔴 Rood</span>
-                  <span class="tag-color" style="background:#3b82f6;">🔵 Blauw</span>
-                  <span class="tag-color" style="background:#10b981;">🟢 Groen</span>
-                  <span class="tag-color" style="background:#f59e0b; color:#000;">🟡 Geel</span>
-                  <span class="tag-color" style="background:#f97316; color:#000;">🟠 Oranje</span>
-                  <span class="tag-color" style="background:#8b5cf6;">🟣 Paars</span>
-                </div>
-              </div>
-              <div class="mm-rows-container" id="mastermindBoard">
-                <!-- Dynamisch gevuld -->
-              </div>
-            </div>
-
-            <div class="glass-card mm-info-card">
-              <h3>Spelregels & Feedback</h3>
-              <div class="rule-item">
-                <div class="pin pin-black"></div>
-                <div>
-                  <strong>Zwarte pin (⬛)</strong>
-                  <p>Juiste kleur op exact de juiste plek.</p>
-                </div>
-              </div>
-              <div class="rule-item">
-                <div class="pin pin-white"></div>
-                <div>
-                  <strong>Witte pin (⬜)</strong>
-                  <p>Juiste kleur, maar foute plek.</p>
-                </div>
-              </div>
-              <div class="notice-box">
-                💡 <strong>Validatie:</strong> Ren met 4 ingevulde kleuren naar de Centrale Post om fysiek te testen!
-              </div>
-            </div>
+        <div class="card ascii-card">
+          <h3>ASCII Referentie</h3>
+          <div class="ascii-columns">
+            <div>A = 01000001</div><div>B = 01000010</div><div>C = 01000011</div><div>D = 01000100</div>
+            <div>E = 01000101</div><div>F = 01000110</div><div>G = 01000111</div><div>H = 01001000</div>
+            <div>I = 01001001</div><div>J = 01001010</div><div>K = 01001011</div><div>L = 01001100</div>
+            <div>M = 01001101</div><div>N = 01001110</div><div>O = 01001111</div><div>P = 01010000</div>
+            <div>Q = 01010001</div><div>R = 01010010</div><div>S = 01010011</div><div>T = 01010100</div>
+            <div>U = 01010101</div><div>V = 01010110</div><div>W = 01010111</div><div>X = 01011000</div>
+            <div>Y = 01011001</div><div>Z = 01011010</div>
           </div>
         </div>
+      </div>
+    </main>
 
-        <!-- TAB 3: LOCATIE KAART -->
-        <div id="tab-map" class="tab-pane">
-          <div class="main-header">
-            <div>
-              <h2>Terrein Coördinaten</h2>
-              <p>Overzicht van de fysieke posten en de centrale basis.</p>
-            </div>
-          </div>
-
-          <div class="locations-grid">
-            <div class="glass-card loc-card">
-              <div class="loc-tag">SECTOR 1</div>
-              <h3>Prompt Engineering</h3>
-              <p class="loc-spot">📍 <strong>Achter de Hoofdtent</strong></p>
-              <p class="loc-desc">LEGO-communicatie via walkietalkie, blind navigatie & censuur protocol.</p>
-            </div>
-            <div class="glass-card loc-card">
-              <div class="loc-tag">SECTOR 2</div>
-              <h3>Creative Neural Net</h3>
-              <p class="loc-spot">📍 <strong>Bij het Open Veld</strong></p>
-              <p class="loc-desc">Generatieve hallucinaties tekenen, motion tracking dance & deepfake inspectie.</p>
-            </div>
-            <div class="glass-card loc-card">
-              <div class="loc-tag">SECTOR 3</div>
-              <h3>Cybersecurity Firewall</h3>
-              <p class="loc-spot">📍 <strong>In het Bos</strong></p>
-              <p class="loc-desc">DDoS ontwijking, laser bellentouw doorkruisen & hardware microchip extractie.</p>
-            </div>
-            <div class="glass-card loc-card">
-              <div class="loc-tag">SECTOR 4</div>
-              <h3>Machine Learning Logic</h3>
-              <p class="loc-spot">📍 <strong>Bij het Kampvuur</strong></p>
-              <p class="loc-desc">Sorteerpatronen ontdekken, bug knopen ontwarren & binaire cryptografie.</p>
-            </div>
-            <div class="glass-card loc-card featured-loc">
-              <div class="loc-tag">HOOFDKWARTIER</div>
-              <h3>CENTRALE POST // MASTER CORE</h3>
-              <p class="loc-spot">📍 <strong>Centraal Plein</strong></p>
-              <p class="loc-desc">Laat hier je voltooide Mastermind rijen controleren door de spelleiding en ontgrendel de fysieke Core-kist!</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB 4: BINAIR / ASCII -->
-        <div id="tab-binary" class="tab-pane">
-          <div class="main-header">
-            <div>
-              <h2>Binaire Decryptie Module</h2>
-              <p>Hulptool voor Sector 4 Opdracht C (ASCII Decodering).</p>
-            </div>
-          </div>
-
-          <div class="binary-layout">
-            <div class="glass-card">
-              <label for="binaryInput" class="input-label">Binaire reeks (gescheiden door spaties):</label>
-              <textarea id="binaryInput" rows="3" class="modern-input" placeholder="01000001 01001001..."></textarea>
-              <div class="btn-group">
-                <button class="btn btn-primary" onclick="decodeBinary()">Decoderen</button>
-                <button class="btn btn-secondary" onclick="clearBinary()">Wissen</button>
-              </div>
-              <div class="binary-output-box">
-                <span class="output-label">Resultaat:</span>
-                <div class="output-text" id="binaryOutput">-- Invoer vereist --</div>
-              </div>
-            </div>
-
-            <div class="glass-card ascii-ref-card">
-              <h3>ASCII Referentiesleutel</h3>
-              <div class="ascii-grid">
-                <div>A = 01000001</div><div>B = 01000010</div><div>C = 01000011</div><div>D = 01000100</div>
-                <div>E = 01000101</div><div>F = 01000110</div><div>G = 01000111</div><div>H = 01001000</div>
-                <div>I = 01001001</div><div>J = 01001010</div><div>K = 01001011</div><div>L = 01001100</div>
-                <div>M = 01001101</div><div>N = 01001110</div><div>O = 01001111</div><div>P = 01010000</div>
-                <div>Q = 01010001</div><div>R = 01010010</div><div>S = 01010011</div><div>T = 01010100</div>
-                <div>U = 01010101</div><div>V = 01010110</div><div>W = 01010111</div><div>X = 01011000</div>
-                <div>Y = 01011001</div><div>Z = 01011010</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </main>
-    </div>
+    <!-- FOOTER MET ADMIN LINK -->
+    <footer class="app-footer">
+      <button class="btn-text" onclick="openAdminModal()">⚙️ Centrale Post / Leiding Paneel</button>
+    </footer>
 
   </div>
 
-  <!-- WHATSAPP EVIDENCE MODAL -->
+  <!-- GSM BEWIJS INSTRUCTIE MODAL -->
   <div class="modal-backdrop" id="evidenceModal">
-    <div class="glass-card modal-panel">
+    <div class="card modal-card">
       <div class="modal-header">
-        <h3>Bewijs Indienen voor Verificatie</h3>
-        <button class="modal-close" onclick="closeEvidenceModal()">✕</button>
+        <h3>Bewijs Versturen via Smartphone</h3>
+        <button class="modal-close-btn" onclick="closeEvidenceModal()">✕</button>
       </div>
       <div class="modal-body">
-        <p>Stuur een foto, video of de antwoordcode door naar de server van de spelleiding:</p>
+        <p>Neem jullie eigen smartphone en stuur het bewijs (foto, video of oplossing) door naar het centrale nummer van de leiding:</p>
         
-        <div class="evidence-box">
-          <div class="evidence-lbl">WHATSAPP SERVER CONTACT</div>
-          <div class="evidence-num">📱 +32 475 84 89 83</div>
-          <div class="evidence-tag" id="evidenceTaskLabel">Sector 1 - Opdracht A</div>
+        <div class="phone-box">
+          <div class="phone-lbl">STUUR BERICHT NAAR:</div>
+          <div class="phone-number">📱 0475 84 89 83</div>
+          <div class="phone-tag" id="evidenceTaskLabel">Sector 1 - Opdracht A</div>
         </div>
 
-        <p class="evidence-hint">
-          Klik op de knop om WhatsApp te openen. Zodra je het bewijs verstuurt, zet het systeem je opdracht op <em>"In Verificatie"</em> totdat de leiding jullie beloont met punten!
-        </p>
-
-        <div class="modal-actions">
-          <a id="whatsappDirectLink" href="#" target="_blank" class="btn btn-whatsapp" onclick="confirmEvidenceSent()">
-            🚀 Open WhatsApp & Verstuur
-          </a>
-          <button class="btn btn-secondary" onclick="confirmEvidenceSent()">Ik heb het al verstuurd</button>
+        <div class="phone-instruction">
+          <strong>Vermeld altijd in jullie bericht:</strong>
+          <code id="evidenceMessageTemplate">[Teamnaam] Bewijs voor Sector X - Opdracht Y</code>
         </div>
+
+        <button class="btn btn-primary btn-block" onclick="confirmEvidenceSent()">✓ Ik heb het bewijs verstuurd</button>
       </div>
     </div>
   </div>
 
-  <!-- ADMIN / BACKSITE MODAL -->
+  <!-- LEIDING BACKSITE MODAL -->
   <div class="modal-backdrop" id="adminModal">
-    <div class="glass-card modal-panel admin-panel">
+    <div class="card modal-card admin-card">
       <div class="modal-header">
-        <h3>⚙️ Spelleiding Beheerderspaneel</h3>
-        <button class="modal-close" onclick="closeAdminModal()">✕</button>
+        <h3>⚙️ Centrale Post Beheer</h3>
+        <button class="modal-close-btn" onclick="closeAdminModal()">✕</button>
       </div>
       <div class="modal-body">
         
+        <!-- Auth Step -->
         <div id="adminAuthSection">
-          <p>Voer het beheerderswachtwoord in om de backsite te ontgrendelen.</p>
-          <div class="auth-inline-row">
+          <p>Voer het beheerderswachtwoord in:</p>
+          <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
             <input type="password" id="adminPasswordInput" class="modern-input" placeholder="Wachtwoord (standaard: admin123)">
             <button class="btn btn-primary" onclick="loginAdmin()">Inloggen</button>
           </div>
           <p id="adminAuthError" class="auth-error" style="display:none;">Ongeldig wachtwoord.</p>
         </div>
 
+        <!-- Controls (na inloggen) -->
         <div id="adminControlsSection" style="display: none;">
           
-          <!-- WhatsApp Submissions Inbox -->
-          <div class="admin-block">
-            <h4>📥 Live WhatsApp Inzendingen & Rewards</h4>
-            <div class="table-container">
+          <!-- Live Noodbevel & Audio Upload Section -->
+          <div class="admin-section">
+            <h4>🚨 LIVE NOODBEVEL & AUDIO VERSTUREN (BLOKKEERT ALLE SCHERMEN)</h4>
+            <p class="admin-hint">Typ een dringend bericht en/of upload een audio-bestand. Teams moeten dit verplicht lezen/beluisteren en op 'Begrepen' drukken.</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+              <input type="text" id="adminEmergencyTitle" class="modern-input" placeholder="Titel (bijv. NOODALERT / GLITCH AANVAL)">
+              <textarea id="adminEmergencyText" rows="2" class="modern-input" placeholder="Dringend bericht voor alle schermen..."></textarea>
+              
+              <label style="font-size: 0.8rem; color: #94a3b8;">Optioneel: Audio-bestand toevoegen (mp3 / wav / m4a):</label>
+              <input type="file" id="adminAudioFileInput" accept="audio/*" class="modern-input">
+              
+              <button class="btn btn-primary" onclick="sendEmergencyLockdown()">🚨 VERSTUUR NOODBEVEL & BLOKKEER SCHERMEN</button>
+            </div>
+          </div>
+
+          <!-- Ingezonden Bewijzen & Goedkeuring -->
+          <div class="admin-section">
+            <h4>📥 Ingezonden Bewijzen (GSM Controle)</h4>
+            <div class="table-wrap">
               <table class="modern-table">
                 <thead>
                   <tr>
                     <th>Team</th>
                     <th>Opdracht</th>
                     <th>Status</th>
-                    <th>Acties</th>
+                    <th>Actie</th>
                   </tr>
                 </thead>
                 <tbody id="adminSubmissionsBody"></tbody>
@@ -381,18 +330,18 @@
             </div>
           </div>
 
-          <!-- Team Management -->
-          <div class="admin-block">
+          <!-- Teams Overzicht & Wachtwoorden -->
+          <div class="admin-section">
             <h4>👥 Teams, Scores & Wachtwoorden</h4>
-            <div class="table-container">
+            <div class="table-wrap">
               <table class="modern-table">
                 <thead>
                   <tr>
                     <th>Cluster</th>
                     <th>Score</th>
-                    <th>Voortgang</th>
-                    <th>Wachtwoord</th>
-                    <th>Acties</th>
+                    <th>Klaar</th>
+                    <th>Pincode</th>
+                    <th>Beheer</th>
                   </tr>
                 </thead>
                 <tbody id="adminTeamsManagerBody"></tbody>
@@ -400,19 +349,10 @@
             </div>
           </div>
 
-          <!-- Broadcast -->
-          <div class="admin-block">
-            <h4>📡 Live Broadcast Bericht Versturen</h4>
-            <div class="auth-inline-row">
-              <input type="text" id="adminBroadcastInput" class="modern-input" placeholder="Type nieuw bericht voor alle schermen...">
-              <button class="btn btn-primary" onclick="publishBroadcast()">Verstuur</button>
-            </div>
-          </div>
-
           <!-- Timer Controls -->
-          <div class="admin-block">
-            <h4>⏱️ Timer Instellingen</h4>
-            <div class="btn-group">
+          <div class="admin-section">
+            <h4>⏱️ Timer</h4>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
               <button class="btn btn-secondary btn-sm" onclick="startTimer()">▶️ Start</button>
               <button class="btn btn-secondary btn-sm" onclick="pauseTimer()">⏸️ Pauzeer</button>
               <button class="btn btn-secondary btn-sm" onclick="resetTimer(120)">🔄 120m</button>
@@ -426,7 +366,7 @@
     </div>
   </div>
 
-  <div id="toastNotification" class="modern-toast"></div>
+  <div id="toastNotification" class="toast"></div>
 
   <script src="script.js"></script>
 </body>
