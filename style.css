@@ -1,7 +1,3 @@
-/* ==========================================================================
-   AETHER_OS - RETRO CRT CYBER TERMINAL & STRUCTURED LAYOUT
-   ========================================================================== */
-
 :root {
   --bg: #050811;
   --panel: #0b1220;
@@ -41,7 +37,6 @@ body {
   overflow-x: hidden;
 }
 
-/* RETRO SCANLINE & VIGNETTE EFFECTS */
 .crt-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -59,29 +54,6 @@ body {
   z-index: 9999;
 }
 
-/* FLOATING SYSADMIN KNOP */
-.sysadmin-floating-btn {
-  position: fixed;
-  bottom: 1rem;
-  right: 1rem;
-  z-index: 10000;
-  background: rgba(11, 18, 32, 0.95);
-  border: 1px solid var(--primary);
-  color: var(--primary);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  padding: 0.4rem 0.8rem;
-  border-radius: var(--radius);
-  cursor: pointer;
-  box-shadow: 0 0 10px var(--primary-glow);
-}
-
-.sysadmin-floating-btn:hover {
-  background: var(--primary);
-  color: #000;
-}
-
-/* COCKPIT FULLSCREEN */
 .cockpit-container {
   width: 100%;
   min-height: 100vh;
@@ -91,7 +63,6 @@ body {
   gap: 1rem;
 }
 
-/* RETRO BOXES & CONTAINERS */
 .retro-box {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -124,7 +95,6 @@ body {
   box-shadow: 0 0 30px var(--emerald-glow);
 }
 
-/* TYPOGRAFIE */
 .retro-title {
   font-family: var(--font-display);
   font-size: 2.2rem;
@@ -175,7 +145,6 @@ body {
   to { opacity: 1; }
 }
 
-/* FORMS */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -229,7 +198,6 @@ body {
   margin-bottom: 0.5rem;
 }
 
-/* TOP NAVBAR */
 .top-nav {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -290,7 +258,6 @@ body {
   font-size: 1.1rem;
 }
 
-/* BROADCAST */
 .broadcast-banner {
   background: #050811;
   border-left: 3px solid var(--primary);
@@ -307,7 +274,6 @@ body {
   font-weight: bold;
 }
 
-/* TABS */
 .main-tabs-nav {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -356,7 +322,6 @@ body {
   font-weight: bold;
 }
 
-/* PROGRESS BAR VOOR MISSIES */
 .mission-progress-bar {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -384,7 +349,6 @@ body {
   transition: width 0.3s ease;
 }
 
-/* SECTORS / MISSIES GRID */
 .sectors-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -429,7 +393,6 @@ body {
   flex-grow: 1;
 }
 
-/* MASTERMIND (6 SLOTS) */
 .mastermind-grid-layout {
   display: grid;
   grid-template-columns: 1fr 300px;
@@ -558,7 +521,6 @@ body {
 .pin-black { background: #000; border-color: #fff; box-shadow: 0 0 4px #fff; }
 .pin-white { background: #fff; border-color: #fff; box-shadow: 0 0 4px #fff; }
 
-/* LEGEND */
 .panel-title {
   font-size: 1rem;
   color: var(--primary);
@@ -581,7 +543,6 @@ body {
   margin-top: 0.75rem;
 }
 
-/* BUTTONS */
 .retro-btn {
   font-family: var(--font-mono);
   font-size: 0.9rem;
@@ -613,7 +574,6 @@ body {
 .retro-link-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-family: var(--font-mono); font-size: 0.85rem; }
 .retro-link-btn:hover { color: #fff; }
 
-/* SCREENS & OVERLAYS */
 .terminal-screen {
   position: fixed;
   inset: 0;
@@ -678,7 +638,6 @@ body {
   margin-top: 0.25rem;
 }
 
-/* ANIMATIES */
 .alert-icon-big { font-size: 3rem; margin-bottom: 0.5rem; }
 .victory-icon-big { font-size: 3.5rem; color: var(--emerald); }
 .victory-code-display { font-size: 2rem; letter-spacing: 6px; margin: 0.75rem 0; }
@@ -689,7 +648,6 @@ body {
   line-height: 1.5;
 }
 
-/* ADMIN SECTIES */
 .admin-block {
   border-bottom: 1px solid var(--border);
   padding-bottom: 1rem;
@@ -729,7 +687,6 @@ body {
 .modern-table th { padding: 0.4rem; color: var(--text-muted); border-bottom: 1px solid var(--border); }
 .modern-table td { padding: 0.5rem 0.4rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
 
-/* FOOTER */
 .bottom-footer {
   display: flex;
   justify-content: space-between;
