@@ -1,494 +1,734 @@
-/* ==========================================================================
-   AI BATTLE TERMINAL - DUIDELIJK, RUSTIG & KINDVRIENDELIJK
-   ========================================================================== */
+/**
+ * AI BATTLE TERMINAL - EENVOUDIG & KINDVRIENDELIJK
+ */
 
-:root {
-  --bg: #0b0f19;
-  --card-bg: #131b2e;
-  --card-border: #24324d;
+const SECTORS_DATA = [
+  {
+    id: '1',
+    title: 'POST 1: PROMPT ENGINEERING',
+    location: 'Achter de Hoofdtent',
+    tasks: [
+      { id: 's1-a', code: 'Opdracht A', name: 'LEGO Nabouwen', desc: '1 teamlid praat via de walkietalkie en legt uit hoe het LEGO-bouwsel in elkaar zit.' },
+      { id: 's1-b', code: 'Opdracht B', name: 'Blinddoek Robot', desc: 'Blinddoek 1 teamlid en stuur hem/haar met stap-commando\'s door het veld.' },
+      { id: 's1-c', code: 'Opdracht C', name: 'Verboden Woorden', desc: 'Lees het verhaal voor zonder de 8 verboden woorden te zeggen.' }
+    ]
+  },
+  {
+    id: '2',
+    title: 'POST 2: CREATIVE NET',
+    location: 'Bij het Open Veld',
+    tasks: [
+      { id: 's2-a', code: 'Opdracht A', name: 'Tekening Raden', desc: '1 teamlid tekent een geheime opdracht. Het team moet het binnen 2 minuten raden.' },
+      { id: 's2-b', code: 'Opdracht B', name: 'Robotdans', desc: 'Kijk naar de dans van de posthouder en doe hem synchroon na met heel je team.' },
+      { id: 's2-c', code: 'Opdracht C', name: 'Deepfake Detector', desc: 'Bekijk de 10 foto\'s en zoek de 5 foto\'s die door AI gemaakt zijn.' }
+    ]
+  },
+  {
+    id: '3',
+    title: 'POST 3: CYBERSECURITY',
+    location: 'In het Bos',
+    tasks: [
+      { id: 's3-a', code: 'Opdracht A', name: 'Trefbal Veld', desc: 'Steek over zonder geraakt te worden. Minstens 6 kinderen moeten heelhuids overkomen.' },
+      { id: 's3-b', code: 'Opdracht B', name: 'Belletjes Web', desc: 'Kruip door het touwenweb. De belletjes mogen maximaal 1 keer rinkelen.' },
+      { id: 's3-c', code: 'Opdracht C', name: 'Chopsticks Vissen', desc: 'Haal 5 houten blokjes uit de modder/waterbak met enkel eetstokjes.' }
+    ]
+  },
+  {
+    id: '4',
+    title: 'POST 4: LOGICA & AI',
+    location: 'Bij het Kampvuur',
+    tasks: [
+      { id: 's4-a', code: 'Opdracht A', name: 'Kaarten Sorteren', desc: 'Ontdek binnen 2 pogingen volgens welke geheime regel de kaarten liggen.' },
+      { id: 's4-b', code: 'Opdracht B', name: 'Handenknoop', desc: 'Ontwar de armen van je team tot een grote cirkel zonder elkaars handen los te laten.' },
+      { id: 's4-c', code: 'Opdracht C', name: 'Geheimschrift', desc: 'Vertaal de binaire getallen (zoals 01000001 = A) naar het geheime woord.' }
+    ]
+  }
+];
+
+const TEAMS_INFO = {
+  chatgpt: { name: 'Team ChatGPT', icon: '🟢' },
+  midjourney: { name: 'Team Midjourney', icon: '🎨' },
+  gemini: { name: 'Team Gemini', icon: '✨' },
+  claude: { name: 'Team Claude', icon: '🧠' },
+  sora: { name: 'Team Sora', icon: '🎬' },
+  copilot: { name: 'Team Copilot', icon: '⚡' }
+};
+
+const COLOR_MAP = {
+  red: '🔴 Rood',
+  blue: '🔵 Blauw',
+  green: '🟢 Groen',
+  yellow: '🟡 Geel',
+  orange: '🟠 Oranje',
+  purple: '🟣 Paars'
+};
+
+let authenticatedTeam = null;
+let currentlySelectedColor = 'red';
+
+function getStorageKey(team, subkey) {
+  return `aibattle_${team}_${subkey}`;
+}
+
+function getTeamPassword(teamKey) {
+  return localStorage.getItem(`aibattle_pw_${teamKey}`);
+}
+
+function setTeamPassword(teamKey, newPw) {
+  localStorage.setItem(`aibattle_pw_${teamKey}`, newPw);
+}
+
+// INLOGGEN
+function onGateTeamChange() {
+  const teamKey = document.getElementById('gateTeamSelect').value;
+  const existingPw = getTeamPassword(teamKey);
+  const label = document.getElementById('gatePassLabel');
+  const input = document.getElementById('gatePasswordInput');
+  input.value = '';
+  document.getElementById('gateErrorMsg').innerText = '';
+
+  if (!existingPw) {
+    label.innerText = "Kies een NIEUWE code voor dit team:";
+    input.placeholder = "Kies een code...";
+  } else {
+    label.innerText = "Geheime Code / Pincode:";
+    input.placeholder = "Typ jullie code...";
+  }
+}
+
+function submitTeamAuth() {
+  const teamKey = document.getElementById('gateTeamSelect').value;
+  const enteredPw = document.getElementById('gatePasswordInput').value.trim();
+  const existingPw = getTeamPassword(teamKey);
+  const errorEl = document.getElementById('gateErrorMsg');
+
+  if (!enteredPw) {
+    errorEl.innerText = "Typ een code in.";
+    return;
+  }
+
+  if (!existingPw) {
+    setTeamPassword(teamKey, enteredPw);
+    loginSuccess(teamKey);
+    showToast(`Code opgeslagen voor ${TEAMS_INFO[teamKey].name}!`);
+  } else if (existingPw === enteredPw || enteredPw === 'admin123') {
+    loginSuccess(teamKey);
+  } else {
+    errorEl.innerText = "Verkeerde code!";
+  }
+}
+
+function loginSuccess(teamKey) {
+  authenticatedTeam = teamKey;
+  sessionStorage.setItem('aibattle_active_team', teamKey);
+  document.getElementById('authGateModal').style.display = 'none';
+
+  const info = TEAMS_INFO[teamKey];
+  document.getElementById('headerTeamIcon').innerText = info.icon;
+  document.getElementById('headerTeamName').innerText = info.name;
+
+  renderSectors();
+  initMastermind();
+  updateTeamStats();
+  checkEmergencyLockdown();
+}
+
+function logoutCurrentTeam() {
+  sessionStorage.removeItem('aibattle_active_team');
+  authenticatedTeam = null;
+  document.getElementById('authGateModal').style.display = 'flex';
+  onGateTeamChange();
+}
+
+// OPDRACHTEN
+let activePendingTask = null;
+
+function renderSectors() {
+  if (!authenticatedTeam) return;
+  const container = document.getElementById('sectorsContainer');
+  container.innerHTML = '';
+
+  const savedTasks = JSON.parse(localStorage.getItem(getStorageKey(authenticatedTeam, 'tasks')) || '{}');
+
+  SECTORS_DATA.forEach(sec => {
+    const card = document.createElement('div');
+    card.className = 'card sector-card';
+
+    let tasksHTML = '';
+    sec.tasks.forEach(t => {
+      const status = savedTasks[t.id] || 'open';
+      let btnLabel = 'Stuur Bewijs via GSM 📱';
+      let btnClass = '';
+
+      if (status === 'pending') {
+        btnLabel = 'Wacht op leiding... ⏳';
+        btnClass = 'pending-btn';
+      } else if (status === 'approved') {
+        btnLabel = 'Goedgekeurd (+1 Token) ✓';
+        btnClass = 'done-btn';
+      }
+
+      tasksHTML += `
+        <div class="task-item ${status}">
+          <div class="task-top">${t.code}: ${t.name}</div>
+          <p class="task-desc">${t.desc}</p>
+          <button class="task-btn ${btnClass}" onclick="openPhoneEvidence('${sec.title}', '${t.id}', '${t.code}: ${t.name}')" ${status === 'approved' ? 'disabled' : ''}>
+            ${btnLabel}
+          </button>
+        </div>
+      `;
+    });
+
+    card.innerHTML = `
+      <h3>${sec.title}</h3>
+      <div class="sec-loc">📍 ${sec.location}</div>
+      <div class="task-list">${tasksHTML}</div>
+    `;
+
+    container.appendChild(card);
+  });
+
+  updateTeamStats();
+}
+
+function openPhoneEvidence(sectorTitle, taskId, taskName) {
+  activePendingTask = { sectorTitle, taskId, taskName, teamKey: authenticatedTeam };
+  const teamName = TEAMS_INFO[authenticatedTeam].name;
+
+  document.getElementById('evidenceTaskLabel').innerText = `${sectorTitle} - ${taskName}`;
+  document.getElementById('evidenceMessageTemplate').innerText = `${teamName} - ${taskName}`;
+  document.getElementById('evidenceModal').classList.add('open');
+}
+
+function closeEvidenceModal() {
+  document.getElementById('evidenceModal').classList.remove('open');
+}
+
+function confirmEvidenceSent() {
+  if (!activePendingTask) return;
+  const key = getStorageKey(activePendingTask.teamKey, 'tasks');
+  const savedTasks = JSON.parse(localStorage.getItem(key) || '{}');
   
-  --primary: #38bdf8;
-  --primary-hover: #0284c7;
-  --emerald: #10b981;
-  --amber: #f59e0b;
-  --rose: #f43f5e;
+  savedTasks[activePendingTask.taskId] = 'pending';
+  localStorage.setItem(key, JSON.stringify(savedTasks));
 
-  --text-main: #ffffff;
-  --text-sub: #cbd5e1;
-  --text-muted: #94a3b8;
+  const subs = JSON.parse(localStorage.getItem('aibattle_submissions') || '[]');
+  const existing = subs.findIndex(s => s.teamKey === activePendingTask.teamKey && s.taskId === activePendingTask.taskId);
+  const entry = {
+    teamKey: activePendingTask.teamKey,
+    taskId: activePendingTask.taskId,
+    taskName: activePendingTask.taskName,
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    status: 'pending'
+  };
 
-  --radius: 12px;
-  --font: 'Plus Jakarta Sans', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  if (existing >= 0) subs[existing] = entry;
+  else subs.unshift(entry);
+  localStorage.setItem('aibattle_submissions', JSON.stringify(subs));
+
+  closeEvidenceModal();
+  renderSectors();
+  showToast("Doorgestuurd! De leiding kijkt ernaar.");
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  background-color: var(--bg);
-  color: var(--text-main);
-  font-family: var(--font);
-  font-size: 16px;
-  min-height: 100vh;
+// MASTERMIND
+function getTeamCredits(teamKey) {
+  return parseInt(localStorage.getItem(getStorageKey(teamKey, 'credits')) || '0', 10);
 }
 
-.app-shell {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+function setTeamCredits(teamKey, count) {
+  localStorage.setItem(getStorageKey(teamKey, 'credits'), Math.max(0, count));
+  updateTeamStats();
 }
 
-.card {
-  background: var(--card-bg);
-  border: 2px solid var(--card-border);
-  border-radius: var(--radius);
-  padding: 1.25rem;
+function selectColor(colorName) {
+  currentlySelectedColor = colorName;
+  document.querySelectorAll('.pal-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.classList.contains(colorName));
+  });
 }
 
-/* HEADER */
-.app-header {
-  background: var(--card-bg);
-  border: 2px solid var(--card-border);
-  border-radius: var(--radius);
-  padding: 0.75rem 1.25rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+function initMastermind() {
+  if (!authenticatedTeam) return;
+  const board = document.getElementById('mastermindBoard');
+  board.innerHTML = '';
+
+  const mmData = JSON.parse(localStorage.getItem(getStorageKey(authenticatedTeam, 'mastermind_state')) || '{}');
+  const currentActiveRow = parseInt(localStorage.getItem(getStorageKey(authenticatedTeam, 'active_row')) || '1', 10);
+
+  for (let r = 1; r <= 6; r++) {
+    const rowObj = mmData[r] || { colors: ['none', 'none', 'none', 'none'], pins: [], status: 'editing' };
+    const isCurrentActive = (r === currentActiveRow);
+    const isLocked = (r < currentActiveRow || rowObj.status === 'evaluated');
+
+    const rowCard = document.createElement('div');
+    rowCard.className = `mm-row-card ${isCurrentActive ? 'active-row' : ''}`;
+
+    let slotsHTML = '<div class="mm-dots-row">';
+    for (let c = 0; c < 4; c++) {
+      const col = rowObj.colors[c] || 'none';
+      slotsHTML += `
+        <div class="mm-slot ${col !== 'none' ? 'filled' : ''}" 
+             data-color="${col}" 
+             onclick="handleSlotClick(${r}, ${c}, ${isCurrentActive && !isLocked})">
+        </div>`;
+    }
+    slotsHTML += '</div>';
+
+    let actionHTML = '<div class="mm-row-actions">';
+    if (rowObj.status === 'evaluated') {
+      let pinsHTML = '<div class="mm-feedback-pins-grid">';
+      rowObj.pins.forEach(pin => {
+        pinsHTML += `<div class="pin pin-${pin}"></div>`;
+      });
+      for (let i = rowObj.pins.length; i < 4; i++) {
+        pinsHTML += `<div class="pin"></div>`;
+      }
+      pinsHTML += '</div>';
+      actionHTML += pinsHTML;
+    } else if (rowObj.status === 'pending_validation') {
+      actionHTML += `<span style="font-size:0.75rem; color:var(--amber); font-weight:bold;">⏳ Ren naar de Centrale Post!</span>`;
+    } else if (isCurrentActive) {
+      const allFilled = rowObj.colors.every(c => c !== 'none');
+      if (allFilled) {
+        actionHTML += `<button class="mm-submit-btn" onclick="submitRowForValidation(${r})">Test bij Post 🚀</button>`;
+      } else {
+        actionHTML += `<span style="font-size:0.75rem; color:var(--text-muted);">Kleur 4 bollen</span>`;
+      }
+    }
+    actionHTML += '</div>';
+
+    rowCard.innerHTML = `
+      <span class="mm-row-lbl">Rij ${r}</span>
+      ${slotsHTML}
+      ${actionHTML}
+    `;
+
+    board.appendChild(rowCard);
+  }
+
+  updateTeamStats();
 }
 
-.team-badge {
-  font-size: 1.15rem;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--primary);
+function handleSlotClick(row, slotIndex, isAllowed) {
+  if (!isAllowed) return;
+
+  const mmData = JSON.parse(localStorage.getItem(getStorageKey(authenticatedTeam, 'mastermind_state')) || '{}');
+  if (!mmData[row]) mmData[row] = { colors: ['none', 'none', 'none', 'none'], pins: [], status: 'editing' };
+
+  const currentColor = mmData[row].colors[slotIndex];
+  const credits = getTeamCredits(authenticatedTeam);
+
+  if (currentColor === 'none') {
+    if (credits <= 0) {
+      return alert("Je hebt 0 tokens! Doe eerst een opdracht op een post om nieuwe tokens te verdienen.");
+    }
+    mmData[row].colors[slotIndex] = currentlySelectedColor;
+    setTeamCredits(authenticatedTeam, credits - 1);
+  } else {
+    mmData[row].colors[slotIndex] = currentlySelectedColor;
+  }
+
+  localStorage.setItem(getStorageKey(authenticatedTeam, 'mastermind_state'), JSON.stringify(mmData));
+  initMastermind();
 }
 
-.timer-val {
-  font-family: var(--font-mono);
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--rose);
-  background: rgba(244, 63, 94, 0.1);
-  padding: 0.2rem 0.6rem;
-  border-radius: 8px;
+function submitRowForValidation(row) {
+  const mmData = JSON.parse(localStorage.getItem(getStorageKey(authenticatedTeam, 'mastermind_state')) || '{}');
+  if (!mmData[row]) return;
+
+  mmData[row].status = 'pending_validation';
+  localStorage.setItem(getStorageKey(authenticatedTeam, 'mastermind_state'), JSON.stringify(mmData));
+
+  const submissions = JSON.parse(localStorage.getItem('aibattle_mm_submissions') || '[]');
+  submissions.push({
+    id: `${authenticatedTeam}_row_${row}_${Date.now()}`,
+    teamKey: authenticatedTeam,
+    row: row,
+    colors: mmData[row].colors,
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  });
+  localStorage.setItem('aibattle_mm_submissions', JSON.stringify(submissions));
+
+  initMastermind();
+  showToast("Ingezonden! Ren naar de Centrale Post!");
 }
 
-.credits-pill {
-  background: rgba(245, 158, 11, 0.15);
-  border: 2px solid var(--amber);
-  color: #fff;
-  padding: 0.4rem 0.85rem;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 1rem;
+function updateTeamStats() {
+  if (!authenticatedTeam) return;
+  const credits = getTeamCredits(authenticatedTeam);
+  document.getElementById('headerCreditsCount').innerText = credits;
 }
 
-.credits-pill strong {
-  color: var(--amber);
-  font-size: 1.3rem;
+// TABS
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+  const target = document.getElementById(`tab-${tabId}`);
+  if (target) target.classList.add('active');
+
+  const btn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(`'${tabId}'`));
+  if (btn) btn.classList.add('active');
 }
 
-/* BROADCAST BAR */
-.broadcast-bar {
-  background: #1e293b;
-  border-left: 4px solid var(--primary);
-  padding: 0.85rem 1rem;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 600;
+// TIMER
+let totalSeconds = 120 * 60;
+let timerRunning = true;
+
+function tickTimer() {
+  if (timerRunning && totalSeconds > 0) {
+    totalSeconds--;
+    localStorage.setItem('aibattle_timer', totalSeconds);
+  }
+
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  document.getElementById('gameTimer').innerText = 
+    `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-/* 3 GROTE HOOFDTABS */
-.nav-tabs {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 0.5rem;
+function startTimer() { timerRunning = true; }
+function pauseTimer() { timerRunning = false; }
+function resetTimer(mins = 120) { totalSeconds = mins * 60; tickTimer(); }
+
+// NOODALARM & LOCKDOWN
+function sendEmergencyLockdown() {
+  const title = document.getElementById('adminEmergencyTitle').value.trim() || "🚨 BERICHT VAN DE BASIS";
+  const text = document.getElementById('adminEmergencyText').value.trim();
+  const fileInput = document.getElementById('adminAudioFileInput');
+
+  if (!text && (!fileInput.files || fileInput.files.length === 0)) {
+    return alert("Typ een tekst of voeg een geluidsbestand toe!");
+  }
+
+  if (fileInput.files && fileInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      publishEmergencyPayload(title, text, e.target.result);
+    };
+    reader.readAsDataURL(fileInput.files[0]);
+  } else {
+    publishEmergencyPayload(title, text, null);
+  }
 }
 
-.tab-btn {
-  background: var(--card-bg);
-  border: 2px solid var(--card-border);
-  color: var(--text-sub);
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: 800;
-  padding: 0.85rem;
-  border-radius: var(--radius);
-  cursor: pointer;
-  text-align: center;
+function publishEmergencyPayload(title, text, audioUrl) {
+  const payload = {
+    id: Date.now(),
+    title,
+    text: text || "Luister naar het audiobericht hieronder.",
+    audioUrl
+  };
+
+  localStorage.setItem('aibattle_emergency', JSON.stringify(payload));
+  showToast("Bericht naar alle schermen gestuurd!");
+  checkEmergencyLockdown();
 }
 
-.tab-btn:hover { color: #fff; border-color: var(--primary); }
-.tab-btn.active {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: #000;
+function checkEmergencyLockdown() {
+  const raw = localStorage.getItem('aibattle_emergency');
+  if (!raw) return;
+
+  const payload = JSON.parse(raw);
+  const dismissedId = sessionStorage.getItem('aibattle_dismissed_lockdown_id');
+
+  if (dismissedId !== String(payload.id)) {
+    document.getElementById('lockdownTitle').innerText = payload.title;
+    document.getElementById('lockdownText').innerText = payload.text;
+
+    const audioContainer = document.getElementById('lockdownAudioContainer');
+    const audioPlayer = document.getElementById('lockdownAudioPlayer');
+
+    if (payload.audioUrl) {
+      audioPlayer.src = payload.audioUrl;
+      audioContainer.style.display = 'block';
+      audioPlayer.play().catch(() => {});
+    } else {
+      audioContainer.style.display = 'none';
+      audioPlayer.src = '';
+    }
+
+    document.getElementById('lockdownModal').style.display = 'flex';
+  }
 }
 
-.tab-content { display: none; }
-.tab-content.active { display: flex; flex-direction: column; gap: 1rem; }
-
-.info-banner {
-  background: rgba(56, 189, 248, 0.1);
-  border: 1px solid var(--primary);
-  border-radius: 8px;
-  padding: 0.85rem 1rem;
-  font-size: 0.95rem;
-  line-height: 1.5;
+function dismissLockdown() {
+  const raw = localStorage.getItem('aibattle_emergency');
+  if (raw) {
+    const payload = JSON.parse(raw);
+    sessionStorage.setItem('aibattle_dismissed_lockdown_id', String(payload.id));
+  }
+  document.getElementById('lockdownAudioPlayer').pause();
+  document.getElementById('lockdownModal').style.display = 'none';
 }
 
-/* OPDRACHTEN */
-.sectors-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
+function closeVictoryModal() {
+  document.getElementById('victoryModal').style.display = 'none';
 }
 
-.sector-card h3 {
-  color: var(--primary);
-  font-size: 1.1rem;
-  margin-bottom: 0.2rem;
+// LEIDING PANEEL (BACKSITE)
+function openAdminModal() { document.getElementById('adminModal').classList.add('open'); }
+function closeAdminModal() { document.getElementById('adminModal').classList.remove('open'); }
+
+function loginAdmin() {
+  const p = document.getElementById('adminPasswordInput').value;
+  if (p === 'admin123' || p === 'core2026') {
+    document.getElementById('adminAuthSection').style.display = 'none';
+    document.getElementById('adminControlsSection').style.display = 'block';
+    loadSecretCode();
+    renderAdminMastermindSubmissions();
+    renderAdminSubmissions();
+    renderAdminTeamsManager();
+  } else {
+    document.getElementById('adminAuthError').style.display = 'block';
+  }
 }
 
-.sec-loc {
-  color: var(--amber);
-  font-weight: 700;
-  font-size: 0.85rem;
-  margin-bottom: 0.85rem;
+function saveSecretCode() {
+  const secret = [
+    document.getElementById('secretSlot1').value,
+    document.getElementById('secretSlot2').value,
+    document.getElementById('secretSlot3').value,
+    document.getElementById('secretSlot4').value
+  ];
+  localStorage.setItem('aibattle_secret_code', JSON.stringify(secret));
+  showToast("Code opgeslagen!");
 }
 
-.task-list { display: flex; flex-direction: column; gap: 0.75rem; }
-.task-item {
-  background: #0b1120;
-  border: 1px solid var(--card-border);
-  border-radius: 8px;
-  padding: 0.85rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+function loadSecretCode() {
+  const raw = localStorage.getItem('aibattle_secret_code');
+  const secret = raw ? JSON.parse(raw) : ['green', 'red', 'yellow', 'blue'];
+  document.getElementById('secretSlot1').value = secret[0] || 'green';
+  document.getElementById('secretSlot2').value = secret[1] || 'red';
+  document.getElementById('secretSlot3').value = secret[2] || 'yellow';
+  document.getElementById('secretSlot4').value = secret[3] || 'blue';
 }
 
-.task-item.approved { border-color: var(--emerald); background: rgba(16, 185, 129, 0.08); }
-.task-item.pending { border-color: var(--amber); background: rgba(245, 158, 11, 0.08); }
-
-.task-top { font-weight: 700; font-size: 0.95rem; }
-.task-desc { font-size: 0.88rem; color: var(--text-sub); line-height: 1.4; }
-
-.task-btn {
-  background: var(--primary);
-  color: #000;
-  border: none;
-  font-family: inherit;
-  font-weight: 800;
-  font-size: 0.85rem;
-  padding: 0.55rem 0.85rem;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 0.25rem;
+function getSecretCode() {
+  const raw = localStorage.getItem('aibattle_secret_code');
+  return raw ? JSON.parse(raw) : ['green', 'red', 'yellow', 'blue'];
 }
 
-.task-btn:hover { background: var(--primary-hover); color: #fff; }
-.task-btn.pending-btn { background: var(--amber); color: #000; }
-.task-btn.done-btn { background: var(--emerald); color: #000; }
+function evaluateGuess(guessColors, secretColors) {
+  let blackPins = 0;
+  let whitePins = 0;
 
-/* MASTERMIND */
-.mastermind-layout {
-  display: grid;
-  grid-template-columns: 1fr 280px;
-  gap: 1rem;
+  let secretCopy = [...secretColors];
+  let guessCopy = [...guessColors];
+
+  for (let i = 0; i < 4; i++) {
+    if (guessCopy[i] === secretCopy[i]) {
+      blackPins++;
+      secretCopy[i] = null;
+      guessCopy[i] = null;
+    }
+  }
+
+  for (let i = 0; i < 4; i++) {
+    if (guessCopy[i] !== null) {
+      const matchIdx = secretCopy.indexOf(guessCopy[i]);
+      if (matchIdx !== -1) {
+        whitePins++;
+        secretCopy[matchIdx] = null;
+      }
+    }
+  }
+
+  const pins = [];
+  for (let b = 0; b < blackPins; b++) pins.push('black');
+  for (let w = 0; w < whitePins; w++) pins.push('white');
+
+  return { blackPins, whitePins, pins };
 }
 
-@media (max-width: 768px) {
-  .mastermind-layout { grid-template-columns: 1fr; }
+function renderAdminMastermindSubmissions() {
+  const tbody = document.getElementById('adminMastermindSubmissionsBody');
+  tbody.innerHTML = '';
+  const submissions = JSON.parse(localStorage.getItem('aibattle_mm_submissions') || '[]');
+
+  if (submissions.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Geen teams bij de Centrale Post.</td></tr>';
+    return;
+  }
+
+  submissions.forEach((sub, index) => {
+    const tInfo = TEAMS_INFO[sub.teamKey];
+    const colorsText = sub.colors.map(c => COLOR_MAP[c] || c).join(' - ');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${tInfo.icon} ${tInfo.name}</strong></td>
+      <td>Rij ${sub.row}</td>
+      <td>${colorsText}</td>
+      <td>
+        <button class="btn btn-primary btn-sm" onclick="adminEvaluateMastermind(${index})">Geef Feedback</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
 }
 
-.palette-picker-bar {
-  background: #0b1120;
-  border: 1px solid var(--card-border);
-  border-radius: 8px;
-  padding: 0.85rem;
-  margin-bottom: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+function adminEvaluateMastermind(submissionIndex) {
+  const submissions = JSON.parse(localStorage.getItem('aibattle_mm_submissions') || '[]');
+  const sub = submissions[submissionIndex];
+  if (!sub) return;
+
+  const secret = getSecretCode();
+  const evaluation = evaluateGuess(sub.colors, secret);
+
+  const mmData = JSON.parse(localStorage.getItem(getStorageKey(sub.teamKey, 'mastermind_state')) || '{}');
+  mmData[sub.row] = {
+    colors: sub.colors,
+    pins: evaluation.pins,
+    status: 'evaluated'
+  };
+  localStorage.setItem(getStorageKey(sub.teamKey, 'mastermind_state'), JSON.stringify(mmData));
+
+  if (sub.row < 6 && evaluation.blackPins < 4) {
+    localStorage.setItem(getStorageKey(sub.teamKey, 'active_row'), sub.row + 1);
+  }
+
+  if (evaluation.blackPins === 4) {
+    localStorage.setItem('aibattle_winner', JSON.stringify({
+      teamKey: sub.teamKey,
+      teamName: TEAMS_INFO[sub.teamKey].name,
+      secret: secret
+    }));
+  }
+
+  submissions.splice(submissionIndex, 1);
+  localStorage.setItem('aibattle_mm_submissions', JSON.stringify(submissions));
+
+  renderAdminMastermindSubmissions();
+  renderAdminTeamsManager();
+  showToast(`Feedback gegeven: ${evaluation.blackPins}x Zwart, ${evaluation.whitePins}x Wit`);
 }
 
-.palette-title { font-weight: 800; font-size: 0.95rem; }
-.palette-buttons { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+function renderAdminSubmissions() {
+  const tbody = document.getElementById('adminSubmissionsBody');
+  tbody.innerHTML = '';
+  const subs = JSON.parse(localStorage.getItem('aibattle_submissions') || '[]');
 
-.pal-btn {
-  font-family: inherit;
-  font-size: 0.85rem;
-  font-weight: 700;
-  padding: 0.45rem 0.75rem;
-  border-radius: 20px;
-  border: 2px solid transparent;
-  cursor: pointer;
-  color: #fff;
+  if (subs.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Geen openstaande opdrachten.</td></tr>';
+    return;
+  }
+
+  subs.forEach((s, idx) => {
+    const tInfo = TEAMS_INFO[s.teamKey];
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${tInfo.icon} ${tInfo.name}</strong></td>
+      <td>${s.taskName}</td>
+      <td><span style="color:${s.status === 'approved' ? 'var(--emerald)' : 'var(--amber)'}">${s.status === 'approved' ? '✓ Goedgekeurd' : '⏳ Wacht op check'}</span></td>
+      <td>
+        ${s.status !== 'approved' ? `
+          <button class="btn btn-primary btn-sm" onclick="adminApproveTask('${s.teamKey}', '${s.taskId}', ${idx})">✓ Goedkeuren (+1 Token)</button>
+        ` : 'Voltooid'}
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
 }
 
-.pal-btn.active {
-  border-color: #fff;
-  transform: scale(1.08);
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+function adminApproveTask(teamKey, taskId, subIndex) {
+  const key = getStorageKey(teamKey, 'tasks');
+  const tasks = JSON.parse(localStorage.getItem(key) || '{}');
+  tasks[taskId] = 'approved';
+  localStorage.setItem(key, JSON.stringify(tasks));
+
+  const curCredits = getTeamCredits(teamKey);
+  setTeamCredits(teamKey, curCredits + 1);
+
+  const subs = JSON.parse(localStorage.getItem('aibattle_submissions') || '[]');
+  if (subs[subIndex]) subs[subIndex].status = 'approved';
+  localStorage.setItem('aibattle_submissions', JSON.stringify(subs));
+
+  renderAdminSubmissions();
+  renderAdminTeamsManager();
+  showToast(`+1 Token gegeven aan ${TEAMS_INFO[teamKey].name}!`);
 }
 
-.pal-btn.red { background: #ef4444; }
-.pal-btn.blue { background: #3b82f6; }
-.pal-btn.green { background: #10b981; }
-.pal-btn.yellow { background: #eab308; color: #000; }
-.pal-btn.orange { background: #f97316; color: #000; }
-.pal-btn.purple { background: #a855f7; }
+function renderAdminTeamsManager() {
+  const tbody = document.getElementById('adminTeamsManagerBody');
+  tbody.innerHTML = '';
 
-/* MASTERMIND RIJEN */
-.mm-rows-container { display: flex; flex-direction: column; gap: 0.65rem; }
-.mm-row-card {
-  background: #0b1120;
-  border: 2px solid var(--card-border);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  display: grid;
-  grid-template-columns: 80px 1fr 140px;
-  align-items: center;
-  gap: 0.75rem;
+  Object.keys(TEAMS_INFO).forEach(tKey => {
+    const tInfo = TEAMS_INFO[tKey];
+    const credits = getTeamCredits(tKey);
+    const activeRow = localStorage.getItem(getStorageKey(tKey, 'active_row')) || '1';
+    const pass = getTeamPassword(tKey) || 'Niet ingesteld';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${tInfo.icon} ${tInfo.name}</strong></td>
+      <td style="color:var(--amber); font-weight:700;">${credits} Tokens</td>
+      <td>Rij ${activeRow}</td>
+      <td><code>${pass}</code></td>
+      <td>
+        <button class="btn btn-secondary btn-sm" onclick="adminAddCredits('${tKey}')">+ Token</button>
+        <button class="btn btn-secondary btn-sm" onclick="adminResetPw('${tKey}')">Reset Code</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
 }
 
-.mm-row-card.active-row {
-  border-color: var(--primary);
-  background: rgba(56, 189, 248, 0.05);
+function adminAddCredits(tKey) {
+  const cur = getTeamCredits(tKey);
+  setTeamCredits(tKey, cur + 1);
+  renderAdminTeamsManager();
+  showToast(`+1 Token gegeven aan ${TEAMS_INFO[tKey].name}`);
 }
 
-.mm-row-lbl { font-weight: 800; font-size: 0.95rem; }
-.mm-dots-row { display: flex; gap: 0.65rem; }
-
-.mm-slot {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 2px dashed rgba(255, 255, 255, 0.3);
-  background: transparent;
-  cursor: pointer;
+function adminResetPw(tKey) {
+  const n = prompt(`Nieuwe code voor ${TEAMS_INFO[tKey].name}:`, "1234");
+  if (n) {
+    setTeamPassword(tKey, n);
+    renderAdminTeamsManager();
+    showToast(`Code gewijzigd.`);
+  }
 }
 
-.mm-slot.filled { border-style: solid; }
-.mm-slot[data-color="red"] { background: #ef4444; border-color: #ef4444; }
-.mm-slot[data-color="blue"] { background: #3b82f6; border-color: #3b82f6; }
-.mm-slot[data-color="green"] { background: #10b981; border-color: #10b981; }
-.mm-slot[data-color="yellow"] { background: #eab308; border-color: #eab308; }
-.mm-slot[data-color="orange"] { background: #f97316; border-color: #f97316; }
-.mm-slot[data-color="purple"] { background: #a855f7; border-color: #a855f7; }
-
-.mm-row-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 0.25rem; }
-.mm-feedback-pins-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem; }
-
-.pin {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+function showToast(msg) {
+  const t = document.getElementById('toastNotification');
+  t.innerText = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 3000);
 }
 
-.pin-black { background: #000; border-color: #fff; }
-.pin-white { background: #fff; border-color: #fff; }
+// AUTO SYNC
+window.onload = function() {
+  const savedTimer = localStorage.getItem('aibattle_timer');
+  if (savedTimer) totalSeconds = parseInt(savedTimer, 10);
+  setInterval(tickTimer, 1000);
+  tickTimer();
 
-.mm-submit-btn {
-  background: var(--emerald);
-  color: #000;
-  border: none;
-  font-family: inherit;
-  font-weight: 800;
-  font-size: 0.75rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  cursor: pointer;
-}
+  window.addEventListener('storage', function(e) {
+    if (e.key === 'aibattle_emergency') {
+      checkEmergencyLockdown();
+    }
+    if (e.key === 'aibattle_winner') {
+      const winner = JSON.parse(e.newValue || '{}');
+      if (winner && winner.teamName) {
+        document.getElementById('victoryTeamName').innerText = winner.teamName;
+        document.getElementById('victoryCodeDisplay').innerText = winner.secret.map(c => COLOR_MAP[c]).join(' ');
+        document.getElementById('victoryModal').style.display = 'flex';
+      }
+    }
+    if (e.key && (e.key.includes('mastermind') || e.key.includes('credits') || e.key.includes('tasks'))) {
+      initMastermind();
+      renderSectors();
+      updateTeamStats();
+    }
+  });
 
-.mm-legend-card h3 { font-size: 1.05rem; margin-bottom: 0.5rem; }
-.legend-item { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem; font-size: 0.9rem; }
-
-/* LOCATIES */
-.locations-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
-.loc-item { display: flex; flex-direction: column; gap: 0.4rem; }
-.loc-badge { font-size: 0.75rem; font-weight: 800; color: var(--primary); }
-.loc-place { font-size: 0.95rem; color: var(--amber); font-weight: 700; }
-.loc-desc { font-size: 0.88rem; color: var(--text-sub); }
-.central-card { grid-column: 1 / -1; border-color: var(--emerald); }
-
-/* INPUTS & KNOPPEN */
-.form-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
-.form-group label { font-size: 0.9rem; font-weight: 700; color: var(--text-sub); }
-
-.modern-input, .modern-select {
-  width: 100%;
-  background-color: #1e293b;
-  color: #ffffff;
-  border: 2px solid var(--card-border);
-  font-family: inherit;
-  font-size: 1rem;
-  padding: 0.75rem;
-  border-radius: 8px;
-  outline: none;
-}
-
-.btn {
-  font-family: inherit;
-  font-size: 0.95rem;
-  font-weight: 700;
-  padding: 0.65rem 1.25rem;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-primary { background: var(--primary); color: #000; font-weight: 800; }
-.btn-emerald { background: var(--emerald); color: #000; font-weight: 800; }
-.btn-secondary { background: #1e293b; color: #fff; border: 1px solid var(--card-border); }
-.btn-lg { padding: 0.85rem 1.5rem; font-size: 1.05rem; }
-.btn-block { width: 100%; }
-.btn-sm { padding: 0.35rem 0.7rem; font-size: 0.8rem; }
-.btn-text { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.85rem; }
-.btn-text:hover { color: #fff; }
-
-/* MODALS */
-.auth-wrapper {
-  position: fixed;
-  inset: 0;
-  background: rgba(11, 15, 25, 0.98);
-  z-index: 5000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.25rem;
-}
-
-.auth-card {
-  background: var(--card-bg);
-  border: 2px solid var(--card-border);
-  border-radius: var(--radius);
-  padding: 2rem;
-  max-width: 400px;
-  width: 100%;
-}
-
-.auth-card h2 { font-size: 1.4rem; margin-bottom: 0.25rem; }
-.sub-text { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 1.25rem; }
-.auth-error { color: var(--rose); font-size: 0.85rem; margin-top: 0.5rem; font-weight: 700; }
-
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.8);
-  z-index: 4000;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
-
-.modal-backdrop.open { display: flex; }
-.modal-card { width: 100%; max-width: 460px; padding: 0; overflow: hidden; }
-.modal-card.admin-card { max-width: 780px; }
-
-.modal-header {
-  padding: 1rem 1.25rem;
-  border-bottom: 2px solid var(--card-border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-close-btn { background: transparent; border: none; color: var(--text-muted); font-size: 1.3rem; cursor: pointer; }
-.modal-body { padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; max-height: 80vh; overflow-y: auto; }
-
-.phone-box {
-  background: #0b1120;
-  border: 2px solid var(--emerald);
-  border-radius: 8px;
-  padding: 1rem;
-  text-align: center;
-}
-
-.phone-number { font-size: 1.4rem; font-weight: 800; color: var(--emerald); font-family: var(--font-mono); }
-.phone-tag { font-size: 0.85rem; color: var(--amber); font-weight: 700; margin-top: 0.25rem; }
-
-.phone-instruction {
-  background: #1e293b;
-  padding: 0.85rem;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  text-align: center;
-}
-
-/* OVERLAYS */
-.lockdown-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(11, 15, 25, 0.98);
-  z-index: 9999;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-}
-
-.lockdown-card {
-  background: #18121e;
-  border: 3px solid var(--rose);
-  border-radius: var(--radius);
-  padding: 2rem;
-  max-width: 500px;
-  width: 100%;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.alert-icon { font-size: 3rem; }
-.lockdown-content { font-size: 1.1rem; font-weight: 600; line-height: 1.5; }
-
-.victory-card {
-  background: #061e14;
-  border-color: var(--emerald);
-}
-
-.victory-text { font-size: 1.1rem; line-height: 1.5; }
-.victory-code-display { font-size: 2rem; letter-spacing: 6px; margin: 0.5rem 0; }
-
-/* ADMIN BACKSITE */
-.admin-section { border-bottom: 2px solid var(--card-border); padding-bottom: 1rem; margin-bottom: 1rem; }
-.admin-section h4 { color: var(--primary); font-size: 0.95rem; margin-bottom: 0.5rem; }
-.admin-secret-code-box { background: #0b1120; padding: 0.75rem; border-radius: 8px; }
-.secret-code-selectors { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 0.35rem; }
-.mini-select { padding: 0.4rem; font-size: 0.85rem; }
-
-.table-wrap { overflow-x: auto; }
-.modern-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
-.modern-table th { padding: 0.5rem; color: var(--text-muted); border-bottom: 1px solid var(--card-border); }
-.modern-table td { padding: 0.55rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-
-.app-footer { display: flex; justify-content: space-between; padding-top: 0.5rem; }
-
-.toast {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  background: #1e293b;
-  border: 2px solid var(--primary);
-  color: #fff;
-  padding: 0.85rem 1.25rem;
-  border-radius: 8px;
-  font-weight: 700;
-  display: none;
-  z-index: 9000;
-}
+  const active = sessionStorage.getItem('aibattle_active_team');
+  if (active) {
+    loginSuccess(active);
+  } else {
+    document.getElementById('authGateModal').style.display = 'flex';
+    onGateTeamChange();
+  }
+};
