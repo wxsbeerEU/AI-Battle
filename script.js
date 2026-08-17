@@ -1,18 +1,17 @@
 /**
- * CYBER_CORE ENGINE // BATTLE OF THE AIS
- * Team Authentication, WhatsApp Evidence Submissions, Admin Reward Center.
+ * AETHER_OS // BATTLE OF THE AIS
+ * State Management, WhatsApp Evidence Submissions & Admin Reward Dashboard
  */
 
-const WHATSAPP_PHONE = "32475848983"; // 0475848983 in internationaal formaat
+const WHATSAPP_PHONE = "32475848983";
 
 const SECTORS_DATA = [
   {
     id: '1',
     title: 'SECTOR 1: PROMPT ENGINEERING',
     location: 'Achter de Hoofdtent',
-    color: '#00e5ff',
     tasks: [
-      { id: 's1-a', code: 'Opdracht A', name: 'Audio Prompt', pts: 100, desc: 'Verstoring in spraakmodule. Stuur 1 operator naar het zendstation met walkietalkie. Bouw het fysieke LEGO-prototype na via enkel gesproken commando\'s.' },
+      { id: 's1-a', code: 'Opdracht A', name: 'Audio Prompt', pts: 100, desc: 'Verstoring in spraakmodule. Stuur 1 operator naar het zendstation met walkietalkie. Bouw het fysieke LEGO-prototype na via gesproken commando\'s.' },
       { id: 's1-b', code: 'Opdracht B', name: 'Blind Algorithm', pts: 100, desc: 'Visuele sensoren offline. Blinddoek 1 teamlid (De Robot). Stuur de Robot met strikte stap-commando\'s foutloos door het mijnenveld.' },
       { id: 's1-c', code: 'Opdracht C', name: 'Censuur Filter', pts: 100, desc: 'Datafilter corruptie. Lees het protocol voor aan de posthouder zonder de 8 verboden woorden te activeren.' }
     ]
@@ -21,10 +20,9 @@ const SECTORS_DATA = [
     id: '2',
     title: 'SECTOR 2: CREATIVE NEURAL NET',
     location: 'Bij het Open Veld',
-    color: '#b336ff',
     tasks: [
-      { id: 's2-a', code: 'Opdracht A', name: 'Hallucination Drawing', pts: 100, desc: 'Generatieve beeldfout. 1 teamlid trekt een prompt en tekent deze direct. Het team moet binnen 2 minuten de exacte prompttekst decoderen.' },
-      { id: 's2-b', code: 'Opdracht B', name: 'Motion Tracking', pts: 100, desc: 'Kinematische calibratie. Bekijk de robotdans van de posthouder en repliceer deze binnen 2 minuten 100% synchroon met het volledige team.' },
+      { id: 's2-a', code: 'Opdracht A', name: 'Hallucination Drawing', pts: 100, desc: 'Generatieve beeldfout. 1 teamlid trekt een prompt en tekent deze direct. Het team moet binnen 2 minuten de exacte prompttekst raden.' },
+      { id: 's2-b', code: 'Opdracht B', name: 'Motion Tracking', pts: 100, desc: 'Kinematische calibratie. Bekijk de robotdans van de posthouder en doe deze binnen 2 minuten synchroon na met het hele team.' },
       { id: 's2-c', code: 'Opdracht C', name: 'Deepfake Detector', pts: 100, desc: 'Visuele fraude gedetecteerd. Analyseer de 10 data-afbeeldingen bij de posthouder en markeer alle 5 de AI-deepfakes.' }
     ]
   },
@@ -32,10 +30,9 @@ const SECTORS_DATA = [
     id: '3',
     title: 'SECTOR 3: CYBERSECURITY FIREWALL',
     location: 'In het Bos',
-    color: '#ff2a5f',
     tasks: [
       { id: 's3-a', code: 'Opdracht A', name: 'DDoS Attack', pts: 100, desc: 'Serveroverbelasting. Steek de firewall-zone over. Minstens 6 teamleden moeten de overkant bereiken zonder geraakt te worden door trefballen.' },
-      { id: 's3-b', code: 'Opdracht B', name: 'Laser Grid Defusal', pts: 100, desc: 'Inbraakdetectie actief. Doorkruis het touwenweb met belletjes. Het alarm mag maximaal 1 keer geactiveerd worden.' },
+      { id: 's3-b', code: 'Opdracht B', name: 'Laser Grid Defusal', pts: 100, desc: 'Inbraakdetectie actief. Doorkruis het touwenweb met belletjes. Het alarm mag maximaal 1 keer afgaan.' },
       { id: 's3-c', code: 'Opdracht C', name: 'Hardware Extraction', pts: 100, desc: 'Fysieke registerschade. Haal 5 microchips uit het koelvloeistof-reservoir (de bak) met enkel eetstokjes.' }
     ]
   },
@@ -43,7 +40,6 @@ const SECTORS_DATA = [
     id: '4',
     title: 'SECTOR 4: MACHINE LEARNING LOGIC',
     location: 'Bij het Kampvuur',
-    color: '#ffd900',
     tasks: [
       { id: 's4-a', code: 'Opdracht A', name: 'Pattern Recognition', pts: 100, desc: 'Onbekend sorteeralgoritme. Analyseer de datakaarten en ontdek de verborgen sorteerregel binnen 2 pogingen.' },
       { id: 's4-b', code: 'Opdracht B', name: 'Bug Fixing', pts: 100, desc: 'Deadlock in het systeem. Los de fysieke knoop van teamhanden op tot een schone ring zonder het contact te verbreken.' },
@@ -53,19 +49,17 @@ const SECTORS_DATA = [
 ];
 
 const TEAMS_INFO = {
-  chatgpt: { name: 'Team ChatGPT', spec: 'LLM Supercluster // NLP Module', icon: '🟢' },
-  midjourney: { name: 'Team Midjourney', spec: 'Generative Canvas // Diffusion Matrix', icon: '🎨' },
-  gemini: { name: 'Team Gemini', spec: 'Multimodal Core // Quantum Context', icon: '✨' },
-  sora: { name: 'Team Sora', spec: 'Kinetic Synth // Temporal Pipeline', icon: '🎬' },
-  copilot: { name: 'Team Copilot', spec: 'Neural Autopilot // SysOps Cluster', icon: '⚡' }
+  chatgpt: { name: 'Team ChatGPT', spec: 'GPT-4o Supercluster', icon: '🟢' },
+  midjourney: { name: 'Team Midjourney', spec: 'v6.1 Diffusion Matrix', icon: '🎨' },
+  gemini: { name: 'Team Gemini', spec: '1.5 Pro Multimodal Core', icon: '✨' },
+  sora: { name: 'Team Sora', spec: 'Diffusion Kinetic Engine', icon: '🎬' },
+  copilot: { name: 'Team Copilot', spec: 'Neural Autopilot Cluster', icon: '⚡' }
 };
 
 const MASTERMIND_COLORS = ['none', 'red', 'blue', 'green', 'yellow', 'orange', 'purple'];
 const PIN_STATES = ['empty', 'black', 'white'];
 
-// ==========================================================================
-// AUDIO SYNTH
-// ==========================================================================
+// Web Audio API
 let sfxEnabled = true;
 let audioCtx = null;
 
@@ -82,7 +76,7 @@ function playBeep(freq = 600, duration = 0.08, type = 'sine') {
     const gain = ctx.createGain();
     osc.type = type;
     osc.frequency.setValueAtTime(freq, ctx.currentTime);
-    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
     osc.connect(gain);
     gain.connect(ctx.destination);
@@ -93,27 +87,25 @@ function playBeep(freq = 600, duration = 0.08, type = 'sine') {
 
 function playSuccessSound() {
   if (!sfxEnabled) return;
-  playBeep(440, 0.1);
-  setTimeout(() => playBeep(660, 0.15), 100);
-  setTimeout(() => playBeep(880, 0.25), 200);
+  playBeep(440, 0.08);
+  setTimeout(() => playBeep(660, 0.1), 80);
+  setTimeout(() => playBeep(880, 0.18), 160);
 }
 
-// ==========================================================================
-// TEAM AUTHENTICATION & LOGIN
-// ==========================================================================
+// Authentication State
 let authenticatedTeam = null;
 let currentSectorFilter = 'all';
 
 function getStorageKey(team, subkey) {
-  return `cybercore_${team}_${subkey}`;
+  return `aether_${team}_${subkey}`;
 }
 
 function getTeamPassword(teamKey) {
-  return localStorage.getItem(`cybercore_pw_${teamKey}`);
+  return localStorage.getItem(`aether_pw_${teamKey}`);
 }
 
 function setTeamPassword(teamKey, newPw) {
-  localStorage.setItem(`cybercore_pw_${teamKey}`, newPw);
+  localStorage.setItem(`aether_pw_${teamKey}`, newPw);
 }
 
 function onGateTeamChange() {
@@ -122,11 +114,11 @@ function onGateTeamChange() {
   const label = document.getElementById('gatePassLabel');
   const input = document.getElementById('gatePasswordInput');
   input.value = '';
-  document.getElementById('gateErrorMsg').style.display = 'none';
+  document.getElementById('gateErrorMsg').innerText = '';
 
   if (!existingPw) {
-    label.innerText = "Stel een NIEUW wachtwoord in voor dit team:";
-    input.placeholder = "Kies wachtwoord/pincode...";
+    label.innerText = "Stel een NIEUW wachtwoord/pincode in:";
+    input.placeholder = "Kies wachtwoord...";
   } else {
     label.innerText = "Voer team-wachtwoord in:";
     input.placeholder = "Wachtwoord...";
@@ -140,38 +132,35 @@ function submitTeamAuth() {
   const errorEl = document.getElementById('gateErrorMsg');
 
   if (!enteredPw) {
-    errorEl.innerText = "Wachtwoord mag niet leeg zijn.";
-    errorEl.style.display = 'block';
+    errorEl.innerText = "Vul een wachtwoord in.";
     return;
   }
 
-  // Eerste keer instellen of controleren
   if (!existingPw) {
     setTeamPassword(teamKey, enteredPw);
     loginSuccess(teamKey);
-    showToast(`🔒 Nieuw wachtwoord opgeslagen voor ${TEAMS_INFO[teamKey].name}!`);
+    showToast(`🔒 Wachtwoord opgeslagen voor ${TEAMS_INFO[teamKey].name}!`);
   } else if (existingPw === enteredPw || enteredPw === 'admin123') {
     loginSuccess(teamKey);
   } else {
     errorEl.innerText = "Onjuist wachtwoord voor dit team!";
-    errorEl.style.display = 'block';
-    playBeep(200, 0.3, 'sawtooth');
+    playBeep(200, 0.25, 'sawtooth');
   }
 }
 
 function loginSuccess(teamKey) {
   authenticatedTeam = teamKey;
-  sessionStorage.setItem('cybercore_active_team', teamKey);
+  sessionStorage.setItem('aether_active_team', teamKey);
   document.getElementById('authGateModal').style.display = 'none';
   
   const info = TEAMS_INFO[teamKey];
   document.getElementById('currentTeamTitle').innerText = info.name;
   document.getElementById('currentTeamSpec').innerText = info.spec;
   document.getElementById('teamAvatarIcon').innerText = info.icon;
-  document.getElementById('activeNodeLabel').innerText = `NODE // ${info.name.toUpperCase()}`;
+  document.getElementById('activeNodeLabel').innerText = `${info.name.toUpperCase()} // ACTIVE`;
 
   playSuccessSound();
-  showToast(`✅ Ingelogd als ${info.name}`);
+  showToast(`Ingelogd als ${info.name}`);
 
   renderSectors();
   initMastermind();
@@ -179,15 +168,13 @@ function loginSuccess(teamKey) {
 }
 
 function logoutCurrentTeam() {
-  sessionStorage.removeItem('cybercore_active_team');
+  sessionStorage.removeItem('aether_active_team');
   authenticatedTeam = null;
   document.getElementById('authGateModal').style.display = 'flex';
   onGateTeamChange();
 }
 
-// ==========================================================================
-// SECTORS & VERIFICATION MODAL
-// ==========================================================================
+// Sectors & Missions
 let activePendingTask = null;
 
 function renderSectors() {
@@ -202,47 +189,44 @@ function renderSectors() {
 
     const card = document.createElement('div');
     card.className = 'sector-card';
-    card.style.setProperty('--sector-color', sec.color);
 
     const completedInSec = sec.tasks.filter(t => savedTasks[t.id] === 'approved').length;
 
     let tasksHTML = '';
     sec.tasks.forEach(t => {
-      const status = savedTasks[t.id] || 'open'; // open, pending, approved
-      let btnLabel = '📤 BEWIJS INDIENEN';
+      const status = savedTasks[t.id] || 'open';
+      let btnLabel = 'Bewijs Indienen 📤';
       let btnClass = '';
 
       if (status === 'pending') {
-        btnLabel = '⏳ IN VERIFICATIE...';
+        btnLabel = 'In Verificatie... ⏳';
         btnClass = 'pending-btn';
       } else if (status === 'approved') {
-        btnLabel = '✓ GOEDGEKEURD (+100 PTS)';
+        btnLabel = 'Goedgekeurd (+100 PTS) ✓';
         btnClass = 'done-btn';
       }
 
       tasksHTML += `
-        <div class="task-item ${status}" id="task-${t.id}">
-          <div class="task-header">
-            <span class="task-name">${t.code}: ${t.name}</span>
-            <span style="font-size:0.75rem; color:var(--neon-green)">+${t.pts} PTS</span>
+        <div class="task-card ${status}">
+          <div class="task-top">
+            <span>${t.code}: ${t.name}</span>
+            <span class="task-pts">+${t.pts} PTS</span>
           </div>
-          <p class="task-body">"${t.desc}"</p>
-          <div class="task-actions">
-            <button class="task-btn ${btnClass}" onclick="openEvidenceSubmission('${sec.title}', '${t.id}', '${t.code}: ${t.name}')" ${status === 'approved' ? 'disabled' : ''}>
-              ${btnLabel}
-            </button>
-          </div>
+          <p class="task-desc">${t.desc}</p>
+          <button class="task-btn ${btnClass}" onclick="openEvidenceSubmission('${sec.title}', '${t.id}', '${t.code}: ${t.name}')" ${status === 'approved' ? 'disabled' : ''}>
+            ${btnLabel}
+          </button>
         </div>
       `;
     });
 
     card.innerHTML = `
-      <div class="sector-header">
+      <div class="sec-head">
         <div>
-          <h3 class="sector-title">${sec.title}</h3>
-          <span class="sector-loc">📍 ${sec.location}</span>
+          <h3>${sec.title}</h3>
+          <div class="sec-loc">📍 ${sec.location}</div>
         </div>
-        <span class="sector-progress-badge">${completedInSec} / ${sec.tasks.length} KLAAR</span>
+        <span class="sec-progress">${completedInSec} / ${sec.tasks.length} KLAAR</span>
       </div>
       <div class="task-list">${tasksHTML}</div>
     `;
@@ -254,14 +238,13 @@ function renderSectors() {
 }
 
 function openEvidenceSubmission(sectorTitle, taskId, taskName) {
-  playBeep(600, 0.08);
+  playBeep(600, 0.05);
   activePendingTask = { sectorTitle, taskId, taskName, teamKey: authenticatedTeam };
 
   document.getElementById('evidenceTaskLabel').innerText = `${sectorTitle} - ${taskName}`;
   
-  // WhatsApp Link pre-fill
   const teamName = TEAMS_INFO[authenticatedTeam].name;
-  const msg = encodeURIComponent(`🚨 [CYBER-BEWIJS] ${teamName}\nSector: ${sectorTitle}\nOpdracht: ${taskName}\n\n-> Hierbij ons bewijs voor verificatie!`);
+  const msg = encodeURIComponent(`🚨 [MISSIE-BEWIJS] ${teamName}\nSector: ${sectorTitle}\nOpdracht: ${taskName}\n\n-> Hierbij ons bewijs voor verificatie!`);
   const waUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${msg}`;
   
   document.getElementById('whatsappDirectLink').setAttribute('href', waUrl);
@@ -280,30 +263,26 @@ function confirmEvidenceSent() {
   savedTasks[activePendingTask.taskId] = 'pending';
   localStorage.setItem(key, JSON.stringify(savedTasks));
 
-  // Log globally for Admin Inbox
   logGlobalSubmission(activePendingTask.teamKey, activePendingTask.taskId, activePendingTask.taskName, activePendingTask.sectorTitle);
 
   closeEvidenceModal();
   renderSectors();
-  showToast("⏳ Bewijs geregistreerd! Wacht op goedkeuring van de leiding.");
+  showToast("⏳ Bewijs verzonden! Wacht op check van de leiding.");
 }
 
 function filterSectors(sectorId) {
-  playBeep(500, 0.05);
+  playBeep(500, 0.04);
   currentSectorFilter = sectorId;
-  document.querySelectorAll('.filter-btn').forEach(btn => {
+  document.querySelectorAll('.filter-chip').forEach(btn => {
     btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${sectorId}'`));
   });
   renderSectors();
 }
 
-// Global Submission Tracking for Admin
 function logGlobalSubmission(teamKey, taskId, taskName, sectorTitle) {
-  const submissions = JSON.parse(localStorage.getItem('cybercore_submissions') || '[]');
-  // Check if exists
+  const submissions = JSON.parse(localStorage.getItem('aether_submissions') || '[]');
   const existingIdx = submissions.findIndex(s => s.teamKey === teamKey && s.taskId === taskId);
   const entry = {
-    id: `${teamKey}_${taskId}_${Date.now()}`,
     teamKey,
     taskId,
     taskName,
@@ -317,12 +296,10 @@ function logGlobalSubmission(teamKey, taskId, taskName, sectorTitle) {
   } else {
     submissions.unshift(entry);
   }
-  localStorage.setItem('cybercore_submissions', JSON.stringify(submissions));
+  localStorage.setItem('aether_submissions', JSON.stringify(submissions));
 }
 
-// ==========================================
-// MASTERMIND MODULE
-// ==========================================
+// Mastermind Module
 function initMastermind() {
   if (!authenticatedTeam) return;
   const board = document.getElementById('mastermindBoard');
@@ -333,25 +310,24 @@ function initMastermind() {
   for (let r = 1; r <= 6; r++) {
     const row = document.createElement('div');
     row.className = 'mm-row';
-    row.id = `mm-row-${r}`;
 
     const rowData = savedData[r] || { colors: ['none', 'none', 'none', 'none'], pins: ['empty', 'empty', 'empty', 'empty'] };
 
-    let dotsHTML = '<div class="color-slots">';
+    let dotsHTML = '<div class="mm-slots">';
     for (let c = 0; c < 4; c++) {
       const col = rowData.colors[c] || 'none';
-      dotsHTML += `<div class="color-dot" data-color="${col}" onclick="cycleColor(${r}, ${c})"></div>`;
+      dotsHTML += `<div class="mm-dot" data-color="${col}" onclick="cycleColor(${r}, ${c})"></div>`;
     }
     dotsHTML += '</div>';
 
-    let pinsHTML = '<div class="feedback-pins">';
+    let pinsHTML = '<div class="mm-pins">';
     for (let p = 0; p < 4; p++) {
       const pinState = rowData.pins[p] || 'empty';
       pinsHTML += `<div class="pin pin-${pinState}" onclick="cyclePin(${r}, ${p})"></div>`;
     }
     pinsHTML += '</div>';
 
-    row.innerHTML = `<span class="row-label">POGING ${r}</span>${dotsHTML}${pinsHTML}`;
+    row.innerHTML = `<span class="mm-label">POGING ${r}</span>${dotsHTML}${pinsHTML}`;
     board.appendChild(row);
   }
 
@@ -359,7 +335,7 @@ function initMastermind() {
 }
 
 function cycleColor(row, colIndex) {
-  playBeep(600, 0.05);
+  playBeep(600, 0.04);
   const key = getStorageKey(authenticatedTeam, 'mastermind');
   const saved = JSON.parse(localStorage.getItem(key) || '{}');
   if (!saved[row]) saved[row] = { colors: ['none', 'none', 'none', 'none'], pins: ['empty', 'empty', 'empty', 'empty'] };
@@ -373,7 +349,7 @@ function cycleColor(row, colIndex) {
 }
 
 function cyclePin(row, pinIndex) {
-  playBeep(800, 0.05);
+  playBeep(800, 0.04);
   const key = getStorageKey(authenticatedTeam, 'mastermind');
   const saved = JSON.parse(localStorage.getItem(key) || '{}');
   if (!saved[row]) saved[row] = { colors: ['none', 'none', 'none', 'none'], pins: ['empty', 'empty', 'empty', 'empty'] };
@@ -387,10 +363,10 @@ function cyclePin(row, pinIndex) {
 }
 
 function resetMastermindRows() {
-  if (!confirm("Weet je zeker dat je alle Mastermind rijen wilt wissen?")) return;
+  if (!confirm("Alle Mastermind test-rijen wissen?")) return;
   localStorage.removeItem(getStorageKey(authenticatedTeam, 'mastermind'));
   initMastermind();
-  showToast("🧹 Mastermind kladbord gewist.");
+  showToast("Mastermind kladbord gereset.");
 }
 
 function updateTeamStats() {
@@ -412,32 +388,30 @@ function updateTeamStats() {
   const coreStatusEl = document.getElementById('teamCoreStatus');
   if (hasWon) {
     coreStatusEl.innerText = "GEKRAAKT! 🔓";
-    coreStatusEl.style.color = "var(--neon-green)";
+    coreStatusEl.style.color = "var(--accent-emerald)";
   } else {
     coreStatusEl.innerText = "VERGRENDELD 🔒";
-    coreStatusEl.style.color = "var(--neon-pink)";
+    coreStatusEl.style.color = "var(--accent-rose)";
   }
 }
 
-// ==========================================
-// TABS & TOOLS
-// ==========================================
+// Tabs & Binary
 function switchTab(tabId) {
-  playBeep(450, 0.05);
+  playBeep(450, 0.03);
   document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-pill').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
   const targetTab = document.getElementById(`tab-${tabId}`);
   if (targetTab) targetTab.classList.add('active');
 
-  const btn = Array.from(document.querySelectorAll('.nav-pill')).find(b => b.getAttribute('onclick').includes(`'${tabId}'`));
+  const btn = Array.from(document.querySelectorAll('.nav-item')).find(b => b.getAttribute('onclick').includes(`'${tabId}'`));
   if (btn) btn.classList.add('active');
 }
 
 function decodeBinary() {
-  playBeep(650, 0.08);
+  playBeep(650, 0.05);
   const input = document.getElementById('binaryInput').value.trim();
-  if (!input) return document.getElementById('binaryOutput').innerText = "-- Geen invoer --";
+  if (!input) return document.getElementById('binaryOutput').innerText = "-- Invoer vereist --";
 
   const binaryTokens = input.split(/\s+/);
   let decoded = "";
@@ -447,18 +421,16 @@ function decodeBinary() {
     }
     document.getElementById('binaryOutput').innerText = decoded || "-- Foutief --";
   } catch (err) {
-    document.getElementById('binaryOutput').innerText = "Fout in binaire reeks.";
+    document.getElementById('binaryOutput').innerText = "Foutief formaat.";
   }
 }
 
 function clearBinary() {
   document.getElementById('binaryInput').value = '';
-  document.getElementById('binaryOutput').innerText = '-- Wacht op invoer --';
+  document.getElementById('binaryOutput').innerText = '-- Invoer vereist --';
 }
 
-// ==========================================
-// TIMER
-// ==========================================
+// Timer
 let totalSeconds = 120 * 60;
 let timerRunning = true;
 let timerInterval = null;
@@ -466,7 +438,7 @@ let timerInterval = null;
 function tickTimer() {
   if (timerRunning && totalSeconds > 0) {
     totalSeconds--;
-    localStorage.setItem('cybercore_timer_seconds', totalSeconds);
+    localStorage.setItem('aether_timer_seconds', totalSeconds);
   }
 
   const hours = Math.floor(totalSeconds / 3600);
@@ -481,19 +453,17 @@ function tickTimer() {
   const valEl = document.getElementById('integrityVal');
   if (fillEl && valEl) {
     fillEl.style.width = `${integrityPct}%`;
-    valEl.innerText = `${integrityPct}% - ${integrityPct < 25 ? 'CRITICAL' : 'STABLE'}`;
+    valEl.innerText = `${integrityPct}%`;
   }
 }
 
-function startTimer() { timerRunning = true; showToast("⏱️ Timer hervat."); }
-function pauseTimer() { timerRunning = false; showToast("⏸️ Timer gepauzeerd."); }
-function resetTimer(mins = 120) { totalSeconds = mins * 60; tickTimer(); showToast(`🔄 Timer gereset.`); }
+function startTimer() { timerRunning = true; showToast("Timer gestart."); }
+function pauseTimer() { timerRunning = false; showToast("Timer gepauzeerd."); }
+function resetTimer(mins = 120) { totalSeconds = mins * 60; tickTimer(); showToast(`Timer gereset.`); }
 
-// ==========================================
-// ADMIN BACKSITE & REWARD SYSTEM
-// ==========================================
+// Admin Center
 function openAdminModal() {
-  playBeep(400, 0.08);
+  playBeep(400, 0.05);
   document.getElementById('adminModal').classList.add('open');
 }
 
@@ -510,7 +480,7 @@ function loginAdmin() {
     renderAdminSubmissions();
     renderAdminTeamsManager();
   } else {
-    playBeep(200, 0.3, 'sawtooth');
+    playBeep(200, 0.25, 'sawtooth');
     document.getElementById('adminAuthError').style.display = 'block';
   }
 }
@@ -518,10 +488,10 @@ function loginAdmin() {
 function renderAdminSubmissions() {
   const tbody = document.getElementById('adminSubmissionsBody');
   tbody.innerHTML = '';
-  const submissions = JSON.parse(localStorage.getItem('cybercore_submissions') || '[]');
+  const submissions = JSON.parse(localStorage.getItem('aether_submissions') || '[]');
 
   if (submissions.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" style="color:#64748b; text-align:center;">Geen openstaande bewijzen ingediend via WhatsApp.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Geen openstaande WhatsApp inzendingen.</td></tr>';
     return;
   }
 
@@ -530,14 +500,14 @@ function renderAdminSubmissions() {
     const isApproved = sub.status === 'approved';
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td><strong>${tInfo.icon} ${tInfo.name}</strong><br><small style="color:#64748b;">${sub.time}</small></td>
-      <td><strong>${sub.taskName}</strong><br><small style="color:#94a3b8;">${sub.sectorTitle}</small></td>
-      <td><span style="color:${isApproved ? 'var(--neon-green)' : 'var(--neon-yellow)'}">${isApproved ? '✓ GOEDGEKEURD' : '⏳ WACHT OP CHECK'}</span></td>
+      <td><strong>${tInfo.icon} ${tInfo.name}</strong><br><small style="color:var(--text-muted);">${sub.time}</small></td>
+      <td><strong>${sub.taskName}</strong></td>
+      <td><span style="color:${isApproved ? 'var(--accent-emerald)' : 'var(--accent-amber)'}">${isApproved ? '✓ Goedgekeurd' : '⏳ Wacht op check'}</span></td>
       <td>
         ${!isApproved ? `
-          <button class="mini-btn green" onclick="adminApproveTask('${sub.teamKey}', '${sub.taskId}', 100)">✓ Goedkeuren & Reward (+100 PTS)</button>
-          <button class="mini-btn" onclick="adminRejectTask('${sub.teamKey}', '${sub.taskId}')">✕ Afkeuren</button>
-        ` : `<span style="color:var(--neon-green)">Beloning toegekend</span>`}
+          <button class="btn btn-primary btn-sm" onclick="adminApproveTask('${sub.teamKey}', '${sub.taskId}', 100)">✓ Beloon (+100 PTS)</button>
+          <button class="btn btn-secondary btn-sm" onclick="adminRejectTask('${sub.teamKey}', '${sub.taskId}')">✕</button>
+        ` : `<span style="color:var(--accent-emerald)">Toegekend</span>`}
       </td>
     `;
     tbody.appendChild(tr);
@@ -545,29 +515,26 @@ function renderAdminSubmissions() {
 }
 
 function adminApproveTask(teamKey, taskId, pointsReward = 100) {
-  // Update team tasks
   const key = getStorageKey(teamKey, 'tasks');
   const tasks = JSON.parse(localStorage.getItem(key) || '{}');
   tasks[taskId] = 'approved';
   localStorage.setItem(key, JSON.stringify(tasks));
 
-  // Update points
   const pointsKey = getStorageKey(teamKey, 'points');
   const currentPts = parseInt(localStorage.getItem(pointsKey) || '0', 10);
   localStorage.setItem(pointsKey, currentPts + pointsReward);
 
-  // Update submission record
-  const submissions = JSON.parse(localStorage.getItem('cybercore_submissions') || '[]');
+  const submissions = JSON.parse(localStorage.getItem('aether_submissions') || '[]');
   const match = submissions.find(s => s.teamKey === teamKey && s.taskId === taskId);
   if (match) match.status = 'approved';
-  localStorage.setItem('cybercore_submissions', JSON.stringify(submissions));
+  localStorage.setItem('aether_submissions', JSON.stringify(submissions));
 
   playSuccessSound();
   renderAdminSubmissions();
   renderAdminTeamsManager();
   renderSectors();
   updateTeamStats();
-  showToast(`🎉 ${TEAMS_INFO[teamKey].name} beloond met +${pointsReward} punten!`);
+  showToast(`🎉 ${TEAMS_INFO[teamKey].name} beloond met +${pointsReward} PTS!`);
 }
 
 function adminRejectTask(teamKey, taskId) {
@@ -576,14 +543,14 @@ function adminRejectTask(teamKey, taskId) {
   tasks[taskId] = 'open';
   localStorage.setItem(key, JSON.stringify(tasks));
 
-  const submissions = JSON.parse(localStorage.getItem('cybercore_submissions') || '[]');
+  const submissions = JSON.parse(localStorage.getItem('aether_submissions') || '[]');
   const filtered = submissions.filter(s => !(s.teamKey === teamKey && s.taskId === taskId));
-  localStorage.setItem('cybercore_submissions', JSON.stringify(filtered));
+  localStorage.setItem('aether_submissions', JSON.stringify(filtered));
 
   renderAdminSubmissions();
   renderAdminTeamsManager();
   renderSectors();
-  showToast("Inzending afgekeurd.");
+  showToast("Inzending afgewezen.");
 }
 
 function renderAdminTeamsManager() {
@@ -595,17 +562,16 @@ function renderAdminTeamsManager() {
     const tasks = JSON.parse(localStorage.getItem(getStorageKey(tKey, 'tasks')) || '{}');
     const doneCount = Object.values(tasks).filter(v => v === 'approved').length;
     const points = localStorage.getItem(getStorageKey(tKey, 'points')) || (doneCount * 100);
-    const pass = getTeamPassword(tKey) || 'Nog niet ingesteld';
+    const pass = getTeamPassword(tKey) || 'Niet ingesteld';
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td><strong>${tInfo.icon} ${tInfo.name}</strong></td>
-      <td><span style="color:var(--neon-green); font-weight:bold;">${points} PTS</span></td>
+      <td><span style="color:var(--accent-emerald); font-weight:700;">${points} PTS</span></td>
       <td>${doneCount} / 12</td>
       <td><code>${pass}</code></td>
       <td>
-        <button class="mini-btn" onclick="adminResetPassword('${tKey}')">Reset PW</button>
-        <button class="mini-btn" onclick="adminAdjustPoints('${tKey}')">PTS Wijzigen</button>
+        <button class="btn btn-secondary btn-sm" onclick="adminResetPassword('${tKey}')">Reset PW</button>
       </td>
     `;
     tbody.appendChild(tr);
@@ -613,39 +579,22 @@ function renderAdminTeamsManager() {
 }
 
 function adminResetPassword(teamKey) {
-  const newPw = prompt(`Voer nieuw wachtwoord in voor ${TEAMS_INFO[teamKey].name}:`, "1234");
+  const newPw = prompt(`Nieuw wachtwoord voor ${TEAMS_INFO[teamKey].name}:`, "1234");
   if (newPw) {
     setTeamPassword(teamKey, newPw);
     renderAdminTeamsManager();
-    showToast(`Wachtwoord voor ${TEAMS_INFO[teamKey].name} gewijzigd.`);
-  }
-}
-
-function adminAdjustPoints(teamKey) {
-  const cur = localStorage.getItem(getStorageKey(teamKey, 'points')) || '0';
-  const val = prompt(`Aantal punten voor ${TEAMS_INFO[teamKey].name}:`, cur);
-  if (val !== null) {
-    localStorage.setItem(getStorageKey(teamKey, 'points'), parseInt(val, 10) || 0);
-    renderAdminTeamsManager();
-    updateTeamStats();
+    showToast(`Wachtwoord gewijzigd.`);
   }
 }
 
 function publishBroadcast() {
   const text = document.getElementById('adminBroadcastInput').value.trim();
   if (!text) return;
-  setLiveBroadcast(text);
+  localStorage.setItem('aether_broadcast', text);
+  document.getElementById('broadcastDisplay').innerText = text;
   document.getElementById('adminBroadcastInput').value = '';
-}
-
-function quickBroadcast(text) { setLiveBroadcast(text); }
-
-function setLiveBroadcast(msg) {
-  localStorage.setItem('cybercore_broadcast', msg);
-  document.getElementById('broadcastDisplay').innerText = msg;
-  document.getElementById('lastBroadcastTime').innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   playSuccessSound();
-  showToast("📡 Broadcast verstuurd naar alle schermen!");
+  showToast("Broadcast gepubliceerd!");
 }
 
 // Toast
@@ -655,42 +604,38 @@ function showToast(message) {
   toast.innerText = message;
   toast.style.display = 'block';
   clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => { toast.style.display = 'none'; }, 3500);
+  toastTimeout = setTimeout(() => { toast.style.display = 'none'; }, 3000);
 }
 
-// ==========================================
-// INIT
-// ==========================================
+// Setup Onload
 window.onload = function() {
-  const savedTimer = localStorage.getItem('cybercore_timer_seconds');
+  const savedTimer = localStorage.getItem('aether_timer_seconds');
   if (savedTimer) totalSeconds = parseInt(savedTimer, 10);
   timerInterval = setInterval(tickTimer, 1000);
   tickTimer();
 
-  const savedBroadcast = localStorage.getItem('cybercore_broadcast');
+  const savedBroadcast = localStorage.getItem('aether_broadcast');
   if (savedBroadcast) document.getElementById('broadcastDisplay').innerText = savedBroadcast;
 
   document.getElementById('audioToggleBtn').onclick = function() {
     sfxEnabled = !sfxEnabled;
     document.getElementById('sfxStatus').innerText = sfxEnabled ? 'AAN' : 'UIT';
-    if (sfxEnabled) playBeep(600, 0.1);
+    if (sfxEnabled) playBeep(600, 0.08);
   };
 
-  // Sync cross-tab/laptop events
   window.addEventListener('storage', function(e) {
-    if (e.key === 'cybercore_broadcast') {
+    if (e.key === 'aether_broadcast') {
       document.getElementById('broadcastDisplay').innerText = e.newValue || '';
       playSuccessSound();
-      showToast("📡 Nieuw bevel van de leiding ontvangen!");
+      showToast("Nieuw broadcast bericht!");
     }
-    if (e.key && e.key.includes('tasks') || e.key.includes('points')) {
+    if (e.key && (e.key.includes('tasks') || e.key.includes('points'))) {
       renderSectors();
       updateTeamStats();
     }
   });
 
-  // Check of team reeds ingelogd was in deze sessie
-  const activeSessionTeam = sessionStorage.getItem('cybercore_active_team');
+  const activeSessionTeam = sessionStorage.getItem('aether_active_team');
   if (activeSessionTeam) {
     loginSuccess(activeSessionTeam);
   } else {
