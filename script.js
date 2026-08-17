@@ -175,7 +175,7 @@ function onTeamSelectChange() {
         localStorage.removeItem(getLocalKey(teamKey, 'personal_pw'));
         bunkerGroup.style.display = 'block';
         returningGroup.style.display = 'none';
-        btn.innerText = "[ VERIFIEER CODE & ONTGRENDEL 🔓 ]";
+        btn.innerText = "[ VERIFIEER CODE & ONTGRENDEL TERMINAL 🔓 ]";
       }
     });
   } else {
@@ -187,7 +187,7 @@ function onTeamSelectChange() {
     } else {
       bunkerGroup.style.display = 'block';
       returningGroup.style.display = 'none';
-      btn.innerText = "[ VERIFIEER CODE & ONTGRENDEL 🔓 ]";
+      btn.innerText = "[ VERIFIEER CODE & ONTGRENDEL TERMINAL 🔓 ]";
     }
   }
 }
@@ -286,6 +286,7 @@ function launchCockpit(teamKey) {
   document.getElementById('screenRoomCode').style.display = 'none';
   document.getElementById('screenSetPassword').style.display = 'none';
   document.getElementById('screenTutorial').style.display = 'none';
+  document.getElementById('mainCockpit').style.display = 'flex';
 
   const info = TEAMS_INFO[teamKey];
   document.getElementById('headerTeamIcon').innerText = info.icon;
@@ -300,6 +301,7 @@ function launchCockpit(teamKey) {
 function logoutCurrentTeam() {
   sessionStorage.removeItem('aether_fb_active_team');
   authenticatedTeam = null;
+  document.getElementById('mainCockpit').style.display = 'none';
   document.getElementById('screenIntro').style.display = 'flex';
   document.getElementById('screenRoomCode').style.display = 'none';
   document.getElementById('screenSetPassword').style.display = 'none';
@@ -537,7 +539,7 @@ function switchTab(tabId) {
   const target = document.getElementById(`tab-${tabId}`);
   if (target) target.classList.add('active');
 
-  const btn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(`'${tabId}'`));
+  const btn = tabId === 'sectors' ? document.getElementById('tabBtnSectors') : document.getElementById('tabBtnMastermind');
   if (btn) btn.classList.add('active');
 }
 
@@ -574,7 +576,7 @@ function resetTimer(mins = 120) {
   }
 }
 
-// NOODBERICHT OVERLAY
+// EMERGENCY BROADCAST
 function sendEmergencyLockdown() {
   const title = document.getElementById('adminEmergencyTitle').value.trim() || "🚨 NOODBEVEL VAN DE LEIDING";
   const text = document.getElementById('adminEmergencyText').value.trim();
@@ -648,7 +650,7 @@ function closeVictoryModal() {
   document.getElementById('victoryModal').style.display = 'none';
 }
 
-// SYSADMIN LEIDING PANEEL (6-KLEURENCODE)
+// SYSADMIN LEIDING PANEEL & SLUITEN
 function openAdminModal() {
   playBeep(400, 0.05);
   document.getElementById('adminModal').style.display = 'flex';
