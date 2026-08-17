@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AETHER_OS // Fullscreen Master Cockpit</title>
+  <title>TER DUINEN // AI RESCUE PROTOCOL</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
@@ -11,21 +11,24 @@
 </head>
 <body class="cyber-theme">
 
-  <!-- VASTE FLOATING KNOP: ALTIJD TOEGANG TOT DE LEIDING BACKSITE -->
-  <button class="floating-admin-btn" onclick="openAdminModal()" title="Centrale Post / Leiding Toegang (of druk Ctrl+Shift+A)">
-    ⚙️ ROOT ADMIN
+  <!-- FLOATING SYSADMIN KNOP (ALTIJD BEREIKBAAR) -->
+  <button class="floating-admin-btn" onclick="openAdminModal()" title="SysAdmin Leiding Paneel (Ctrl+Shift+A)">
+    ⚙️ SYSADMIN ROOT
   </button>
 
-  <!-- 0. BOOT ACTIVATOR -->
+  <!-- 0. BOOT SCREEN: DIRECT NA DE TOESPRAAK VAN DE MONI -->
   <div class="modal-layer active-layer" id="bootLayer">
-    <div class="center-card">
-      <div class="card-tag">⚡ GLITCH_NET PROTOCOL</div>
-      <h1 class="card-title">SYSTEEM INITIALISATIE</h1>
+    <div class="center-card boot-card">
+      <div class="danger-tag">🚨 NOODSITUATIE TER DUINEN // SYSTEEM GEGIJZELD</div>
+      <h1 class="card-title">HET NETWERK LIGT PLAT!</h1>
       <p class="card-text">
-        Koppel deze terminal aan de centrale datastroom van het AI-netwerk.
+        Virus <strong>GLITCH</strong> heeft de servers, de lichten en de <strong>muziekinstallatie van de bar</strong> gegijzeld! Zonder jullie AI gaat de bar vanavond NOOIT open.
       </p>
+      <div class="boot-prompt-box">
+        ⚠️ <em>Moni-bevel: "JULLIE MOETEN DEZE AI REDDEN EN ALS EERSTE WEER ONLINE KRIJGEN!"</em>
+      </div>
       <button class="btn btn-emerald btn-lg btn-block" onclick="igniteSystem()">
-        START TERMINAL VERBINDING ▶
+        START TERMINAL BOOTSTRAP ▶
       </button>
     </div>
   </div>
@@ -34,15 +37,15 @@
   <div class="modal-layer" id="glitchScreen" style="display: none;">
     <div class="center-card glitch-border">
       <div class="hud-header-line">
-        <span class="danger-tag">🚨 DEFCON-1: KRITIEKE SYSTEEMINBREUK</span>
-        <span class="source-tag">SRC: 0xGLITCH_ROOT // ENCRYPTED</span>
+        <span class="danger-tag">🚨 DEFCON-1: SYSTEEM OVERNAME TER DUINEN</span>
+        <span class="source-tag">SRC: 0xGLITCH_ROOT // NETWORK_HIJACK</span>
       </div>
 
       <div class="glitch-title-row">
         <div class="glitch-avatar">👾</div>
         <div>
           <h2 class="glitch-sender">VIRUS GLITCH v4.0</h2>
-          <span class="glitch-sub">CENTRALE KERN OVERGENOMEN</span>
+          <span class="glitch-sub">MUZIEK & SERVERS VERGRENDELD</span>
         </div>
       </div>
 
@@ -51,26 +54,26 @@
       </div>
 
       <button class="btn btn-danger btn-lg btn-block" id="btnEscapeStart" onclick="proceedToBunker()" style="display: none;">
-        NOODPROTOCOL INITIALISEREN & KRAAK DE BUNKER 🔓
+        NOODPROTOCOL INITIALISEREN & KRAAK DE KAMER 🔓
       </button>
     </div>
   </div>
 
-  <!-- 2. DATABUNKER ESCAPE VERGRENDELING (6-CIJFERIGE CODE + EIGEN PW) -->
+  <!-- 2. DATABUNKER ESCAPE (6-CIJFERIGE CODE + EIGEN PW) -->
   <div class="modal-layer" id="bunkerAuthModal" style="display: none;">
     <div class="center-card bunker-border">
-      <div class="danger-tag">🔒 OMEGA PROTOCOL // SUB-BUNKER VERGRENDELD</div>
+      <div class="danger-tag">🔒 LOKAAL VERGRENDELD // OMEGA PROTOCOL</div>
       
       <!-- Stap 1: 6-cijferige kamercode -->
       <div id="authStep1">
-        <h2 class="card-title">KRAAK DEZE KAMER</h2>
+        <h2 class="card-title">ONTGRENDEL JULLIE AI KERN</h2>
         <p class="card-text">
-          Virus <strong>GLITCH</strong> houdt jullie gevangen in deze kamer! Los de <strong>3 fysieke puzzels</strong> in deze ruimte op om de 6-cijferige code te vormen.
+          GLITCH heeft deze laptop vergrendeld. Zoek de <strong>3 raadsels in dit lokaal</strong> om de 6-cijferige opstartcode te kraken!
         </p>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="gateTeamSelect">Kies jullie AI Supercluster:</label>
+            <label for="gateTeamSelect">Welke AI moeten jullie redden?</label>
             <select id="gateTeamSelect" class="modern-select" onchange="onGateTeamChange()">
               <option value="chatgpt">🟢 Team ChatGPT (GPT-4o)</option>
               <option value="midjourney">🎨 Team Midjourney (v6.1)</option>
@@ -95,7 +98,7 @@
         <p id="gateErrorMsg" class="auth-error"></p>
 
         <button class="btn btn-primary btn-lg btn-block" id="btnSubmitBunker" onclick="handleAuthSubmit()">
-          VERIFIEER CODE & ONTGRENDEL 🔓
+          VERIFIEER CODE & RED DE AI 🔓
         </button>
       </div>
 
@@ -109,7 +112,7 @@
 
         <div class="form-group">
           <label for="newTeamPasswordInput">Eigen Team Wachtwoord / Pincode:</label>
-          <input type="password" id="newTeamPasswordInput" class="modern-input" placeholder="Bijv. turbo2026">
+          <input type="password" id="newTeamPasswordInput" class="modern-input" placeholder="Bijv. feest2026">
         </div>
 
         <p id="step2ErrorMsg" class="auth-error"></p>
@@ -125,7 +128,7 @@
   <div class="modal-layer" id="lockdownModal" style="display: none;">
     <div class="center-card emergency-border">
       <div class="alert-icon-anim">🚨</div>
-      <h2 id="lockdownTitle" class="card-title">NOODBEVEL VAN DE CENTRALE POST</h2>
+      <h2 id="lockdownTitle" class="card-title">NOODBEVEL VAN DE CENTRALE BASIS</h2>
       <div class="emergency-content" id="lockdownText">Er is een belangrijk direct bevel binnengekomen.</div>
       <div id="lockdownAudioContainer" style="display: none; width: 100%;">
         <audio id="lockdownAudioPlayer" controls style="width: 100%; margin-top: 0.5rem;"></audio>
@@ -138,9 +141,9 @@
   <div class="modal-layer" id="victoryModal" style="display: none;">
     <div class="center-card victory-border">
       <div class="victory-icon-anim">🏆</div>
-      <h2 class="card-title">MASTER CORE GEKRAAKT!</h2>
+      <h2 class="card-title">MASTER CORE GEKRAAKT // MUZIEK ONLINE!</h2>
       <p class="card-text">
-        Supercluster <strong id="victoryTeamName">Jullie Team</strong> heeft de 4 Quantum Frequenties gekraakt en GLITCH verslagen!
+        Supercluster <strong id="victoryTeamName">Jullie Team</strong> heeft de 4 geheime kleuren gekraakt en GLITCH verslagen! De muziekinstallatie en de bar zijn gered!
       </p>
       <div class="victory-code-display" id="victoryCodeDisplay">🟢 🔴 🟡 🔵</div>
       <p class="card-text" style="font-weight: bold; color: var(--emerald);">
@@ -150,10 +153,10 @@
     </div>
   </div>
 
-  <!-- 5. WIDESCREEN HOOFDDASHBOARD -->
-  <div class="fullscreen-shell">
+  <!-- 5. WIDESCREEN HOOFD COCKPIT -->
+  <div class="cockpit-container">
     
-    <!-- HEADER BAR -->
+    <!-- TOP NAVIGATION -->
     <header class="top-nav">
       <div class="team-badge">
         <span id="headerTeamIcon">🤖</span>
@@ -177,22 +180,31 @@
     <div class="broadcast-banner" id="broadcastBanner">
       <span class="pulse-dot"></span>
       <span id="broadcastDisplay" class="broadcast-text">
-        Console Online. Ga naar de posten, doe opdrachten, verdien kleur-tokens en kraak de Master Core!
+        Console Online. Ga op dropspel rond Ter Duinen en in de straat, stuur bewijs via GSM en kraak de code om de bar te redden!
       </span>
     </div>
 
-    <!-- MAIN APP TABS -->
+    <!-- TABS NAVIGATIE -->
     <div class="tab-nav-bar">
-      <button class="tab-btn active" onclick="switchTab('sectors')">1. Kies Opdracht 🎯</button>
+      <button class="tab-btn active" onclick="switchTab('sectors')">1. Kies Dropspel Opdracht 🎯</button>
       <button class="tab-btn" onclick="switchTab('mastermind')">2. Kleur & Kraak Code 🧩</button>
-      <button class="tab-btn" onclick="switchTab('map')">3. Waar staan de posten? 📍</button>
+      <button class="tab-btn" onclick="switchTab('map')">3. Terrein & Zones Kaart 📍</button>
     </div>
 
-    <!-- TAB 1: OPDRACHTEN -->
+    <!-- TAB 1: DROPSPEL OPDRACHTEN -->
     <main id="tab-sectors" class="tab-pane active">
       <div class="instruction-box">
-        <strong>Spelregel:</strong> Ga fysiek naar een post ➔ Voer de opdracht uit ➔ Stuur bewijs via GSM. De leiding geeft jullie dan <strong>+1 Kleur-Token</strong>!
+        <strong>Spelregels Dropspel:</strong> Kies een opdracht uit één van de 4 categorieën ➔ Voer hem uit op het terrein of in de straat ➔ Stuur foto/video/tekst naar <strong>0475 84 89 83</strong> en klik op de knop. De leiding geeft jullie dan <strong>+1 Kleur-Token</strong>!
       </div>
+
+      <div class="category-filters">
+        <button class="cat-filter-btn active" onclick="filterSectors('all')">Alles Weergeven (16)</button>
+        <button class="cat-filter-btn" onclick="filterSectors('cat-a')">🏢 Cat. A: Terrein Ter Duinen (4)</button>
+        <button class="cat-filter-btn" onclick="filterSectors('cat-b')">🌲 Cat. B: Straat & Natuur (4)</button>
+        <button class="cat-filter-btn" onclick="filterSectors('cat-c')">🏃 Cat. C: Team Challenges (4)</button>
+        <button class="cat-filter-btn" onclick="filterSectors('cat-d')">🧩 Cat. D: Puzzel & Audio (4)</button>
+      </div>
+
       <div class="sectors-grid" id="sectorsContainer"></div>
     </main>
 
@@ -200,7 +212,7 @@
     <main id="tab-mastermind" class="tab-pane">
       <div class="instruction-box">
         <strong>Mastermind Regels:</strong> 
-        1. Kies hieronder een kleur. ➔ 2. Klik op een leeg bolletje in je actieve rij (kost 1 token). ➔ 3. Rij vol? Ren naar de Centrale Post!
+        1. Kies hieronder een kleur. ➔ 2. Klik op een leeg bolletje in je actieve rij (kost 1 token). ➔ 3. Rij van 4 vol? Ren naar de Centrale Post om te testen!
       </div>
 
       <div class="mastermind-grid-layout">
@@ -242,35 +254,35 @@
       </div>
     </main>
 
-    <!-- TAB 3: LOCATIES -->
+    <!-- TAB 3: LOCATIES & DROPSPEL ZONES -->
     <main id="tab-map" class="tab-pane">
       <div class="locations-grid">
         <div class="panel-box loc-card">
-          <span class="loc-tag">POST 1</span>
-          <h3 class="loc-title">Prompt Engineering</h3>
-          <p class="loc-spot">📍 Achter de Hoofdtent</p>
-          <p class="loc-desc">LEGO nabouwen via walkietalkie & geblinddoekt navigeren.</p>
+          <span class="loc-tag">ZONE A</span>
+          <h3 class="loc-title">Gebouwen & Terrein Ter Duinen</h3>
+          <p class="loc-spot">📍 Rondom Schoolgebouwen, Buitentrappen & Parking</p>
+          <p class="loc-desc">Masterchef Brigade groepsfoto, nummerplaten datamining, borden puzzel & serverruimte stilte.</p>
         </div>
 
         <div class="panel-box loc-card">
-          <span class="loc-tag">POST 2</span>
-          <h3 class="loc-title">Creative Net</h3>
-          <p class="loc-spot">📍 Bij het Open Veld</p>
-          <p class="loc-desc">AI-prompts tekenen, robotdans synchroniseren & deepfakes ontmaskeren.</p>
+          <span class="loc-tag">ZONE B</span>
+          <h3 class="loc-title">Directe Straat & Natuurrand</h3>
+          <p class="loc-spot">📍 Straat & Bermen binnen 200-300 meter</p>
+          <p class="loc-desc">Natuurkleuren verzamelen, huisnummer rekensom, dikste boom knuffelen & putdeksel microchip maken.</p>
         </div>
 
         <div class="panel-box loc-card">
-          <span class="loc-tag">POST 3</span>
-          <h3 class="loc-title">Cybersecurity</h3>
-          <p class="loc-spot">📍 In het Bos</p>
-          <p class="loc-desc">Trefbal-firewall ontwijken, touwenweb doorkruisen & microchips vissen.</p>
+          <span class="loc-tag">ZONE C</span>
+          <h3 class="loc-title">Fysieke Team Zones</h3>
+          <p class="loc-spot">📍 Grasveld of Vrije Vlakte</p>
+          <p class="loc-desc">Menselijke QR-code, 10-seconden slow-motion sprint, elleboog-transportketting & stoeprand balans.</p>
         </div>
 
         <div class="panel-box loc-card">
-          <span class="loc-tag">POST 4</span>
-          <h3 class="loc-title">Logica & AI</h3>
-          <p class="loc-spot">📍 Bij het Kampvuur</p>
-          <p class="loc-desc">Sorteeralgoritmes kraken, teamknopen ontwarren & geheimschrift.</p>
+          <span class="loc-tag">ZONE D</span>
+          <h3 class="loc-title">Observatie & Audio Zone</h3>
+          <p class="loc-spot">📍 Vrije Zone rondom het Kampterrein</p>
+          <p class="loc-desc">Natuurlijk robotgezicht, maffe verkeersborden decodering, lengte-algoritme & robot-audio opname.</p>
         </div>
 
         <div class="panel-box loc-card central-loc">
@@ -282,7 +294,7 @@
       </div>
     </main>
 
-    <!-- WIDESCREEN FOOTER -->
+    <!-- FOOTER -->
     <footer class="bottom-footer">
       <button class="sysadmin-link-btn" onclick="openAdminModal()">[ ROOT://SYSADMIN_CONSOLE ]</button>
       <button class="btn-text" onclick="logoutCurrentTeam()">Bunker Vergrendelen 🔒</button>
@@ -303,7 +315,7 @@
         
         <div class="phone-box">
           <div class="phone-num">📱 0475 84 89 83</div>
-          <div class="phone-tag" id="evidenceTaskLabel">Post 1 - Opdracht A</div>
+          <div class="phone-tag" id="evidenceTaskLabel">Opdracht X</div>
         </div>
 
         <div class="phone-instruction">
