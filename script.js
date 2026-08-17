@@ -3,7 +3,7 @@
  */
 
 // =========================================================================
-// 1. DIRECT INGESTELDE FIREBASE CONFIGURATIE (UIT JOUW SCREENSHOT)
+// 1. FIREBASE CONFIGURATIE (GEKOPPELD AAN AI-BATTLE)
 // =========================================================================
 const firebaseConfig = {
   apiKey: "AIzaSyBkO-N0BF7tbIpSQhWwALD_hx3xCZRzecQ",
@@ -114,7 +114,7 @@ function playVictoryFanfare() {
   setTimeout(() => playBeep(880, 0.3), 380);
 }
 
-// STORAGE & FIREBASE
+// STORAGE & FIREBASE HELPERS
 function getLocalKey(team, subkey) {
   return `aether_fb_${team}_${subkey}`;
 }
@@ -137,7 +137,7 @@ function setPersonalPassword(teamKey, pw) {
   if (isFirebaseReady) db.ref(`teams/${teamKey}/personalPassword`).set(pw);
 }
 
-// FLOW LOGICA
+// FASE 1 & 2: INTRO & KAMERCODE FLOW
 function goFromIntroToRoomCode() {
   getAudioContext();
   playGlitchNoise();
@@ -153,7 +153,6 @@ function backToIntro() {
 
 function onTeamSelectChange() {
   const teamKey = document.getElementById('gateTeamSelect').value;
-  const personalPw = getPersonalPassword(teamKey);
   const errorEl = document.getElementById('gateErrorMsg');
   errorEl.innerText = '';
 
@@ -164,53 +163,99 @@ function onTeamSelectChange() {
   document.getElementById('bunker6DigitInput').value = '';
   document.getElementById('teamPersonalPasswordInput').value = '';
 
-  if (personalPw) {
-    bunkerGroup.style.display = 'none';
-    returningGroup.style.display = 'block';
-    btn.innerText = "[ INLOGGEN MET EIGEN WACHTWOORD 🚀 ]";
+  // Check direct in Firebase of er al een wachtwoord is
+  if (isFirebaseReady) {
+    db.ref(`teams/${teamKey}/personalPassword`).once('value', snapshot => {
+      const personalPw = snapshot.val();
+      if (personalPw) {
+        setPersonalPassword(teamKey, personalPw);
+        bunkerGroup.style.display = 'none';
+        returningGroup.style.display = 'block';
+        btn.innerText = "[ INLOGGEN MET EIGEN WACHTWOORD 🚀 ]";
+      } else {
+        localStorage.removeItem(getLocalKey(teamKey, 'personal_pw'));
+        bunkerGroup.style.display = 'block';
+        returningGroup.style.display = 'none';
+        btn.innerText = "[ VERIFIEER CODE & ONTGRENDEL 🔓 ]";
+      }
+    });
   } else {
-    bunkerGroup.style.display = 'block';
-    returningGroup.style.display = 'none';
-    btn.innerText = "[ VERIFIEER CODE & ONTGRENDEL 🔓 ]";
+    const personalPw = getPersonalPassword(teamKey);
+    if (personalPw) {
+      bunkerGroup.style.display = 'none';
+      returningGroup.style.display = 'block';
+      btn.innerText = "[ INLOGGEN MET EIGEN WACHTWOORD 🚀 ]";
+    } else {
+      bunkerGroup.style.display = 'block';
+      returningGroup.style.display = 'none';
+      btn.innerText = "[ VERIFIEER CODE & ONTGRENDEL 🔓 ]";
+    }
   }
 }
 
 function handleRoomCodeSubmit() {
   const teamKey = document.getElementById('gateTeamSelect').value;
-  const personalPw = getPersonalPassword(teamKey);
   const errorEl = document.getElementById('gateErrorMsg');
 
-  if (personalPw) {
-    const enteredPw = document.getElementById('teamPersonalPasswordInput').value.trim();
-    if (!enteredPw) {
-      errorEl.innerText = "Voer jullie team-wachtwoord in.";
-      return;
-    }
-    if (enteredPw === personalPw || enteredPw === 'admin123') {
-      launchCockpit(teamKey);
-    } else {
-      errorEl.innerText = "Verkeerd wachtwoord! Vraag hulp aan de leiding.";
-    }
+  if (isFirebaseReady) {
+    db.ref(`teams/${teamKey}`).once('value', snapshot => {
+      const teamData = snapshot.val() || {};
+      const personalPw = teamData.personalPassword;
+      const roomCode = teamData.roomEscapeCode || getRoomEscapeCode(teamKey);
+
+      if (personalPw) {
+        const enteredPw = document.getElementById('teamPersonalPasswordInput').value.trim();
+        if (!enteredPw) {
+          errorEl.innerText = "Voer jullie team-wachtwoord in.";
+          return;
+        }
+        if (enteredPw === personalPw || enteredPw === 'admin123') {
+          launchCockpit(teamKey);
+        } else {
+          errorEl.innerText = "Verkeerd wachtwoord! Vraag hulp aan de leiding.";
+        }
+      } else {
+        const enteredCode = document.getElementById('bunker6DigitInput').value.trim();
+        if (enteredCode.length !== 6) {
+          errorEl.innerText = "De kamercode moet exact 6 cijfers zijn!";
+          return;
+        }
+        if (enteredCode === roomCode || enteredCode === '123456' || enteredCode === '482619' || enteredCode === 'admin123') {
+          playVictoryFanfare();
+          authenticatedTeam = teamKey;
+          document.getElementById('screenRoomCode').style.display = 'none';
+          document.getElementById('screenSetPassword').style.display = 'flex';
+        } else {
+          errorEl.innerText = "Onjuiste 6-cijferige code! Controleer jullie 3 raadsels.";
+        }
+      }
+    });
   } else {
-    const enteredCode = document.getElementById('bunker6DigitInput').value.trim();
-    const correctCode = getRoomEscapeCode(teamKey);
-
-    if (enteredCode.length !== 6) {
-      errorEl.innerText = "De kamercode moet exact 6 cijfers zijn!";
-      return;
-    }
-
-    if (enteredCode === correctCode || enteredCode === '123456' || enteredCode === '482619' || enteredCode === 'admin123') {
-      playVictoryFanfare();
-      authenticatedTeam = teamKey;
-      document.getElementById('screenRoomCode').style.display = 'none';
-      document.getElementById('screenSetPassword').style.display = 'flex';
+    // Lokale Fallback
+    const personalPw = getPersonalPassword(teamKey);
+    if (personalPw) {
+      const enteredPw = document.getElementById('teamPersonalPasswordInput').value.trim();
+      if (enteredPw === personalPw || enteredPw === 'admin123') {
+        launchCockpit(teamKey);
+      } else {
+        errorEl.innerText = "Verkeerd wachtwoord!";
+      }
     } else {
-      errorEl.innerText = "Onjuiste 6-cijferige code! Controleer jullie 3 raadsels.";
+      const enteredCode = document.getElementById('bunker6DigitInput').value.trim();
+      const correctCode = getRoomEscapeCode(teamKey);
+      if (enteredCode === correctCode || enteredCode === '123456' || enteredCode === '482619' || enteredCode === 'admin123') {
+        playVictoryFanfare();
+        authenticatedTeam = teamKey;
+        document.getElementById('screenRoomCode').style.display = 'none';
+        document.getElementById('screenSetPassword').style.display = 'flex';
+      } else {
+        errorEl.innerText = "Onjuiste 6-cijferige code!";
+      }
     }
   }
 }
 
+// FASE 3: EIGEN WACHTWOORD VASTLEGGEN
 function savePasswordAndLaunchCockpit() {
   const newPw = document.getElementById('newTeamPasswordInput').value.trim();
   const errorEl = document.getElementById('step2ErrorMsg');
@@ -252,7 +297,7 @@ function logoutCurrentTeam() {
   document.getElementById('screenSetPassword').style.display = 'none';
 }
 
-// MISSIES
+// FASE 4: GEFASEERDE MISSIES
 let activePendingTask = null;
 
 function renderSectors() {
@@ -339,7 +384,7 @@ function confirmEvidenceSent() {
   showToast("Doorgestuurd! De leiding kijkt ernaar.");
 }
 
-// 6-KLEUREN MASTERMIND
+// MASTERMIND ENGINE (6 KLEUREN)
 function getTeamCredits(teamKey) {
   return parseInt(localStorage.getItem(getLocalKey(teamKey, 'credits')) || '0', 10);
 }
@@ -520,7 +565,7 @@ function resetTimer(mins = 120) {
   }
 }
 
-// NOODBERICHT OVERLAY
+// EMERGENCY BROADCAST
 function sendEmergencyLockdown() {
   const title = document.getElementById('adminEmergencyTitle').value.trim() || "🚨 NOODBEVEL VAN DE LEIDING";
   const text = document.getElementById('adminEmergencyText').value.trim();
@@ -594,13 +639,14 @@ function closeVictoryModal() {
   document.getElementById('victoryModal').style.display = 'none';
 }
 
-// SYSADMIN LEIDING PANEEL (6-KLEURENCODE)
+// SYSADMIN LEIDING PANEEL & SLUITEN
 function openAdminModal() {
   playBeep(400, 0.05);
   document.getElementById('adminModal').style.display = 'flex';
 }
 
 function closeAdminModal() {
+  playBeep(300, 0.05);
   document.getElementById('adminModal').style.display = 'none';
 }
 
@@ -694,7 +740,7 @@ function renderAdminMastermindSubmissions() {
       }
       entries.forEach(([subKey, sub]) => {
         const tInfo = TEAMS_INFO[sub.teamKey];
-        const colorsText = sub.colors.map(c => COLOR_MAP[c] || c).join(' - ');
+        const colorsText = (sub.colors || []).map(c => COLOR_MAP[c] || c).join(' - ');
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td><strong>${tInfo.icon} ${tInfo.name}</strong></td>
@@ -785,42 +831,106 @@ function renderAdminTeamsManager() {
   const tbody = document.getElementById('adminTeamsManagerBody');
   tbody.innerHTML = '';
 
-  Object.keys(TEAMS_INFO).forEach(tKey => {
-    const tInfo = TEAMS_INFO[tKey];
-    const credits = getTeamCredits(tKey);
-    const activeRow = localStorage.getItem(getLocalKey(tKey, 'active_row')) || '1';
-    const roomCode = getRoomEscapeCode(tKey);
-    const personalPw = getPersonalPassword(tKey) || 'Nog niet gekozen';
+  if (isFirebaseReady) {
+    db.ref('teams').once('value', snapshot => {
+      const teamsData = snapshot.val() || {};
 
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><strong>${tInfo.icon} ${tInfo.name}</strong></td>
-      <td style="color:var(--amber); font-weight:bold;">${credits} Tokens</td>
-      <td>Rij ${activeRow}</td>
-      <td><code>${roomCode}</code></td>
-      <td><code>${personalPw}</code></td>
-      <td>
-        <button class="retro-btn btn-sm" onclick="adminAddCredits('${tKey}')">+ Token</button>
-        <button class="retro-btn btn-sm" onclick="adminResetTeamAuth('${tKey}')">Reset PW</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
+      Object.keys(TEAMS_INFO).forEach(tKey => {
+        const tInfo = TEAMS_INFO[tKey];
+        const tData = teamsData[tKey] || {};
+        const credits = tData.credits || 0;
+        const activeRow = tData.active_row || 1;
+        const roomCode = tData.roomEscapeCode || '482619';
+        const personalPw = tData.personalPassword || 'Nog niet gekozen';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${tInfo.icon} ${tInfo.name}</strong></td>
+          <td style="color:var(--amber); font-weight:bold;">
+            <span id="creditsVal_${tKey}">${credits}</span> Tokens
+            <button class="retro-btn btn-sm" style="padding:0.15rem 0.4rem; margin-left:0.4rem;" onclick="adminAdjustTokens('${tKey}', 1)">+1</button>
+            <button class="retro-btn btn-sm" style="padding:0.15rem 0.4rem;" onclick="adminAdjustTokens('${tKey}', -1)">-1</button>
+          </td>
+          <td>Rij ${activeRow}</td>
+          <td><code>${roomCode}</code></td>
+          <td><code>${personalPw}</code></td>
+          <td>
+            <button class="retro-btn btn-sm" onclick="adminResetTeamPassword('${tKey}')">Reset PW</button>
+            <button class="retro-btn btn-sm btn-danger" style="margin-left:0.3rem;" onclick="adminResetTeamFull('${tKey}')">Reset Team</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    });
+  }
 }
 
-function adminAddCredits(tKey) {
-  const cur = getTeamCredits(tKey);
-  setTeamCredits(tKey, cur + 1);
-  renderAdminTeamsManager();
-  showToast(`+1 Token gegeven aan ${TEAMS_INFO[tKey].name}`);
+function adminAdjustTokens(tKey, amount) {
+  const current = getTeamCredits(tKey);
+  const next = Math.max(0, current + amount);
+  setTeamCredits(tKey, next);
+  const valEl = document.getElementById(`creditsVal_${tKey}`);
+  if (valEl) valEl.innerText = next;
+  showToast(`Tokens aangepast voor ${TEAMS_INFO[tKey].name}: nu ${next}`);
 }
 
-function adminResetTeamAuth(tKey) {
-  if (confirm(`Wil je het wachtwoord van ${TEAMS_INFO[tKey].name} resetten?`)) {
+function adminResetTeamPassword(tKey) {
+  if (confirm(`Wil je het wachtwoord van ${TEAMS_INFO[tKey].name} resetten in Firebase? Ze moeten dan opnieuw de 6-cijferige kamer-code invoeren.`)) {
     localStorage.removeItem(getLocalKey(tKey, 'personal_pw'));
-    if (isFirebaseReady) db.ref(`teams/${tKey}/personalPassword`).remove();
+    if (isFirebaseReady) {
+      db.ref(`teams/${tKey}/personalPassword`).remove();
+    }
     renderAdminTeamsManager();
-    showToast(`Wachtwoord gereset.`);
+    showToast(`Wachtwoord van ${TEAMS_INFO[tKey].name} gereset.`);
+  }
+}
+
+function adminResetTeamFull(tKey) {
+  if (confirm(`LET OP: Wil je ALLE data (tokens, rijen, taken & wachtwoord) van ${TEAMS_INFO[tKey].name} wissen in Firebase?`)) {
+    localStorage.removeItem(getLocalKey(tKey, 'personal_pw'));
+    localStorage.removeItem(getLocalKey(tKey, 'credits'));
+    localStorage.removeItem(getLocalKey(tKey, 'tasks'));
+    localStorage.removeItem(getLocalKey(tKey, 'mastermind_state'));
+    localStorage.removeItem(getLocalKey(tKey, 'active_row'));
+
+    if (isFirebaseReady) {
+      db.ref(`teams/${tKey}`).set({
+        credits: 0,
+        active_row: 1,
+        roomEscapeCode: '482619',
+        personalPassword: null,
+        tasks: {},
+        mastermind: {}
+      });
+    }
+    renderAdminTeamsManager();
+    showToast(`Volledige data van ${TEAMS_INFO[tKey].name} gereset.`);
+  }
+}
+
+function adminResetAllGameData() {
+  if (confirm("🚨 WEET JE DIT ZEKER? Dit wist ALLE data van ALLE 6 teams, de inzendingen, winnaars en reset de timer!")) {
+    if (isFirebaseReady) {
+      db.ref('submissions').remove();
+      db.ref('gameState/winner').remove();
+      db.ref('gameState/emergency').remove();
+      db.ref('gameState/totalSeconds').set(7200);
+      db.ref('gameState/timerRunning').set(false);
+
+      Object.keys(TEAMS_INFO).forEach(tKey => {
+        db.ref(`teams/${tKey}`).set({
+          credits: 0,
+          active_row: 1,
+          roomEscapeCode: '482619',
+          personalPassword: null,
+          tasks: {},
+          mastermind: {}
+        });
+      });
+    }
+    localStorage.clear();
+    showToast("Compleet spel gereset in Firebase!");
+    setTimeout(() => location.reload(), 1000);
   }
 }
 
@@ -831,11 +941,14 @@ function showToast(msg) {
   setTimeout(() => { t.style.display = 'none'; }, 3000);
 }
 
-// Sneltoets voor SysAdmin (Ctrl + Shift + A)
+// Sneltoetsen: Ctrl + Shift + A (Open Admin), Escape (Sluit Modals & Admin)
 window.addEventListener('keydown', function(e) {
   if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
     e.preventDefault();
     openAdminModal();
+  } else if (e.key === 'Escape') {
+    closeAdminModal();
+    closeEvidenceModal();
   }
 });
 
@@ -869,7 +982,7 @@ function setupFirebaseGlobalListeners() {
   if (!isFirebaseReady) return;
 
   const statusEl = document.getElementById('dbStatusIndicator');
-  if (statusEl) statusEl.innerText = "● DATABASE ONLINE";
+  if (statusEl) statusEl.innerText = "● DATABASE ONLINE (FIREBASE SYNC)";
 
   db.ref('gameState/emergency').on('value', snapshot => {
     const data = snapshot.val();
@@ -883,7 +996,7 @@ function setupFirebaseGlobalListeners() {
     const winner = snapshot.val();
     if (winner && winner.teamName) {
       document.getElementById('victoryTeamName').innerText = winner.teamName;
-      document.getElementById('victoryCodeDisplay').innerText = winner.secret.map(c => COLOR_MAP[c]).join(' ');
+      document.getElementById('victoryCodeDisplay').innerText = (winner.secret || []).map(c => COLOR_MAP[c]).join(' ');
       document.getElementById('victoryModal').style.display = 'flex';
       playVictoryFanfare();
     }
