@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AI BATTLE TERMINAL - DUIDELIJK, RUSTIG & KINDVRIENDELIJK
+   AETHER_OS - OMEGA PROTOCOL & ESCAPE BUNKER UI
    ========================================================================== */
 
 :root {
@@ -48,6 +48,68 @@ body {
   padding: 1.25rem;
 }
 
+/* BUNKER ESCAPE OVERLAY */
+.bunker-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #1e1329 0%, #080c14 100%);
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.bunker-card {
+  background: #101626;
+  border: 2px solid var(--rose);
+  box-shadow: 0 0 40px rgba(244, 63, 94, 0.25);
+  border-radius: var(--radius);
+  padding: 2.25rem;
+  max-width: 520px;
+  width: 100%;
+}
+
+.bunker-badge {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--rose);
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.bunker-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 0.75rem;
+}
+
+.bunker-story {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-sub);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 3px solid var(--rose);
+  margin-bottom: 1.25rem;
+}
+
+.bunker-code-input {
+  font-family: var(--font-mono);
+  font-size: 1.3rem !important;
+  letter-spacing: 4px;
+  text-align: center;
+}
+
+.bunker-hint {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 1rem;
+}
+
 /* HEADER */
 .app-header {
   background: var(--card-bg);
@@ -69,6 +131,9 @@ body {
   gap: 0.5rem;
   color: var(--primary);
 }
+
+.timer-box { display: flex; flex-direction: column; align-items: center; }
+.timer-lbl { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; }
 
 .timer-val {
   font-family: var(--font-mono);
@@ -337,6 +402,11 @@ body {
   outline: none;
 }
 
+.modern-select option {
+  background-color: #1e293b;
+  color: #ffffff;
+}
+
 .btn {
   font-family: inherit;
   font-size: 0.95rem;
@@ -359,31 +429,9 @@ body {
 .btn-text { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.85rem; }
 .btn-text:hover { color: #fff; }
 
-/* MODALS */
-.auth-wrapper {
-  position: fixed;
-  inset: 0;
-  background: rgba(11, 15, 25, 0.98);
-  z-index: 5000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.25rem;
-}
-
-.auth-card {
-  background: var(--card-bg);
-  border: 2px solid var(--card-border);
-  border-radius: var(--radius);
-  padding: 2rem;
-  max-width: 400px;
-  width: 100%;
-}
-
-.auth-card h2 { font-size: 1.4rem; margin-bottom: 0.25rem; }
-.sub-text { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 1.25rem; }
 .auth-error { color: var(--rose); font-size: 0.85rem; margin-top: 0.5rem; font-weight: 700; }
 
+/* MODALS */
 .modal-backdrop {
   position: fixed;
   inset: 0;
