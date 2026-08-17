@@ -6,21 +6,26 @@
   <title>AETHER_OS // Fullscreen Master Cockpit</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="cyber-theme">
 
-  <!-- 0. SYSTEEM BOOT ACTIVATOR -->
+  <!-- VASTE FLOATING KNOP: ALTIJD TOEGANG TOT DE LEIDING BACKSITE -->
+  <button class="floating-admin-btn" onclick="openAdminModal()" title="Centrale Post / Leiding Toegang (of druk Ctrl+Shift+A)">
+    ⚙️ ROOT ADMIN
+  </button>
+
+  <!-- 0. BOOT ACTIVATOR -->
   <div class="modal-layer active-layer" id="bootLayer">
     <div class="center-card">
-      <div class="card-tag">⚡ GLITCH_NET INITIALISATIE</div>
-      <h1 class="card-title">SYSTEEM BOOTSTRAP</h1>
+      <div class="card-tag">⚡ GLITCH_NET PROTOCOL</div>
+      <h1 class="card-title">SYSTEEM INITIALISATIE</h1>
       <p class="card-text">
-        Koppel de laptop-terminal aan de centrale communicatiestroom van het netwerk.
+        Koppel deze terminal aan de centrale datastroom van het AI-netwerk.
       </p>
       <button class="btn btn-emerald btn-lg btn-block" onclick="igniteSystem()">
-        START VERBINDING MET DE TERMINAL ▶
+        START TERMINAL VERBINDING ▶
       </button>
     </div>
   </div>
@@ -37,12 +42,12 @@
         <div class="glitch-avatar">👾</div>
         <div>
           <h2 class="glitch-sender">VIRUS GLITCH v4.0</h2>
-          <span class="glitch-sub">CENTRALE CONTROLE OVERGENOMEN</span>
+          <span class="glitch-sub">CENTRALE KERN OVERGENOMEN</span>
         </div>
       </div>
 
       <div class="typewriter-box">
-        <p id="glitchTypewriter"></p>
+        <div id="glitchTypewriter" class="typewriter-text"></div>
       </div>
 
       <button class="btn btn-danger btn-lg btn-block" id="btnEscapeStart" onclick="proceedToBunker()" style="display: none;">
@@ -99,7 +104,7 @@
         <div class="success-tag">✓ 6-CIJFERIGE CODE IS JUIST!</div>
         <h2 class="card-title">KIES EEN EIGEN WACHTWOORD</h2>
         <p class="card-text">
-          Geweldig gedaan! Kies nu een <strong>eigen geheim wachtwoord</strong> voor jullie team. Hiermee loggen jullie opnieuw in als de laptop vergrendelt.
+          Geweldig gedaan! Kies nu een <strong>eigen geheim wachtwoord</strong> voor jullie team. Hiermee loggen jullie opnieuw in als de laptop herstart.
         </p>
 
         <div class="form-group">
@@ -120,7 +125,7 @@
   <div class="modal-layer" id="lockdownModal" style="display: none;">
     <div class="center-card emergency-border">
       <div class="alert-icon-anim">🚨</div>
-      <h2 id="lockdownTitle" class="card-title">NOODBEVEL VAN DE ROOT COMMANDER</h2>
+      <h2 id="lockdownTitle" class="card-title">NOODBEVEL VAN DE CENTRALE POST</h2>
       <div class="emergency-content" id="lockdownText">Er is een belangrijk direct bevel binnengekomen.</div>
       <div id="lockdownAudioContainer" style="display: none; width: 100%;">
         <audio id="lockdownAudioPlayer" controls style="width: 100%; margin-top: 0.5rem;"></audio>
@@ -160,8 +165,11 @@
         <span class="timer-val" id="gameTimer">02:00:00</span>
       </div>
 
-      <div class="credits-badge">
-        ⭐ Kleur-Tokens: <strong id="headerCreditsCount">0</strong>
+      <div class="header-actions">
+        <div class="credits-badge">
+          ⭐ Kleur-Tokens: <strong id="headerCreditsCount">0</strong>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="openAdminModal()">⚙️ Leiding</button>
       </div>
     </header>
 
@@ -266,7 +274,7 @@
         </div>
 
         <div class="panel-box loc-card central-loc">
-          <span class="loc-tag" style="background:var(--emerald);">COMMAND HQ</span>
+          <span class="loc-tag" style="background:var(--emerald); color:#000;">COMMAND HQ</span>
           <h3 class="loc-title">CENTRALE POST // MASTER CORE KIST</h3>
           <p class="loc-spot">📍 Centraal Plein</p>
           <p class="loc-desc">Laat hier je Mastermind rij testen door de spelleiding en ontgrendel de fysieke kist met 4x Zwart!</p>
@@ -319,7 +327,7 @@
       <div class="popup-body">
         <div id="adminAuthSection">
           <p class="card-text">Voer SysAdmin Root Key in:</p>
-          <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+          <div style="display: flex; gap: 0.75rem; margin-top: 0.75rem;">
             <input type="password" id="adminPasswordInput" class="modern-input" placeholder="Root Key (standaard: admin123)">
             <button class="btn btn-primary" onclick="loginAdmin()">Autoriseren</button>
           </div>
@@ -375,7 +383,7 @@
           <!-- Live Audio / Broadcast -->
           <div class="admin-block">
             <h4 class="admin-block-title">🚨 3. Live Audio / Noodbevel Broadcast</h4>
-            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
               <input type="text" id="adminEmergencyTitle" class="modern-input" placeholder="Titel (bijv. ALLE TEAMS NAAR HET PLEIN)">
               <textarea id="adminEmergencyText" rows="2" class="modern-input" placeholder="Tekst van het bevel..."></textarea>
               <input type="file" id="adminAudioFileInput" accept="audio/*" class="modern-input">
