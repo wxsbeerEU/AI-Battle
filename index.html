@@ -18,12 +18,19 @@
   <div class="crt-overlay"></div>
   <div class="crt-scanlines"></div>
 
-  <!-- FASE 1: NOODSITUATIE / MONI TOESPRAAK -->
+  <!-- FLOATING SYSADMIN KNOP -->
+  <button class="sysadmin-floating-btn" onclick="openAdminModal()" title="SysAdmin Leiding Paneel (Ctrl+Shift+A of klik hier)">
+    ⚙️ SYSADMIN ROOT
+  </button>
+
+  <!-- =======================================================
+       FASE 1: OPENINGSSCHERM - DE NOODOPROEP (MONI SPEECH)
+       ======================================================= -->
   <div class="terminal-screen" id="screenIntro">
     <div class="retro-box alert-box">
       <div class="box-header danger">
         <span>🚨 DEFCON-1: NOODSITUATIE TER DUINEN</span>
-        <span class="blink" id="dbStatusIndicator">● ONLINE</span>
+        <span class="blink" id="dbStatusIndicator">● DATABASE KOPPELEN...</span>
       </div>
       
       <h1 class="retro-title danger-glow">HET NETWERK LIGT PLAT!</h1>
@@ -47,7 +54,9 @@
     </div>
   </div>
 
-  <!-- FASE 2: 6-CIJFERIGE KAMERCODE INVOEREN -->
+  <!-- =======================================================
+       FASE 2: KRAAK DE KAMER (6-CIJFERIGE CODE)
+       ======================================================= -->
   <div class="terminal-screen" id="screenRoomCode" style="display: none;">
     <div class="retro-box">
       <div class="box-header danger">
@@ -97,7 +106,9 @@
     </div>
   </div>
 
-  <!-- FASE 3: EIGEN WACHTWOORD KIEZEN -->
+  <!-- =======================================================
+       FASE 3: EIGEN WACHTWOORD KIEZEN
+       ======================================================= -->
   <div class="terminal-screen" id="screenSetPassword" style="display: none;">
     <div class="retro-box">
       <div class="box-header success">
@@ -125,7 +136,7 @@
     </div>
   </div>
 
-  <!-- NOODALARM / LIVE AUDIO BROADCAST -->
+  <!-- NOODALARM / LIVE AUDIO OVERRIDE -->
   <div class="terminal-screen" id="lockdownModal" style="display: none;">
     <div class="retro-box alert-box text-center">
       <div class="box-header danger">
@@ -203,7 +214,7 @@
     <main id="tab-sectors" class="tab-panel active">
       <div class="instruction-box">
         <span class="info-tag">> MISSIE PROTOCOL:</span> 
-        Voltooi een van de actieve opdrachten ➔ Stuur bewijs naar <strong>0475 84 89 83</strong> ➔ Klik op "Verstuur". 
+        Voltooi een van de onderstaande actieve opdrachten ➔ Stuur bewijs naar <strong>0475 84 89 83</strong> ➔ Klik op "Verstuur". 
         Zodra de leiding goedkeurt, ontgrendelt er een token én een nieuwe opdracht!
       </div>
 
@@ -300,7 +311,7 @@
     <div class="retro-box admin-popup">
       <div class="popup-head">
         <h3 class="popup-title">⚙️ SysAdmin Root Console (Centrale Post)</h3>
-        <button class="close-btn" onclick="closeAdminModal()">✕</button>
+        <button class="close-btn-red" onclick="closeAdminModal()" title="Sluit leidingpaneel (ESC)">[ SLUITEN ✕ ]</button>
       </div>
 
       <div class="popup-body">
@@ -315,7 +326,7 @@
 
         <div id="adminControlsSection" style="display: none;">
           
-          <!-- Mastermind 6-Kleuren Validator -->
+          <!-- Mastermind Validator (6 Kleurencode) -->
           <div class="admin-block">
             <h4 class="admin-block-title">🧩 1. Geheime 6-Kleurencode van de Kist & Ingezonden Rijen</h4>
             <div class="admin-secret-code-box">
@@ -365,9 +376,22 @@
             </div>
           </div>
 
+          <!-- Teams Overzicht, Tokens & Reset Opties -->
+          <div class="admin-block">
+            <h4 class="admin-block-title">👥 3. Teams Data, Tokens & Reset Beheer (Firebase Sync)</h4>
+            <div class="table-wrap">
+              <table class="modern-table">
+                <thead>
+                  <tr><th>Team</th><th>Tokens</th><th>Rij</th><th>Kamercode</th><th>Eigen PW</th><th>Reset Acties</th></tr>
+                </thead>
+                <tbody id="adminTeamsManagerBody"></tbody>
+              </table>
+            </div>
+          </div>
+
           <!-- Live Audio / Broadcast -->
           <div class="admin-block">
-            <h4 class="admin-block-title">🚨 3. Live Audio / Noodbevel Broadcast</h4>
+            <h4 class="admin-block-title">🚨 4. Live Audio / Noodbevel Broadcast</h4>
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
               <input type="text" id="adminEmergencyTitle" class="retro-input" placeholder="Titel (bijv. ALLE TEAMS NAAR HET PLEIN)">
               <textarea id="adminEmergencyText" rows="2" class="retro-input" placeholder="Tekst van het bevel..."></textarea>
@@ -376,28 +400,24 @@
             </div>
           </div>
 
-          <!-- Teams Overzicht -->
+          <!-- Timer & Global Reset -->
           <div class="admin-block">
-            <h4 class="admin-block-title">👥 4. Teams, Tokens & Wachtwoorden</h4>
-            <div class="table-wrap">
-              <table class="modern-table">
-                <thead>
-                  <tr><th>Team</th><th>Tokens</th><th>Rij</th><th>Kamercode</th><th>Eigen PW</th><th>Actie</th></tr>
-                </thead>
-                <tbody id="adminTeamsManagerBody"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Timer -->
-          <div class="admin-block">
-            <h4 class="admin-block-title">⏱️ 5. Timer</h4>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <h4 class="admin-block-title">⏱️ 5. Timer & Master Game Reset</h4>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
               <button class="retro-btn btn-sm" onclick="startTimer()">▶️ Start</button>
               <button class="retro-btn btn-sm" onclick="pauseTimer()">⏸️ Pauze</button>
               <button class="retro-btn btn-sm" onclick="resetTimer(120)">🔄 120m</button>
               <button class="retro-btn btn-sm" onclick="resetTimer(60)">🔄 60m</button>
             </div>
+
+            <button class="retro-btn btn-danger btn-block" onclick="adminResetAllGameData()">
+              [ 💣 VOLLEDIG SPEL RESETTEN (ALLE TEAMS & GEGEVENS LEAGMAKEN) ]
+            </button>
+          </div>
+
+          <!-- Extra Sluitknop Onderaan -->
+          <div style="margin-top: 1.5rem; text-align: right;">
+            <button class="retro-btn btn-danger btn-sm" onclick="closeAdminModal()">[ SLUIT LEIDINGPANEEL ✕ ]</button>
           </div>
 
         </div>
