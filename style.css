@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AETHER_OS - WIDESCREEN COCKPIT STYLING
+   AETHER_OS - WIDESCREEN MASTER COCKPIT STYLING
    ========================================================================== */
 
 :root {
@@ -631,46 +631,6 @@ body {
   margin-top: 0.75rem;
 }
 
-/* LOCATIES */
-.locations-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.25rem;
-}
-
-.loc-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.loc-tag {
-  font-size: 0.75rem;
-  font-weight: 800;
-  color: var(--primary);
-}
-
-.loc-title {
-  font-size: 1.15rem;
-  font-weight: 800;
-}
-
-.loc-spot {
-  font-size: 0.95rem;
-  color: var(--amber);
-  font-weight: 700;
-}
-
-.loc-desc {
-  font-size: 0.92rem;
-  color: var(--text-sub);
-}
-
-.central-loc {
-  grid-column: 1 / -1;
-  border-color: var(--emerald);
-}
-
 /* KNOPPEN */
 .btn {
   font-family: inherit;
@@ -765,14 +725,6 @@ body {
   font-weight: 700;
   color: var(--primary);
   margin-top: 0.25rem;
-}
-
-.phone-instruction {
-  background: #1e293b;
-  padding: 1rem;
-  border-radius: 8px;
-  font-size: 1rem;
-  text-align: center;
 }
 
 /* ANIMATIES */
