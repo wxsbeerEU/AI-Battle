@@ -1,9 +1,9 @@
 /**
- * AETHER_OS - FIREBASE REALTIME DATABASE ENGINE
+ * AETHER_OS - FIREBASE REALTIME DATABASE ENGINE & MISSION FLOW
  */
 
 // =========================================================================
-// 1. FIREBASE CONFIGURATIE (GEKOPPELD AAN AI-BATTLE)
+// 1. FIREBASE CONFIGURATIE (AI-BATTLE)
 // =========================================================================
 const firebaseConfig = {
   apiKey: "AIzaSyBkO-N0BF7tbIpSQhWwALD_hx3xCZRzecQ",
@@ -163,7 +163,6 @@ function onTeamSelectChange() {
   document.getElementById('bunker6DigitInput').value = '';
   document.getElementById('teamPersonalPasswordInput').value = '';
 
-  // Check direct in Firebase of er al een wachtwoord is
   if (isFirebaseReady) {
     db.ref(`teams/${teamKey}/personalPassword`).once('value', snapshot => {
       const personalPw = snapshot.val();
@@ -231,7 +230,6 @@ function handleRoomCodeSubmit() {
       }
     });
   } else {
-    // Lokale Fallback
     const personalPw = getPersonalPassword(teamKey);
     if (personalPw) {
       const enteredPw = document.getElementById('teamPersonalPasswordInput').value.trim();
@@ -255,8 +253,8 @@ function handleRoomCodeSubmit() {
   }
 }
 
-// FASE 3: EIGEN WACHTWOORD VASTLEGGEN
-function savePasswordAndLaunchCockpit() {
+// FASE 3: EIGEN WACHTWOORD & DOORSTUREN NAAR TUTORIAL
+function savePasswordAndShowTutorial() {
   const newPw = document.getElementById('newTeamPasswordInput').value.trim();
   const errorEl = document.getElementById('step2ErrorMsg');
 
@@ -267,7 +265,16 @@ function savePasswordAndLaunchCockpit() {
 
   setPersonalPassword(authenticatedTeam, newPw);
   playVictoryFanfare();
-  showToast("Wachtwoord succesvol opgeslagen!");
+  
+  document.getElementById('screenSetPassword').style.display = 'none';
+  const teamInfo = TEAMS_INFO[authenticatedTeam];
+  document.getElementById('tutorialTeamBadge').innerText = `TARGET: ${teamInfo.name.toUpperCase()}`;
+  document.getElementById('screenTutorial').style.display = 'flex';
+}
+
+function finishTutorialAndLaunchCockpit() {
+  playBeep(600, 0.1);
+  document.getElementById('screenTutorial').style.display = 'none';
   launchCockpit(authenticatedTeam);
 }
 
@@ -278,10 +285,11 @@ function launchCockpit(teamKey) {
   document.getElementById('screenIntro').style.display = 'none';
   document.getElementById('screenRoomCode').style.display = 'none';
   document.getElementById('screenSetPassword').style.display = 'none';
+  document.getElementById('screenTutorial').style.display = 'none';
 
   const info = TEAMS_INFO[teamKey];
   document.getElementById('headerTeamIcon').innerText = info.icon;
-  document.getElementById('headerTeamName').innerText = info.name;
+  document.getElementById('headerTeamName').innerText = `Target: ${info.name.replace('Team ', '')}`;
 
   renderSectors();
   initMastermind();
@@ -295,9 +303,10 @@ function logoutCurrentTeam() {
   document.getElementById('screenIntro').style.display = 'flex';
   document.getElementById('screenRoomCode').style.display = 'none';
   document.getElementById('screenSetPassword').style.display = 'none';
+  document.getElementById('screenTutorial').style.display = 'none';
 }
 
-// FASE 4: GEFASEERDE MISSIES
+// FASE 4: MISSIES RENDERING & GSM BEWIJS
 let activePendingTask = null;
 
 function renderSectors() {
@@ -565,7 +574,7 @@ function resetTimer(mins = 120) {
   }
 }
 
-// EMERGENCY BROADCAST
+// NOODBERICHT OVERLAY
 function sendEmergencyLockdown() {
   const title = document.getElementById('adminEmergencyTitle').value.trim() || "🚨 NOODBEVEL VAN DE LEIDING";
   const text = document.getElementById('adminEmergencyText').value.trim();
@@ -639,7 +648,7 @@ function closeVictoryModal() {
   document.getElementById('victoryModal').style.display = 'none';
 }
 
-// SYSADMIN LEIDING PANEEL & SLUITEN
+// SYSADMIN LEIDING PANEEL (6-KLEURENCODE)
 function openAdminModal() {
   playBeep(400, 0.05);
   document.getElementById('adminModal').style.display = 'flex';
@@ -1025,4 +1034,5 @@ window.onload = function() {
   document.getElementById('screenIntro').style.display = 'flex';
   document.getElementById('screenRoomCode').style.display = 'none';
   document.getElementById('screenSetPassword').style.display = 'none';
+  document.getElementById('screenTutorial').style.display = 'none';
 };
