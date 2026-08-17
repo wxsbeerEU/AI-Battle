@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Battle Terminal</title>
+  <title>AETHER_OS // Omega Protocol Edition</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
@@ -11,62 +11,74 @@
 </head>
 <body>
 
-  <!-- NOODALARM OVERLAY -->
-  <div class="lockdown-overlay" id="lockdownModal">
-    <div class="lockdown-card">
-      <div class="alert-icon">🚨</div>
-      <h2 id="lockdownTitle">BERICHT VAN DE BASIS</h2>
-      <div class="lockdown-content" id="lockdownText">Er is een nieuw bericht.</div>
-      <div id="lockdownAudioContainer" style="display: none; width: 100%;">
-        <audio id="lockdownAudioPlayer" controls style="width: 100%; margin-top: 0.5rem;"></audio>
-      </div>
-      <button class="btn btn-primary btn-lg" onclick="dismissLockdown()">IK HEB HET BEGREPEN 👍</button>
-    </div>
-  </div>
-
-  <!-- WINNAARS SCHERM -->
-  <div class="lockdown-overlay victory-overlay" id="victoryModal">
-    <div class="lockdown-card victory-card">
-      <div class="alert-icon">🏆</div>
-      <h2>CODE GEKRAAKT!</h2>
-      <p class="victory-text">
-        Goed gedaan <strong id="victoryTeamName">Jullie Team</strong>!<br>Jullie hebben 4 zwarte pinnen gehaald en virus GLITCH verslagen!
+  <!-- 1. INTRO / DATABUNKER ESCAPE VERGRENDELING -->
+  <div class="bunker-overlay" id="bunkerAuthModal">
+    <div class="bunker-card">
+      <div class="bunker-badge">🚨 OMEGA PROTOCOL // NOODVERGRENDELING</div>
+      <h1 class="bunker-title">DATABUNKER VERGRENDELD</h1>
+      
+      <p class="bunker-story">
+        <strong>ALARM:</strong> Virus <em>GLITCH</em> valt het centrale netwerk aan! Om jullie AI-systeem te beschermen, zijn jullie fysiek opgesloten in deze bunker. 
+        Zoek de <strong>3 raadsels in deze kamer</strong> om de 4-cijferige opstartcode van deze terminal te kraken!
       </p>
-      <div class="victory-code-display" id="victoryCodeDisplay">🟢 🔴 🟡 🔵</div>
-      <p style="color: #cbd5e1; font-weight: bold;">Ren direct naar de kist van de Centrale Post!</p>
-      <button class="btn btn-emerald btn-lg" onclick="closeVictoryModal()">Sluiten</button>
-    </div>
-  </div>
-
-  <!-- LOGIN SCHERM -->
-  <div class="auth-wrapper" id="authGateModal">
-    <div class="auth-card">
-      <h2>Kies je AI Team</h2>
-      <p class="sub-text">Klik op je team en typ jullie geheime code in.</p>
 
       <div class="form-group">
-        <label for="gateTeamSelect">Jullie Team:</label>
+        <label for="gateTeamSelect">Selecteer jullie AI Supercluster:</label>
         <select id="gateTeamSelect" class="modern-select" onchange="onGateTeamChange()">
-          <option value="chatgpt">🟢 Team ChatGPT</option>
-          <option value="midjourney">🎨 Team Midjourney</option>
-          <option value="gemini">✨ Team Gemini</option>
-          <option value="claude">🧠 Team Claude</option>
-          <option value="sora">🎬 Team Sora</option>
-          <option value="copilot">⚡ Team Copilot</option>
+          <option value="chatgpt">🟢 Team ChatGPT (GPT-4o)</option>
+          <option value="midjourney">🎨 Team Midjourney (v6.1)</option>
+          <option value="gemini">✨ Team Gemini (1.5 Pro)</option>
+          <option value="claude">🧠 Team Claude (3.5 Sonnet)</option>
+          <option value="sora">🎬 Team Sora (Diffusion)</option>
+          <option value="copilot">⚡ Team Copilot (Neural Auto)</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label id="gatePassLabel" for="gatePasswordInput">Geheime Code / Pincode:</label>
-        <input type="password" id="gatePasswordInput" class="modern-input" placeholder="Bijv. 1234">
+        <label for="gatePasswordInput" id="gatePassLabel">4-Cijferige Bunker Pincode:</label>
+        <input type="password" id="gatePasswordInput" class="modern-input bunker-code-input" placeholder="Bijv. 4826" maxlength="8">
       </div>
 
       <p id="gateErrorMsg" class="auth-error"></p>
-      <button class="btn btn-primary btn-lg" onclick="submitTeamAuth()">Starten 🚀</button>
+
+      <button class="btn btn-primary btn-lg btn-block" onclick="submitTeamAuth()">
+        ⚡ INITIALISEER & START MISSIE →
+      </button>
+
+      <div class="bunker-hint">
+        💡 <em>Hebben jullie de 3 envelop-raadsels in deze kamer al gevonden?</em>
+      </div>
     </div>
   </div>
 
-  <!-- HOOFDSCHERM -->
+  <!-- 2. NOODALARM / GLITCH OVERRIDE OVERLAY -->
+  <div class="lockdown-overlay" id="lockdownModal">
+    <div class="lockdown-card">
+      <div class="alert-icon">🚨</div>
+      <h2 id="lockdownTitle">NOODBEVEL VAN DE CENTRALE BASIS</h2>
+      <div class="lockdown-content" id="lockdownText">Er is een belangrijk bericht van de leiding binnengekomen.</div>
+      <div id="lockdownAudioContainer" style="display: none; width: 100%;">
+        <audio id="lockdownAudioPlayer" controls style="width: 100%; margin-top: 0.5rem;"></audio>
+      </div>
+      <button class="btn btn-primary btn-lg" onclick="dismissLockdown()">✓ BEGREPEN & CONSOLE ONTGRENDELEN</button>
+    </div>
+  </div>
+
+  <!-- 3. WINNAARS SCHERM (4X ZWART) -->
+  <div class="lockdown-overlay victory-overlay" id="victoryModal">
+    <div class="lockdown-card victory-card">
+      <div class="alert-icon">🏆</div>
+      <h2>MASTER CORE GEKRAAKT!</h2>
+      <p class="victory-text">
+        Geweldig gedaan <strong id="victoryTeamName">Jullie Team</strong>!<br>Jullie hebben 4 zwarte pinnen gehaald en virus GLITCH verslagen!
+      </p>
+      <div class="victory-code-display" id="victoryCodeDisplay">🟢 🔴 🟡 🔵</div>
+      <p style="color: #cbd5e1; font-weight: bold;">Ren direct naar de kist van de Centrale Post om de Master Core fysiek te openen!</p>
+      <button class="btn btn-emerald btn-lg" onclick="closeVictoryModal()">Sluiten</button>
+    </div>
+  </div>
+
+  <!-- 4. HOOFD DASHBOARD (ZICHTBAAR NA ESCAPE) -->
   <div class="app-shell">
     
     <!-- HEADER -->
@@ -77,6 +89,7 @@
       </div>
 
       <div class="timer-box">
+        <span class="timer-lbl">Tijd tot Meltdown</span>
         <span class="timer-val" id="gameTimer">02:00:00</span>
       </div>
 
@@ -87,10 +100,10 @@
 
     <!-- LIVE BERICHT -->
     <div class="broadcast-bar" id="broadcastBanner">
-      📢 <span id="broadcastDisplay">Virus GLITCH is actief! Doe opdrachten om tokens te verdienen en kraak de code!</span>
+      📢 <span id="broadcastDisplay">Bunker succesvol ontgrendeld! Ga naar de posten, verdien tokens en kraak de Master Core!</span>
     </div>
 
-    <!-- 3 GROTE DUIDELIJKE HOOFDTABS -->
+    <!-- 3 HOOFDTABS -->
     <nav class="nav-tabs">
       <button class="tab-btn active" onclick="switchTab('sectors')">1. Kies Opdracht 🎯</button>
       <button class="tab-btn" onclick="switchTab('mastermind')">2. Kleur & Kraak Code 🧩</button>
@@ -100,7 +113,7 @@
     <!-- TAB 1: OPDRACHTEN -->
     <main id="tab-sectors" class="tab-content active">
       <div class="info-banner">
-        <strong>Hoe werkt het?</strong> Ga naar een post ➔ Doe de opdracht ➔ Klik op de blauwe knop om je bewijs via de gsm door te sturen!
+        <strong>Hoe werkt het?</strong> Ga fysiek naar een post ➔ Doe de opdracht ➔ Stuur bewijs door via GSM. De leiding geeft je dan <strong>+1 Kleur-Token</strong>!
       </div>
       <div class="sectors-grid" id="sectorsContainer"></div>
     </main>
@@ -116,7 +129,6 @@
         
         <!-- Speelbord -->
         <div class="card mm-board-card">
-          
           <div class="palette-picker-bar">
             <span class="palette-title">Kies een kleur:</span>
             <div class="palette-buttons">
@@ -134,7 +146,7 @@
 
         <!-- Uitleg Pinnen -->
         <div class="card mm-legend-card">
-          <h3>Betekenis van de Pinnen</h3>
+          <h3>Feedback Betekenis</h3>
           <div class="legend-item">
             <div class="pin pin-black"></div>
             <div><strong>Zwart (⬛)</strong> = Juiste kleur op de <u>juiste plek</u>!</div>
@@ -190,8 +202,8 @@
 
     <!-- FOOTER -->
     <footer class="app-footer">
-      <button class="btn-text" onclick="openAdminModal()">⚙️ Leiding Menu</button>
-      <button class="btn-text" onclick="logoutCurrentTeam()">Uitloggen</button>
+      <button class="btn-text" onclick="openAdminModal()">⚙️ Leiding Controle Scherm</button>
+      <button class="btn-text" onclick="logoutCurrentTeam()">Vergrendel Bunker 🔒</button>
     </footer>
 
   </div>
@@ -221,7 +233,7 @@
     </div>
   </div>
 
-  <!-- LEIDING MENU -->
+  <!-- LEIDING BACKSITE MODAL -->
   <div class="modal-backdrop" id="adminModal">
     <div class="card modal-card admin-card">
       <div class="modal-header">
@@ -233,7 +245,7 @@
         <div id="adminAuthSection">
           <p>Wachtwoord voor leiding:</p>
           <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-            <input type="password" id="adminPasswordInput" class="modern-input" placeholder="Wachtwoord (admin123)">
+            <input type="password" id="adminPasswordInput" class="modern-input" placeholder="Wachtwoord (standaard: admin123)">
             <button class="btn btn-primary" onclick="loginAdmin()">Inloggen</button>
           </div>
           <p id="adminAuthError" class="auth-error" style="display:none;">Verkeerd wachtwoord.</p>
@@ -243,10 +255,10 @@
           
           <!-- Mastermind Code Validator -->
           <div class="admin-section">
-            <h4>🧩 1. Geheime Code & Ingezonden Rijen</h4>
+            <h4>🧩 1. Geheime Code van de Kist & Ingezonden Rijen</h4>
             
             <div class="admin-secret-code-box">
-              <label><strong>Geheime Code van de Kist (4 kleuren):</strong></label>
+              <label><strong>Geheime Code van de Master Core (4 kleuren):</strong></label>
               <div class="secret-code-selectors">
                 <select id="secretSlot1" class="modern-select mini-select" onchange="saveSecretCode()">
                   <option value="red">🔴 Rood</option><option value="blue">🔵 Blauw</option><option value="green" selected>🟢 Groen</option><option value="yellow">🟡 Geel</option><option value="orange">🟠 Oranje</option><option value="purple">🟣 Paars</option>
@@ -275,7 +287,7 @@
 
           <!-- Goedkeuren van opdrachten -->
           <div class="admin-section">
-            <h4>📥 2. GSM Berichten Goedkeuren (+1 Token)</h4>
+            <h4>📥 2. GSM Berichten Goedkeuren (+1 Kleur-Token)</h4>
             <div class="table-wrap">
               <table class="modern-table">
                 <thead>
@@ -290,7 +302,7 @@
           <div class="admin-section">
             <h4>🚨 3. Noodbericht / Audio naar alle schermen sturen</h4>
             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-              <input type="text" id="adminEmergencyTitle" class="modern-input" placeholder="Titel (bijv. IEDEREEN NAAR HET PLEIN)">
+              <input type="text" id="adminEmergencyTitle" class="modern-input" placeholder="Titel (bijv. NOODALERT / VERZAMELEN)">
               <textarea id="adminEmergencyText" rows="2" class="modern-input" placeholder="Tekst van het bericht..."></textarea>
               <input type="file" id="adminAudioFileInput" accept="audio/*" class="modern-input">
               <button class="btn btn-primary" onclick="sendEmergencyLockdown()">🚨 Blokkeer Schermen met dit Bericht</button>
@@ -303,7 +315,7 @@
             <div class="table-wrap">
               <table class="modern-table">
                 <thead>
-                  <tr><th>Team</th><th>Tokens</th><th>Rij</th><th>Pincode</th><th>Reset</th></tr>
+                  <tr><th>Team</th><th>Tokens</th><th>Rij</th><th>Bunker Pincode</th><th>Reset</th></tr>
                 </thead>
                 <tbody id="adminTeamsManagerBody"></tbody>
               </table>
