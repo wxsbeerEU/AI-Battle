@@ -26,7 +26,7 @@ try {
   console.error("Firebase init fout:", err);
 }
 
-// 19 DROPSPEL MISSIES (INCLUSIEF KERKHOF, KERK & 112)
+// 19 DROPSPEL MISSIES
 const SECTORS_DATA = [
   { 
     id: 't-1', 
@@ -181,8 +181,6 @@ const COLOR_MAP = {
   purple: '🟣 NEURAL_SHOCK'
 };
 
-const ALL_COLORS = ['red', 'blue', 'green', 'yellow', 'orange', 'purple'];
-
 let authenticatedTeam = null;
 let currentTeamState = {
   credits: 0,
@@ -190,10 +188,12 @@ let currentTeamState = {
   tasks: {},
   mastermind: {},
   personalPassword: null,
-  lockout: false
+  lockout: false,
+  activeCodeType: 'primary' // 'primary' of 'backup'
 };
 
-let currentSecretCode = ['green', 'red', 'yellow', 'blue', 'orange', 'purple'];
+let primarySecretCode = ['green', 'red', 'yellow', 'blue', 'orange', 'purple'];
+let backupSecretCode = ['blue', 'purple', 'red', 'green', 'yellow', 'orange'];
 let pendingCrackedTeam = null;
 let currentlySelectedColor = 'red';
 let audioCtx = null;
@@ -504,7 +504,7 @@ function initMastermind() {
   for (let r = 1; r <= 6; r++) {
     const rowObj = mmData[r] || { colors: ['none', 'none', 'none', 'none', 'none', 'none'], pins: [], status: 'editing' };
     const isCurrentActive = (r === currentActiveRow);
-    const isLocked = (r < currentActiveRow || rowObj.status === 'evaluated');
+    const isLocked = (r < currentActiveRow || rowObj.status === 'evaluated' || rowObj.status === 'cracked_pending');
 
     const rowCard = document.createElement('div');
     rowCard.className = `mm-row-item ${isCurrentActive ? 'active-row' : ''}`;
@@ -531,6 +531,8 @@ function initMastermind() {
       }
       pinsHTML += '</div>';
       actionHTML += pinsHTML;
+    } else if (rowObj.status === 'cracked_pending') {
+      actionHTML += `<span style="font-size:0.8rem; color:var(--emerald); font-weight:bold;">🔒 VERIFICATIE BEZIG...</span>`;
     } else if (isCurrentActive) {
       const allFilled = rowObj.colors.every(c => c !== 'none');
       if (allFilled) {
@@ -582,35 +584,41 @@ function handleSlotClick(row, slotIndex, isAllowed) {
   }
 }
 
-// AUTOMATISCHE DIRECTE EVALUATIE
+// AUTOMATISCHE DIRECTE EVALUATIE (TEGEN DE ACTIEVE CODE VAN HET TEAM)
 function submitRowForValidation(row) {
   const mmData = currentTeamState.mastermind || {};
   if (!mmData[row]) return;
 
-  const secret = currentSecretCode;
-  const evaluation = evaluateGuess(mmData[row].colors, secret);
+  // Gebruik de actieve code van het team (primaire of backup)
+  const targetSecret = (currentTeamState.activeCodeType === 'backup') ? backupSecretCode : primarySecretCode;
+  const evaluation = evaluateGuess(mmData[row].colors, targetSecret);
 
   playBeep(750, 0.08);
 
-  mmData[row].pins = evaluation.pins;
-  mmData[row].status = 'evaluated';
+  if (evaluation.blackPins === 6) {
+    mmData[row].pins = evaluation.pins;
+    mmData[row].status = 'cracked_pending';
 
-  if (isFirebaseReady) {
-    db.ref(`teams/${authenticatedTeam}/mastermind/${row}`).set(mmData[row]);
-    if (row < 6 && evaluation.blackPins < 6) {
-      db.ref(`teams/${authenticatedTeam}/active_row`).set(row + 1);
-    }
-    // Als 6x Zwart: stuur notificatie naar Firebase voor Leiding-Paneel
-    if (evaluation.blackPins === 6) {
+    if (isFirebaseReady) {
+      db.ref(`teams/${authenticatedTeam}/mastermind/${row}`).set(mmData[row]);
       db.ref('gameState/crackedAlert').set({
         teamKey: authenticatedTeam,
         teamName: TEAMS_INFO[authenticatedTeam].name,
+        row: row,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       });
-      showCustomAlert("6x Zwart behaald! De centrale parameters worden geverifieerd door de basis...", "🏆 DECRYPTIE SUCCESVOL");
-    } else {
-      showCustomAlert(`Tegenaanval Verwerkt!\nFeedback: ${evaluation.blackPins}x Zwart (Exact), ${evaluation.whitePins}x Wit (Positiefout)`, "📡 TELEMETRIE RAPPORT");
     }
+  } else {
+    mmData[row].pins = evaluation.pins;
+    mmData[row].status = 'evaluated';
+
+    if (isFirebaseReady) {
+      db.ref(`teams/${authenticatedTeam}/mastermind/${row}`).set(mmData[row]);
+      if (row < 6) {
+        db.ref(`teams/${authenticatedTeam}/active_row`).set(row + 1);
+      }
+    }
+    showCustomAlert(`Tegenaanval Verwerkt!\nFeedback: ${evaluation.blackPins}x Zwart (Exact), ${evaluation.whitePins}x Wit (Positiefout)`, "📡 TELEMETRIE RAPPORT");
   }
 }
 
@@ -746,7 +754,7 @@ function loginAdmin() {
     playVictoryFanfare();
     document.getElementById('adminAuthSection').style.display = 'none';
     document.getElementById('adminControlsSection').style.display = 'block';
-    loadSecretCodeUI();
+    loadSecretCodesUI();
     renderAdminSubmissions();
     renderAdminTeamsManager();
   } else {
@@ -754,8 +762,8 @@ function loginAdmin() {
   }
 }
 
-function saveSecretCode() {
-  const secret = [
+function saveSecretCodes() {
+  const primary = [
     document.getElementById('secretSlot1').value,
     document.getElementById('secretSlot2').value,
     document.getElementById('secretSlot3').value,
@@ -763,18 +771,37 @@ function saveSecretCode() {
     document.getElementById('secretSlot5').value,
     document.getElementById('secretSlot6').value
   ];
-  if (isFirebaseReady) db.ref('gameState/secretCode').set(secret);
-  showCustomAlert("6-Voudige Malafide AI Code opgeslagen in Firebase!", "✓ CODE GEÜPDATET");
+
+  const backup = [
+    document.getElementById('backupSlot1').value,
+    document.getElementById('backupSlot2').value,
+    document.getElementById('backupSlot3').value,
+    document.getElementById('backupSlot4').value,
+    document.getElementById('backupSlot5').value,
+    document.getElementById('backupSlot6').value
+  ];
+
+  if (isFirebaseReady) {
+    db.ref('gameState/primarySecretCode').set(primary);
+    db.ref('gameState/backupSecretCode').set(backup);
+  }
+  showCustomAlert("Primaire en Backup Codes succesvol opgeslagen in Firebase!", "✓ CODES GEÜPDATET");
 }
 
-function loadSecretCodeUI() {
-  const secret = currentSecretCode;
-  document.getElementById('secretSlot1').value = secret[0] || 'green';
-  document.getElementById('secretSlot2').value = secret[1] || 'red';
-  document.getElementById('secretSlot3').value = secret[2] || 'yellow';
-  document.getElementById('secretSlot4').value = secret[3] || 'blue';
-  document.getElementById('secretSlot5').value = secret[4] || 'orange';
-  document.getElementById('secretSlot6').value = secret[5] || 'purple';
+function loadSecretCodesUI() {
+  document.getElementById('secretSlot1').value = primarySecretCode[0] || 'green';
+  document.getElementById('secretSlot2').value = primarySecretCode[1] || 'red';
+  document.getElementById('secretSlot3').value = primarySecretCode[2] || 'yellow';
+  document.getElementById('secretSlot4').value = primarySecretCode[3] || 'blue';
+  document.getElementById('secretSlot5').value = primarySecretCode[4] || 'orange';
+  document.getElementById('secretSlot6').value = primarySecretCode[5] || 'purple';
+
+  document.getElementById('backupSlot1').value = backupSecretCode[0] || 'blue';
+  document.getElementById('backupSlot2').value = backupSecretCode[1] || 'purple';
+  document.getElementById('backupSlot3').value = backupSecretCode[2] || 'red';
+  document.getElementById('backupSlot4').value = backupSecretCode[3] || 'green';
+  document.getElementById('backupSlot5').value = backupSecretCode[4] || 'yellow';
+  document.getElementById('backupSlot6').value = backupSecretCode[5] || 'orange';
 }
 
 function evaluateGuess(guessColors, secretColors) {
@@ -808,52 +835,45 @@ function evaluateGuess(guessColors, secretColors) {
   return { blackPins, whitePins, pins };
 }
 
-// LEIDING ACTIE: ALARM TRIGGEREN VOOR SPOEDTERUGKEER
+// LEIDING ACTIE 1: ALARM TRIGGEREN VOOR SPOEDTERUGKEER
 function adminTriggerGlobalReturn() {
   if (isFirebaseReady && pendingCrackedTeam) {
+    const winningCode = (pendingCrackedTeam.teamKey && currentTeamState.activeCodeType === 'backup') ? backupSecretCode : primarySecretCode;
     db.ref('gameState/winner').set({
       teamKey: pendingCrackedTeam.teamKey,
       teamName: pendingCrackedTeam.teamName,
-      secret: currentSecretCode
+      secret: winningCode
     });
     db.ref('gameState/crackedAlert').remove();
     document.getElementById('adminCrackAlertBox').style.display = 'none';
   }
 }
 
-// LEIDING ACTIE: AI SABOTAGE (CODE HERGENEREREN + TOKENS TERUGGEVEN)
+// LEIDING ACTIE 2: ENKEL DIT TEAM SABOTEREN EN OVERZETTEN OP BACKUP CODE
 function adminSabotageTeamCode() {
   if (!pendingCrackedTeam || !isFirebaseReady) return;
 
   const tKey = pendingCrackedTeam.teamKey;
   const tName = pendingCrackedTeam.teamName;
 
-  // Genereer willekeurige nieuwe code
-  const newSecret = [];
-  for (let i = 0; i < 6; i++) {
-    newSecret.push(ALL_COLORS[Math.floor(Math.random() * ALL_COLORS.length)]);
-  }
-
-  // Update nieuwe code in database
-  db.ref('gameState/secretCode').set(newSecret);
-
-  // Wis rijen van dat team en geef +6 tokens compensatie
+  // Schakel specifiek dit team over op de backup code
+  db.ref(`teams/${tKey}/activeCodeType`).set('backup');
   db.ref(`teams/${tKey}/mastermind`).remove();
   db.ref(`teams/${tKey}/active_row`).set(1);
   db.ref(`teams/${tKey}/credits`).transaction(current => (current || 0) + 6);
+
+  // Stuur specifieke sabotage notificatie
+  db.ref(`teams/${tKey}/sabotageNotice`).set({
+    id: Date.now(),
+    title: "⚡ AI COUNTER-MEASURE: KERN SABOTAGE",
+    text: "De corrupte AI heeft jullie aanval op de primaire kern afgeweerd en jullie injectieparameters gereset! Jullie terminal is overgeschakeld naar het secundaire back-up protocol. Er zijn 6 compensatie-tokens toegevoegd. Herstart direct de aanval!"
+  });
 
   // Verwijder alert
   db.ref('gameState/crackedAlert').remove();
   document.getElementById('adminCrackAlertBox').style.display = 'none';
 
-  // Stuur gericht sabotagebericht
-  publishEmergencyPayload(
-    `⚡ HOSTILE RE-ENCRYPTION: ${tName.toUpperCase()}`,
-    `De centrale AI heeft jullie aanval gedetecteerd en de kernparameters gewijzigd! Jullie eerdere rijen zijn overschreven, maar het systeem heeft jullie 6 compensatie-tokens toegekend. Herstart de decryptie!`,
-    null
-  );
-
-  showCustomAlert(`Code gereset & +6 tokens toegekend aan ${tName}!`, "✓ SABOTAGE TOEGEPAST");
+  showCustomAlert(`Sabotage uitgevoerd! ${tName} staat nu op de Backup Code en heeft +6 tokens ontvangen.`, "✓ SABOTAGE TOEGEPAST");
 }
 
 function renderAdminSubmissions() {
@@ -909,7 +929,7 @@ function renderAdminTeamsManager() {
         const tData = teamsData[tKey] || {};
         const credits = tData.credits || 0;
         const activeRow = tData.active_row || 1;
-        const roomCode = tData.roomEscapeCode || '2543';
+        const activeCodeType = tData.activeCodeType === 'backup' ? '🟠 Backup Code' : '🟢 Primaire Code';
         const personalPw = tData.personalPassword || 'Nog niet gekozen';
         const isLocked = tData.lockout === true;
 
@@ -922,11 +942,11 @@ function renderAdminTeamsManager() {
             <button class="retro-btn btn-sm" style="padding:0.15rem 0.4rem;" onclick="adminAdjustTokens('${tKey}', -1)">-1</button>
           </td>
           <td>Rij ${activeRow}</td>
-          <td><code>${roomCode}</code></td>
+          <td><code>${activeCodeType}</code></td>
           <td><code>${personalPw}</code></td>
           <td>
             <button class="retro-btn btn-sm ${isLocked ? 'btn-emerald' : 'btn-danger'}" onclick="adminToggleTeamLockout('${tKey}', ${!isLocked})">
-              ${isLocked ? 'Vrijgeven' : '⚡ AI Counter-Attack'}
+              ${isLocked ? 'Vrijgeven' : '⚡ Lockout'}
             </button>
             <button class="retro-btn btn-sm" style="margin-left:0.3rem;" onclick="adminResetTeamPassword('${tKey}')">Reset PW</button>
             <button class="retro-btn btn-sm btn-danger" style="margin-left:0.3rem;" onclick="adminResetTeamFull('${tKey}')">Reset Team</button>
@@ -962,7 +982,7 @@ function adminResetTeamPassword(tKey) {
 }
 
 function adminResetTeamFull(tKey) {
-  if (confirm(`LET OP: Wil je ALLE data (tokens, rijen, taken & wachtwoord) van ${TEAMS_INFO[tKey].name} wissen in Firebase?`)) {
+  if (confirm(`LET OP: Wil je ALLE data van ${TEAMS_INFO[tKey].name} wissen in Firebase?`)) {
     if (isFirebaseReady) {
       db.ref(`teams/${tKey}`).set({
         credits: 0,
@@ -970,6 +990,7 @@ function adminResetTeamFull(tKey) {
         roomEscapeCode: '2543',
         personalPassword: null,
         lockout: false,
+        activeCodeType: 'primary',
         tasks: {},
         mastermind: {}
       });
@@ -995,6 +1016,7 @@ function adminResetAllGameData() {
           roomEscapeCode: '2543',
           personalPassword: null,
           lockout: false,
+          activeCodeType: 'primary',
           tasks: {},
           mastermind: {}
         });
@@ -1036,8 +1058,15 @@ function setupFirebaseTeamListener(teamKey) {
       tasks: data.tasks || {},
       mastermind: data.mastermind || {},
       personalPassword: data.personalPassword || null,
-      lockout: data.lockout === true
+      lockout: data.lockout === true,
+      activeCodeType: data.activeCodeType || 'primary'
     };
+
+    // Check of er een sabotageNotice voor dit team is binnengekomen
+    if (data.sabotageNotice) {
+      showCustomAlert(data.sabotageNotice.text, data.sabotageNotice.title);
+      db.ref(`teams/${teamKey}/sabotageNotice`).remove();
+    }
 
     document.getElementById('teamLockoutModal').style.display = currentTeamState.lockout ? 'flex' : 'none';
 
@@ -1053,12 +1082,15 @@ function setupFirebaseGlobalListeners() {
   const statusEl = document.getElementById('dbStatusIndicator');
   if (statusEl) statusEl.innerText = "● LIVE SERVER DATABASE CONNECTED";
 
-  db.ref('gameState/secretCode').on('value', snapshot => {
+  // Luister naar Primaire en Backup Codes
+  db.ref('gameState/primarySecretCode').on('value', snapshot => {
     const code = snapshot.val();
-    if (code && Array.isArray(code)) {
-      currentSecretCode = code;
-      loadSecretCodeUI();
-    }
+    if (code && Array.isArray(code)) primarySecretCode = code;
+  });
+
+  db.ref('gameState/backupSecretCode').on('value', snapshot => {
+    const code = snapshot.val();
+    if (code && Array.isArray(code)) backupSecretCode = code;
   });
 
   // Luister naar gekraakte code alerts in het leidingpaneel
@@ -1070,7 +1102,7 @@ function setupFirebaseGlobalListeners() {
     if (alertData && alertData.teamKey) {
       pendingCrackedTeam = alertData;
       if (alertText) {
-        alertText.innerHTML = `<strong>${alertData.teamName}</strong> heeft om <strong>${alertData.time}</strong> de 6-cijferige code GEKRAAKT (6x Zwart)!<br>Kies hieronder wat er moet gebeuren:`;
+        alertText.innerHTML = `<strong>${alertData.teamName}</strong> heeft zojuist om <strong>${alertData.time}</strong> de 6-cijferige sequentie GEKRAAKT (6x Zwart)!<br>Kies hieronder wat er moet gebeuren:`;
       }
       if (alertBox) alertBox.style.display = 'block';
     } else {
