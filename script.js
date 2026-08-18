@@ -26,7 +26,7 @@ try {
   console.error("Firebase init fout:", err);
 }
 
-// 16 NIEUWE DROPSPEL MISSIES MET LOCATIES
+// 19 DROPSPEL MISSIES (INCLUSIEF KERKHOF, KERK & 112)
 const SECTORS_DATA = [
   { 
     id: 't-1', 
@@ -71,7 +71,8 @@ const SECTORS_DATA = [
     desc: 'Zoek een officieel straatnaambord met minstens 15 letters (exclusief spaties/symbolen). Maak een selfie met het bord.' 
   },
   { 
-    id: 't-7', code: 'Opdracht 7', 
+    id: 't-7', 
+    code: 'Opdracht 7', 
     name: 'Dubbele Cijfercode', 
     location: 'Openbare Parking', 
     desc: 'Vind een geparkeerde auto met een nummerplaat die minstens 2 dezelfde cijfers bevat (bijv. 1-ABC-223). Stuur de foto van de plaat.' 
@@ -138,6 +139,27 @@ const SECTORS_DATA = [
     name: 'De Brooddoos Monoloog', 
     location: 'Willekeurige Plek', 
     desc: 'Laat 1 iemand van jullie groep 1 volle minuut (60 seconden aan een stuk) zonder pauze vol passie over een brooddoos praten op video.' 
+  },
+  { 
+    id: 't-17', 
+    code: 'Opdracht 17', 
+    name: 'Sint-Pieterskerk Standbeelden & Gebed', 
+    location: 'Sint-Pieterskerk Koksijde-Dorp', 
+    desc: 'Wandel naar de Sint-Pieterskerk. Maak 2 foto\'s: 1) Waarbij iedereen buiten een heilig standbeeld nadoet, en 2) Waarbij het hele team theatraal in gebedshouding staat.' 
+  },
+  { 
+    id: 't-18', 
+    code: 'Opdracht 18', 
+    name: 'Historische Extractie', 
+    location: 'Militair Kerkhof Koksijde (Kerkstraat / Robert Vandammestraat)', 
+    desc: 'Wandel naar het militaire kerkhof. Betreed het domein in absolute stilte en respect. Zoek de oudste datum die jullie op een grafsteen vinden en stuur een duidelijke foto door.' 
+  },
+  { 
+    id: 't-19', 
+    code: 'Opdracht 19', 
+    name: 'Noodprotocol 112', 
+    location: 'In de Straat / Openbaar Domein', 
+    desc: 'Voor de veiligheid van het netwerk: vind in het openbaar domein een bord, sticker, stickerpaal, AED-kast of voertuig waar het noodnummer "112" op vermeld staat. Stuur de foto!' 
   }
 ];
 
@@ -159,6 +181,8 @@ const COLOR_MAP = {
   purple: '🟣 NEURAL_SHOCK'
 };
 
+const ALL_COLORS = ['red', 'blue', 'green', 'yellow', 'orange', 'purple'];
+
 let authenticatedTeam = null;
 let currentTeamState = {
   credits: 0,
@@ -170,6 +194,7 @@ let currentTeamState = {
 };
 
 let currentSecretCode = ['green', 'red', 'yellow', 'blue', 'orange', 'purple'];
+let pendingCrackedTeam = null;
 let currentlySelectedColor = 'red';
 let audioCtx = null;
 let totalSeconds = 120 * 60;
@@ -557,6 +582,7 @@ function handleSlotClick(row, slotIndex, isAllowed) {
   }
 }
 
+// AUTOMATISCHE DIRECTE EVALUATIE
 function submitRowForValidation(row) {
   const mmData = currentTeamState.mastermind || {};
   if (!mmData[row]) return;
@@ -574,17 +600,17 @@ function submitRowForValidation(row) {
     if (row < 6 && evaluation.blackPins < 6) {
       db.ref(`teams/${authenticatedTeam}/active_row`).set(row + 1);
     }
+    // Als 6x Zwart: stuur notificatie naar Firebase voor Leiding-Paneel
     if (evaluation.blackPins === 6) {
-      db.ref('gameState/winner').set({
+      db.ref('gameState/crackedAlert').set({
         teamKey: authenticatedTeam,
         teamName: TEAMS_INFO[authenticatedTeam].name,
-        secret: secret
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       });
+      showCustomAlert("6x Zwart behaald! De centrale parameters worden geverifieerd door de basis...", "🏆 DECRYPTIE SUCCESVOL");
+    } else {
+      showCustomAlert(`Tegenaanval Verwerkt!\nFeedback: ${evaluation.blackPins}x Zwart (Exact), ${evaluation.whitePins}x Wit (Positiefout)`, "📡 TELEMETRIE RAPPORT");
     }
-  }
-
-  if (evaluation.blackPins < 6) {
-    showCustomAlert(`Tegenaanval Verwerkt!\nFeedback: ${evaluation.blackPins}x Zwart (Exact), ${evaluation.whitePins}x Wit (Positiefout)`, "📡 TELEMETRIE RAPPORT");
   }
 }
 
@@ -782,6 +808,54 @@ function evaluateGuess(guessColors, secretColors) {
   return { blackPins, whitePins, pins };
 }
 
+// LEIDING ACTIE: ALARM TRIGGEREN VOOR SPOEDTERUGKEER
+function adminTriggerGlobalReturn() {
+  if (isFirebaseReady && pendingCrackedTeam) {
+    db.ref('gameState/winner').set({
+      teamKey: pendingCrackedTeam.teamKey,
+      teamName: pendingCrackedTeam.teamName,
+      secret: currentSecretCode
+    });
+    db.ref('gameState/crackedAlert').remove();
+    document.getElementById('adminCrackAlertBox').style.display = 'none';
+  }
+}
+
+// LEIDING ACTIE: AI SABOTAGE (CODE HERGENEREREN + TOKENS TERUGGEVEN)
+function adminSabotageTeamCode() {
+  if (!pendingCrackedTeam || !isFirebaseReady) return;
+
+  const tKey = pendingCrackedTeam.teamKey;
+  const tName = pendingCrackedTeam.teamName;
+
+  // Genereer willekeurige nieuwe code
+  const newSecret = [];
+  for (let i = 0; i < 6; i++) {
+    newSecret.push(ALL_COLORS[Math.floor(Math.random() * ALL_COLORS.length)]);
+  }
+
+  // Update nieuwe code in database
+  db.ref('gameState/secretCode').set(newSecret);
+
+  // Wis rijen van dat team en geef +6 tokens compensatie
+  db.ref(`teams/${tKey}/mastermind`).remove();
+  db.ref(`teams/${tKey}/active_row`).set(1);
+  db.ref(`teams/${tKey}/credits`).transaction(current => (current || 0) + 6);
+
+  // Verwijder alert
+  db.ref('gameState/crackedAlert').remove();
+  document.getElementById('adminCrackAlertBox').style.display = 'none';
+
+  // Stuur gericht sabotagebericht
+  publishEmergencyPayload(
+    `⚡ HOSTILE RE-ENCRYPTION: ${tName.toUpperCase()}`,
+    `De centrale AI heeft jullie aanval gedetecteerd en de kernparameters gewijzigd! Jullie eerdere rijen zijn overschreven, maar het systeem heeft jullie 6 compensatie-tokens toegekend. Herstart de decryptie!`,
+    null
+  );
+
+  showCustomAlert(`Code gereset & +6 tokens toegekend aan ${tName}!`, "✓ SABOTAGE TOEGEPAST");
+}
+
 function renderAdminSubmissions() {
   const tbody = document.getElementById('adminSubmissionsBody');
   tbody.innerHTML = '';
@@ -909,6 +983,7 @@ function adminResetAllGameData() {
     if (isFirebaseReady) {
       db.ref('submissions').remove();
       db.ref('gameState/winner').remove();
+      db.ref('gameState/crackedAlert').remove();
       db.ref('gameState/emergency').remove();
       db.ref('gameState/totalSeconds').set(7200);
       db.ref('gameState/timerRunning').set(false);
@@ -982,6 +1057,25 @@ function setupFirebaseGlobalListeners() {
     const code = snapshot.val();
     if (code && Array.isArray(code)) {
       currentSecretCode = code;
+      loadSecretCodeUI();
+    }
+  });
+
+  // Luister naar gekraakte code alerts in het leidingpaneel
+  db.ref('gameState/crackedAlert').on('value', snapshot => {
+    const alertData = snapshot.val();
+    const alertBox = document.getElementById('adminCrackAlertBox');
+    const alertText = document.getElementById('adminCrackAlertText');
+
+    if (alertData && alertData.teamKey) {
+      pendingCrackedTeam = alertData;
+      if (alertText) {
+        alertText.innerHTML = `<strong>${alertData.teamName}</strong> heeft om <strong>${alertData.time}</strong> de 6-cijferige code GEKRAAKT (6x Zwart)!<br>Kies hieronder wat er moet gebeuren:`;
+      }
+      if (alertBox) alertBox.style.display = 'block';
+    } else {
+      pendingCrackedTeam = null;
+      if (alertBox) alertBox.style.display = 'none';
     }
   });
 
