@@ -1,5 +1,5 @@
 /**
- * AETHER_OS - FIREBASE REALTIME DATABASE ENGINE & AUTOMATED MASTERMIND
+ * AETHER_OS - 100% FIREBASE REALTIME DATABASE POWERED ENGINE
  */
 
 // =========================================================================
@@ -65,8 +65,20 @@ const COLOR_MAP = {
 };
 
 let authenticatedTeam = null;
+let currentTeamState = {
+  credits: 0,
+  active_row: 1,
+  tasks: {},
+  mastermind: {},
+  personalPassword: null,
+  lockout: false
+};
+
+let currentSecretCode = ['green', 'red', 'yellow', 'blue', 'orange', 'purple'];
 let currentlySelectedColor = 'red';
 let audioCtx = null;
+let totalSeconds = 120 * 60;
+let timerRunning = true;
 
 // SYNTHESIZER SOUND ENGINE
 function getAudioContext() {
@@ -114,27 +126,17 @@ function playVictoryFanfare() {
   setTimeout(() => playBeep(880, 0.3), 380);
 }
 
-// STORAGE & FIREBASE HELPERS
-function getLocalKey(team, subkey) {
-  return `aether_fb_${team}_${subkey}`;
+// THEMATISCHE POPUP / ALERT FUNCTIE
+function showCustomAlert(text, header = "⚠️ SYSTEEM MELDING") {
+  playGlitchNoise();
+  document.getElementById('customAlertHeader').innerText = header;
+  document.getElementById('customAlertText').innerText = text;
+  document.getElementById('customAlertModal').style.display = 'flex';
 }
 
-function getRoomEscapeCode(teamKey) {
-  return localStorage.getItem(`aether_fb_roomcode_${teamKey}`) || '2543';
-}
-
-function setRoomEscapeCode(teamKey, code) {
-  localStorage.setItem(`aether_fb_roomcode_${teamKey}`, code);
-  if (isFirebaseReady) db.ref(`teams/${teamKey}/roomEscapeCode`).set(code);
-}
-
-function getPersonalPassword(teamKey) {
-  return localStorage.getItem(`aether_fb_personal_pw_${teamKey}`);
-}
-
-function setPersonalPassword(teamKey, pw) {
-  localStorage.setItem(`aether_fb_personal_pw_${teamKey}`, pw);
-  if (isFirebaseReady) db.ref(`teams/${teamKey}/personalPassword`).set(pw);
+function closeCustomAlert() {
+  playBeep(400, 0.05);
+  document.getElementById('customAlertModal').style.display = 'none';
 }
 
 // FASE 1 & 2: INTRO & KAMERCODE FLOW
@@ -167,28 +169,15 @@ function onTeamSelectChange() {
     db.ref(`teams/${teamKey}/personalPassword`).once('value', snapshot => {
       const personalPw = snapshot.val();
       if (personalPw) {
-        setPersonalPassword(teamKey, personalPw);
         bunkerGroup.style.display = 'none';
         returningGroup.style.display = 'block';
         btn.innerText = "[ INLOGGEN MET EIGEN WACHTWOORD 🚀 ]";
       } else {
-        localStorage.removeItem(getLocalKey(teamKey, 'personal_pw'));
         bunkerGroup.style.display = 'block';
         returningGroup.style.display = 'none';
         btn.innerText = "[ VERIFIEER CODE & ONTGRENDEL TERMINAL 🔓 ]";
       }
     });
-  } else {
-    const personalPw = getPersonalPassword(teamKey);
-    if (personalPw) {
-      bunkerGroup.style.display = 'none';
-      returningGroup.style.display = 'block';
-      btn.innerText = "[ INLOGGEN MET EIGEN WACHTWOORD 🚀 ]";
-    } else {
-      bunkerGroup.style.display = 'block';
-      returningGroup.style.display = 'none';
-      btn.innerText = "[ VERIFIEER CODE & ONTGRENDEL TERMINAL 🔓 ]";
-    }
   }
 }
 
@@ -200,7 +189,7 @@ function handleRoomCodeSubmit() {
     db.ref(`teams/${teamKey}`).once('value', snapshot => {
       const teamData = snapshot.val() || {};
       const personalPw = teamData.personalPassword;
-      const roomCode = teamData.roomEscapeCode || getRoomEscapeCode(teamKey);
+      const roomCode = teamData.roomEscapeCode || '2543';
 
       if (personalPw) {
         const enteredPw = document.getElementById('teamPersonalPasswordInput').value.trim();
@@ -216,10 +205,9 @@ function handleRoomCodeSubmit() {
       } else {
         const enteredCode = document.getElementById('bunker6DigitInput').value.trim();
         if (!enteredCode) {
-          errorEl.innerText = "Voer de lokaalcode in (bijv. 2543 of 4325)!";
+          errorEl.innerText = "Voer de lokaalcode in (2543 of 4325)!";
           return;
         }
-        // Accepteer standaard 2543, 4325, de specifieke roomCode of admin123
         if (enteredCode === '2543' || enteredCode === '4325' || enteredCode === roomCode || enteredCode === 'admin123') {
           playVictoryFanfare();
           authenticatedTeam = teamKey;
@@ -230,31 +218,10 @@ function handleRoomCodeSubmit() {
         }
       }
     });
-  } else {
-    const personalPw = getPersonalPassword(teamKey);
-    if (personalPw) {
-      const enteredPw = document.getElementById('teamPersonalPasswordInput').value.trim();
-      if (enteredPw === personalPw || enteredPw === 'admin123') {
-        launchCockpit(teamKey);
-      } else {
-        errorEl.innerText = "Verkeerd wachtwoord!";
-      }
-    } else {
-      const enteredCode = document.getElementById('bunker6DigitInput').value.trim();
-      const correctCode = getRoomEscapeCode(teamKey);
-      if (enteredCode === '2543' || enteredCode === '4325' || enteredCode === correctCode || enteredCode === 'admin123') {
-        playVictoryFanfare();
-        authenticatedTeam = teamKey;
-        document.getElementById('screenRoomCode').style.display = 'none';
-        document.getElementById('screenSetPassword').style.display = 'flex';
-      } else {
-        errorEl.innerText = "Onjuiste lokaalcode!";
-      }
-    }
   }
 }
 
-// FASE 3: EIGEN WACHTWOORD & DOORSTUREN NAAR TUTORIAL
+// FASE 3: EIGEN WACHTWOORD
 function savePasswordAndShowTutorial() {
   const newPw = document.getElementById('newTeamPasswordInput').value.trim();
   const errorEl = document.getElementById('step2ErrorMsg');
@@ -264,9 +231,11 @@ function savePasswordAndShowTutorial() {
     return;
   }
 
-  setPersonalPassword(authenticatedTeam, newPw);
+  if (isFirebaseReady) {
+    db.ref(`teams/${authenticatedTeam}/personalPassword`).set(newPw);
+  }
+
   playVictoryFanfare();
-  
   document.getElementById('screenSetPassword').style.display = 'none';
   openTutorialModal();
 }
@@ -285,13 +254,8 @@ function closeTutorialModal() {
   }
 }
 
-function finishTutorialAndLaunchCockpit() {
-  closeTutorialModal();
-}
-
 function launchCockpit(teamKey) {
   authenticatedTeam = teamKey;
-  sessionStorage.setItem('aether_fb_active_team', teamKey);
   
   document.getElementById('screenIntro').style.display = 'none';
   document.getElementById('screenRoomCode').style.display = 'none';
@@ -303,14 +267,10 @@ function launchCockpit(teamKey) {
   document.getElementById('headerTeamIcon').innerText = info.icon;
   document.getElementById('headerTeamName').innerText = `Target: ${info.name.replace('Team ', '')}`;
 
-  renderSectors();
-  initMastermind();
-  updateTeamStats();
   setupFirebaseTeamListener(teamKey);
 }
 
 function logoutCurrentTeam() {
-  sessionStorage.removeItem('aether_fb_active_team');
   authenticatedTeam = null;
   document.getElementById('mainCockpit').style.display = 'none';
   document.getElementById('screenIntro').style.display = 'flex';
@@ -327,7 +287,7 @@ function renderSectors() {
   const container = document.getElementById('sectorsContainer');
   container.innerHTML = '';
 
-  const savedTasks = JSON.parse(localStorage.getItem(getLocalKey(authenticatedTeam, 'tasks')) || '{}');
+  const savedTasks = currentTeamState.tasks || {};
   const completedCount = Object.values(savedTasks).filter(v => v === 'approved').length;
   
   document.getElementById('missionProgressCounter').innerText = `${completedCount} / ${SECTORS_DATA.length}`;
@@ -385,11 +345,6 @@ function confirmEvidenceSent() {
   const foundTask = SECTORS_DATA.find(t => t.name === activePendingTask.taskName);
   if (!foundTask) return;
 
-  const key = getLocalKey(activePendingTask.teamKey, 'tasks');
-  const savedTasks = JSON.parse(localStorage.getItem(key) || '{}');
-  savedTasks[foundTask.id] = 'pending';
-  localStorage.setItem(key, JSON.stringify(savedTasks));
-
   if (isFirebaseReady) {
     db.ref(`teams/${activePendingTask.teamKey}/tasks/${foundTask.id}`).set('pending');
     db.ref(`submissions/tasks/${activePendingTask.teamKey}_${foundTask.id}`).set({
@@ -402,23 +357,10 @@ function confirmEvidenceSent() {
   }
 
   closeEvidenceModal();
-  renderSectors();
-  showToast("Doorgestuurd! De leiding kijkt ernaar.");
+  showCustomAlert("Transmissie verzonden naar de centrale basis. De leiding controleert het bewijs!", "📡 TRANSMISSIE BEVESTIGD");
 }
 
-// =======================================================
-// AUTOMATISCHE MASTERMIND ENGINE (6 SLOTS)
-// =======================================================
-function getTeamCredits(teamKey) {
-  return parseInt(localStorage.getItem(getLocalKey(teamKey, 'credits')) || '0', 10);
-}
-
-function setTeamCredits(teamKey, count) {
-  localStorage.setItem(getLocalKey(teamKey, 'credits'), Math.max(0, count));
-  if (isFirebaseReady) db.ref(`teams/${teamKey}/credits`).set(Math.max(0, count));
-  updateTeamStats();
-}
-
+// MASTERMIND ENGINE (6 SLOTS)
 function selectColor(colorName) {
   playBeep(520, 0.04);
   currentlySelectedColor = colorName;
@@ -432,8 +374,8 @@ function initMastermind() {
   const board = document.getElementById('mastermindBoard');
   board.innerHTML = '';
 
-  const mmData = JSON.parse(localStorage.getItem(getLocalKey(authenticatedTeam, 'mastermind_state')) || '{}');
-  const currentActiveRow = parseInt(localStorage.getItem(getLocalKey(authenticatedTeam, 'active_row')) || '1', 10);
+  const mmData = currentTeamState.mastermind || {};
+  const currentActiveRow = currentTeamState.active_row || 1;
 
   for (let r = 1; r <= 6; r++) {
     const rowObj = mmData[r] || { colors: ['none', 'none', 'none', 'none', 'none', 'none'], pins: [], status: 'editing' };
@@ -470,7 +412,7 @@ function initMastermind() {
       if (allFilled) {
         actionHTML += `<button class="retro-btn btn-sm btn-emerald" onclick="submitRowForValidation(${r})">[ LANCEER 🚀 ]</button>`;
       } else {
-        actionHTML += `<span style="font-size:0.75rem; color:var(--text-muted);">Vul 6 protocollen</span>`;
+        actionHTML += `<span style="font-size:0.75rem; color:var(--text-muted);">Vul 6 slots</span>`;
       }
     }
     actionHTML += '</div>';
@@ -490,77 +432,68 @@ function initMastermind() {
 function handleSlotClick(row, slotIndex, isAllowed) {
   if (!isAllowed) return;
 
-  const mmData = JSON.parse(localStorage.getItem(getLocalKey(authenticatedTeam, 'mastermind_state')) || '{}');
+  const mmData = currentTeamState.mastermind || {};
   if (!mmData[row]) mmData[row] = { colors: ['none', 'none', 'none', 'none', 'none', 'none'], pins: [], status: 'editing' };
 
   const currentColor = mmData[row].colors[slotIndex];
-  const credits = getTeamCredits(authenticatedTeam);
+  const credits = currentTeamState.credits || 0;
 
   if (currentColor === 'none') {
     if (credits <= 0) {
-      return alert("Je hebt 0 tokens! Doe eerst een opdracht om nieuwe quantum-tokens te verdienen.");
+      return showCustomAlert("Onvoldoende Quantum-Tokens! Voer eerst een dropspel-opdracht uit om nieuwe tokens te verdienen.", "⚠️ GEEN TOKENS");
     }
     playBeep(640, 0.05);
     mmData[row].colors[slotIndex] = currentlySelectedColor;
-    setTeamCredits(authenticatedTeam, credits - 1);
+    
+    // Direct live in Firebase
+    if (isFirebaseReady) {
+      db.ref(`teams/${authenticatedTeam}/credits`).set(Math.max(0, credits - 1));
+      db.ref(`teams/${authenticatedTeam}/mastermind/${row}`).set(mmData[row]);
+    }
   } else {
     playBeep(580, 0.05);
     mmData[row].colors[slotIndex] = currentlySelectedColor;
+    if (isFirebaseReady) {
+      db.ref(`teams/${authenticatedTeam}/mastermind/${row}`).set(mmData[row]);
+    }
   }
-
-  localStorage.setItem(getLocalKey(authenticatedTeam, 'mastermind_state'), JSON.stringify(mmData));
-  if (isFirebaseReady) db.ref(`teams/${authenticatedTeam}/mastermind/${row}`).set(mmData[row]);
-  initMastermind();
 }
 
 // AUTOMATISCHE DIRECTE EVALUATIE TEGEN FIREBASE CODE
 function submitRowForValidation(row) {
-  const mmData = JSON.parse(localStorage.getItem(getLocalKey(authenticatedTeam, 'mastermind_state')) || '{}');
+  const mmData = currentTeamState.mastermind || {};
   if (!mmData[row]) return;
 
-  const secret = getSecretCode();
+  const secret = currentSecretCode;
   const evaluation = evaluateGuess(mmData[row].colors, secret);
 
   playBeep(750, 0.08);
 
   mmData[row].pins = evaluation.pins;
   mmData[row].status = 'evaluated';
-  localStorage.setItem(getLocalKey(authenticatedTeam, 'mastermind_state'), JSON.stringify(mmData));
-
-  if (row < 6 && evaluation.blackPins < 6) {
-    localStorage.setItem(getLocalKey(authenticatedTeam, 'active_row'), row + 1);
-    if (isFirebaseReady) db.ref(`teams/${authenticatedTeam}/active_row`).set(row + 1);
-  }
 
   if (isFirebaseReady) {
     db.ref(`teams/${authenticatedTeam}/mastermind/${row}`).set(mmData[row]);
-  }
-
-  if (evaluation.blackPins === 6) {
-    const winnerData = {
-      teamKey: authenticatedTeam,
-      teamName: TEAMS_INFO[authenticatedTeam].name,
-      secret: secret
-    };
-    if (isFirebaseReady) {
-      db.ref('gameState/winner').set(winnerData);
-    } else {
-      document.getElementById('victoryTeamName').innerText = winnerData.teamName;
-      document.getElementById('victoryCodeDisplay').innerText = secret.map(c => COLOR_MAP[c]).join(' ');
-      document.getElementById('victoryModal').style.display = 'flex';
-      playVictoryFanfare();
+    if (row < 6 && evaluation.blackPins < 6) {
+      db.ref(`teams/${authenticatedTeam}/active_row`).set(row + 1);
     }
-  } else {
-    showToast(`Feedback: ${evaluation.blackPins}x Zwart, ${evaluation.whitePins}x Wit`);
+    if (evaluation.blackPins === 6) {
+      db.ref('gameState/winner').set({
+        teamKey: authenticatedTeam,
+        teamName: TEAMS_INFO[authenticatedTeam].name,
+        secret: secret
+      });
+    }
   }
 
-  initMastermind();
+  if (evaluation.blackPins < 6) {
+    showCustomAlert(`Tegenaanval Verwerkt!\nFeedback: ${evaluation.blackPins}x Zwart (Exact), ${evaluation.whitePins}x Wit (Positiefout)`, "📡 TELEMETRIE RAPPORT");
+  }
 }
 
 function updateTeamStats() {
   if (!authenticatedTeam) return;
-  const credits = getTeamCredits(authenticatedTeam);
-  document.getElementById('headerCreditsCount').innerText = credits;
+  document.getElementById('headerCreditsCount').innerText = currentTeamState.credits || 0;
 }
 
 // TABS & TIMER
@@ -576,9 +509,6 @@ function switchTab(tabId) {
   if (btn) btn.classList.add('active');
 }
 
-let totalSeconds = 120 * 60;
-let timerRunning = true;
-
 function tickTimer() {
   if (timerRunning && totalSeconds > 0) {
     totalSeconds--;
@@ -592,19 +522,16 @@ function tickTimer() {
 }
 
 function startTimer() {
-  timerRunning = true;
   if (isFirebaseReady) db.ref('gameState/timerRunning').set(true);
 }
 
 function pauseTimer() {
-  timerRunning = false;
   if (isFirebaseReady) db.ref('gameState/timerRunning').set(false);
 }
 
 function resetTimer(mins = 120) {
-  totalSeconds = mins * 60;
   if (isFirebaseReady) {
-    db.ref('gameState/totalSeconds').set(totalSeconds);
+    db.ref('gameState/totalSeconds').set(mins * 60);
     db.ref('gameState/timerRunning').set(true);
   }
 }
@@ -616,7 +543,7 @@ function sendEmergencyLockdown() {
   const fileInput = document.getElementById('adminAudioFileInput');
 
   if (!text && (!fileInput.files || fileInput.files.length === 0)) {
-    return alert("Typ een tekst of voeg een audiobestand toe!");
+    return showCustomAlert("Typ een tekst of voeg een audiobestand toe!");
   }
 
   if (fileInput.files && fileInput.files[0]) {
@@ -640,16 +567,12 @@ function publishEmergencyPayload(title, text, audioUrl) {
 
   if (isFirebaseReady) {
     db.ref('gameState/emergency').set(payload);
-  } else {
-    localStorage.setItem('aether_fb_emergency', JSON.stringify(payload));
-    checkEmergencyLockdown(payload);
   }
-  showToast("Noodbericht verzonden naar alle consoles!");
 }
 
 function checkEmergencyLockdown(payload) {
   if (!payload) return;
-  const dismissedId = sessionStorage.getItem('aether_fb_dismissed_lockdown_id');
+  const dismissedId = sessionStorage.getItem('aether_dismissed_emergency');
 
   if (dismissedId !== String(payload.id)) {
     playGlitchNoise();
@@ -674,7 +597,7 @@ function checkEmergencyLockdown(payload) {
 
 function dismissLockdown() {
   const rawId = document.getElementById('lockdownTitle').dataset.emergencyId;
-  sessionStorage.setItem('aether_fb_dismissed_lockdown_id', String(rawId || Date.now()));
+  sessionStorage.setItem('aether_dismissed_emergency', String(rawId || Date.now()));
   document.getElementById('lockdownAudioPlayer').pause();
   document.getElementById('lockdownModal').style.display = 'none';
 }
@@ -700,7 +623,7 @@ function loginAdmin() {
     playVictoryFanfare();
     document.getElementById('adminAuthSection').style.display = 'none';
     document.getElementById('adminControlsSection').style.display = 'block';
-    loadSecretCode();
+    loadSecretCodeUI();
     renderAdminSubmissions();
     renderAdminTeamsManager();
   } else {
@@ -717,25 +640,18 @@ function saveSecretCode() {
     document.getElementById('secretSlot5').value,
     document.getElementById('secretSlot6').value
   ];
-  localStorage.setItem('aether_fb_secret_code', JSON.stringify(secret));
   if (isFirebaseReady) db.ref('gameState/secretCode').set(secret);
-  showToast("Code van de kist opgeslagen!");
+  showCustomAlert("6-Voudige Malafide AI Code opgeslagen in Firebase!", "✓ CODE GEÜPDATET");
 }
 
-function loadSecretCode() {
-  const raw = localStorage.getItem('aether_fb_secret_code');
-  const secret = raw ? JSON.parse(raw) : ['green', 'red', 'yellow', 'blue', 'orange', 'purple'];
+function loadSecretCodeUI() {
+  const secret = currentSecretCode;
   document.getElementById('secretSlot1').value = secret[0] || 'green';
   document.getElementById('secretSlot2').value = secret[1] || 'red';
   document.getElementById('secretSlot3').value = secret[2] || 'yellow';
   document.getElementById('secretSlot4').value = secret[3] || 'blue';
   document.getElementById('secretSlot5').value = secret[4] || 'orange';
   document.getElementById('secretSlot6').value = secret[5] || 'purple';
-}
-
-function getSecretCode() {
-  const raw = localStorage.getItem('aether_fb_secret_code');
-  return raw ? JSON.parse(raw) : ['green', 'red', 'yellow', 'blue', 'orange', 'purple'];
 }
 
 function evaluateGuess(guessColors, secretColors) {
@@ -806,8 +722,7 @@ function adminApproveTaskFB(subKey, teamKey, taskId) {
     db.ref(`teams/${teamKey}/credits`).transaction(current => (current || 0) + 1);
     db.ref(`submissions/tasks/${subKey}`).remove();
   }
-  showToast(`+1 Token toegekend aan ${TEAMS_INFO[teamKey].name}!`);
-  setTimeout(renderAdminSubmissions, 400);
+  setTimeout(renderAdminSubmissions, 300);
 }
 
 function renderAdminTeamsManager() {
@@ -852,42 +767,31 @@ function renderAdminTeamsManager() {
   }
 }
 
+function adminAdjustTokens(tKey, amount) {
+  if (isFirebaseReady) {
+    db.ref(`teams/${tKey}/credits`).transaction(current => Math.max(0, (current || 0) + amount));
+  }
+  setTimeout(renderAdminTeamsManager, 300);
+}
+
 function adminToggleTeamLockout(tKey, lockStatus) {
   if (isFirebaseReady) {
     db.ref(`teams/${tKey}/lockout`).set(lockStatus);
   }
-  showToast(`${TEAMS_INFO[tKey].name} is nu ${lockStatus ? 'GEBLOKKEERD (Counter-Attack)' : 'VRIJGEGEVEN'}`);
   setTimeout(renderAdminTeamsManager, 300);
 }
 
-function adminAdjustTokens(tKey, amount) {
-  const current = getTeamCredits(tKey);
-  const next = Math.max(0, current + amount);
-  setTeamCredits(tKey, next);
-  const valEl = document.getElementById(`creditsVal_${tKey}`);
-  if (valEl) valEl.innerText = next;
-  showToast(`Tokens aangepast voor ${TEAMS_INFO[tKey].name}: nu ${next}`);
-}
-
 function adminResetTeamPassword(tKey) {
-  if (confirm(`Wil je het wachtwoord van ${TEAMS_INFO[tKey].name} resetten in Firebase? Ze moeten dan opnieuw de lokaalcode invoeren.`)) {
-    localStorage.removeItem(getLocalKey(tKey, 'personal_pw'));
+  if (confirm(`Wil je het wachtwoord van ${TEAMS_INFO[tKey].name} resetten in Firebase?`)) {
     if (isFirebaseReady) {
       db.ref(`teams/${tKey}/personalPassword`).remove();
     }
-    renderAdminTeamsManager();
-    showToast(`Wachtwoord van ${TEAMS_INFO[tKey].name} gereset.`);
+    setTimeout(renderAdminTeamsManager, 300);
   }
 }
 
 function adminResetTeamFull(tKey) {
   if (confirm(`LET OP: Wil je ALLE data (tokens, rijen, taken & wachtwoord) van ${TEAMS_INFO[tKey].name} wissen in Firebase?`)) {
-    localStorage.removeItem(getLocalKey(tKey, 'personal_pw'));
-    localStorage.removeItem(getLocalKey(tKey, 'credits'));
-    localStorage.removeItem(getLocalKey(tKey, 'tasks'));
-    localStorage.removeItem(getLocalKey(tKey, 'mastermind_state'));
-    localStorage.removeItem(getLocalKey(tKey, 'active_row'));
-
     if (isFirebaseReady) {
       db.ref(`teams/${tKey}`).set({
         credits: 0,
@@ -899,13 +803,12 @@ function adminResetTeamFull(tKey) {
         mastermind: {}
       });
     }
-    renderAdminTeamsManager();
-    showToast(`Volledige data van ${TEAMS_INFO[tKey].name} gereset.`);
+    setTimeout(renderAdminTeamsManager, 300);
   }
 }
 
 function adminResetAllGameData() {
-  if (confirm("🚨 WEET JE DIT ZEKER? Dit wist ALLE data van ALLE 6 teams, de inzendingen, winnaars en reset de timer!")) {
+  if (confirm("🚨 WEET JE DIT ZEKER? Dit wist ALLE data van ALLE 6 teams, alle inzendingen, winnaars en reset de timer in Firebase!")) {
     if (isFirebaseReady) {
       db.ref('submissions').remove();
       db.ref('gameState/winner').remove();
@@ -925,17 +828,9 @@ function adminResetAllGameData() {
         });
       });
     }
-    localStorage.clear();
-    showToast("Compleet spel gereset in Firebase!");
+    showCustomAlert("Volledig spel gereset in Firebase!", "✓ RESET VOLTOOID");
     setTimeout(() => location.reload(), 1000);
   }
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toastNotification');
-  t.innerText = msg;
-  t.style.display = 'block';
-  setTimeout(() => { t.style.display = 'none'; }, 3000);
 }
 
 // Sneltoetsen: Ctrl + Shift + A (Open Admin), Escape (Sluit Modals & Admin)
@@ -947,39 +842,38 @@ window.addEventListener('keydown', function(e) {
     closeAdminModal();
     closeEvidenceModal();
     closeTutorialModal();
+    closeCustomAlert();
   }
 });
 
-// REALTIME LISTENERS
+// REALTIME LISTENERS (GEEN LOKALE OPSLAG MEER)
 function setupFirebaseTeamListener(teamKey) {
   if (!isFirebaseReady) return;
 
   db.ref(`teams/${teamKey}`).on('value', snapshot => {
-    const data = snapshot.val();
-    if (!data) return;
-
-    // Check individuele lockout
-    if (data.lockout === true) {
-      document.getElementById('teamLockoutModal').style.display = 'flex';
-    } else {
-      document.getElementById('teamLockoutModal').style.display = 'none';
+    const data = snapshot.val() || {};
+    
+    // Als team gereset is en wachtwoord weg is, gooi terug naar start
+    if (authenticatedTeam === teamKey && !data.personalPassword && document.getElementById('mainCockpit').style.display === 'flex') {
+      logoutCurrentTeam();
+      return;
     }
 
-    if (data.credits !== undefined) {
-      localStorage.setItem(getLocalKey(teamKey, 'credits'), data.credits);
-      updateTeamStats();
-    }
-    if (data.active_row !== undefined) {
-      localStorage.setItem(getLocalKey(teamKey, 'active_row'), data.active_row);
-    }
-    if (data.tasks) {
-      localStorage.setItem(getLocalKey(teamKey, 'tasks'), JSON.stringify(data.tasks));
-      renderSectors();
-    }
-    if (data.mastermind) {
-      localStorage.setItem(getLocalKey(teamKey, 'mastermind_state'), JSON.stringify(data.mastermind));
-      initMastermind();
-    }
+    currentTeamState = {
+      credits: data.credits || 0,
+      active_row: data.active_row || 1,
+      tasks: data.tasks || {},
+      mastermind: data.mastermind || {},
+      personalPassword: data.personalPassword || null,
+      lockout: data.lockout === true
+    };
+
+    // Individuele lockout
+    document.getElementById('teamLockoutModal').style.display = currentTeamState.lockout ? 'flex' : 'none';
+
+    renderSectors();
+    initMastermind();
+    updateTeamStats();
   });
 }
 
@@ -987,16 +881,17 @@ function setupFirebaseGlobalListeners() {
   if (!isFirebaseReady) return;
 
   const statusEl = document.getElementById('dbStatusIndicator');
-  if (statusEl) statusEl.innerText = "● DATABASE ONLINE (FIREBASE SYNC)";
+  if (statusEl) statusEl.innerText = "● LIVE SERVER DATABASE CONNECTED";
 
-  // Secret code realtime sync
+  // Secret code listener
   db.ref('gameState/secretCode').on('value', snapshot => {
     const code = snapshot.val();
     if (code && Array.isArray(code)) {
-      localStorage.setItem('aether_fb_secret_code', JSON.stringify(code));
+      currentSecretCode = code;
     }
   });
 
+  // Emergency listener
   db.ref('gameState/emergency').on('value', snapshot => {
     const data = snapshot.val();
     if (data) {
@@ -1005,16 +900,18 @@ function setupFirebaseGlobalListeners() {
     }
   });
 
+  // Winnaars listener
   db.ref('gameState/winner').on('value', snapshot => {
     const winner = snapshot.val();
     if (winner && winner.teamName) {
       document.getElementById('victoryTeamName').innerText = winner.teamName;
-      document.getElementById('victoryCodeDisplay').innerText = (winner.secret || []).map(c => COLOR_MAP[c]).join(' ');
+      document.getElementById('victoryCodeDisplay').innerText = (winner.secret || []).map(c => COLOR_MAP[c] || c).join(' ');
       document.getElementById('victoryModal').style.display = 'flex';
       playVictoryFanfare();
     }
   });
 
+  // Timer sync
   db.ref('gameState/totalSeconds').on('value', snapshot => {
     const val = snapshot.val();
     if (val !== null) totalSeconds = val;
