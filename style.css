@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AETHER_OS - RETRO CRT CYBER TERMINAL STYLING (RESPONSIEF & VOLLEDIGE SCROLL)
+   AETHER_OS - RETRO CRT CYBER TERMINAL (RESPONSIEF & VOLLEDIGE SCROLL)
    ========================================================================== */
 
 :root {
@@ -692,7 +692,22 @@ body {
 }
 
 .modal-popup { max-width: 500px; width: 100%; }
-.admin-popup { max-width: 960px; width: 100%; }
+
+/* DYNAMISCHE GROOTTE VOOR ADMIN POPUP (PAST PERFECT OP LAPTOP) */
+.admin-popup {
+  width: 95vw;
+  max-width: 1100px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem;
+}
+
+.admin-scrollable-body {
+  overflow-y: auto;
+  max-height: calc(92vh - 80px);
+  padding-right: 0.5rem;
+}
 
 .popup-head {
   padding-bottom: 0.75rem;
