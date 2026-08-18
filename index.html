@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AETHER_OS // DEFCON-1 TERMINAL (DUAL-CORE ARCHITECTURE)</title>
+  <title>AETHER_OS // DEFCON-1 TERMINAL (REALTIME SYNC)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
@@ -185,10 +185,7 @@
           <div class="step-badge">STAP 3</div>
           <div class="step-content">
             <h3 class="step-title">🏆 Automatische Verificatie & Uitschakeling</h3>
-            <p>Rij van 6 compleet? Klik op <strong>[ LANCEER TEGENAANVAL 🚀 ]</strong>. Het systeem berekent onmiddellijk het effect:<br>
-            • <strong>Zwart (⬛)</strong> = Juist protocol op de juiste sequentie.<br>
-            • <strong>Wit (⬜)</strong> = Juist protocol, maar op de verkeerde sequentie.<br>
-            Zodra jullie <strong>6x Zwart</strong> behalen, wordt dit geverifieerd door de centrale basis!</p>
+            <p>Rij van 6 compleet? Klik op <strong>[ LANCEER TEGENAANVAL 🚀 ]</strong>. Het systeem injecteert direct de code in de hoofdserver en berekent de feedback!</p>
           </div>
         </div>
       </div>
@@ -196,6 +193,35 @@
       <button class="retro-btn btn-emerald btn-block btn-pulse" onclick="closeTutorialModal()">
         [ BEGREPEN, START DE TEGENAANVAL! 🚀 ]
       </button>
+    </div>
+  </div>
+
+  <!-- =======================================================
+       TRANSMISSIE / VERZENDSCHERM BIJ 6X ZWART (WACHTTIJD)
+       ======================================================= -->
+  <div class="terminal-screen" id="transmittingModal" style="display: none;">
+    <div class="retro-box text-center" style="max-width: 600px; border-color: var(--primary); box-shadow: 0 0 35px var(--primary-glow);">
+      <div class="box-header">
+        <span style="color: var(--primary);">📡 TRANSMISSIE NAAR HOOFDSERVER</span>
+        <span class="blink">● UPLOADING...</span>
+      </div>
+      <div class="alert-icon-big" style="color: var(--primary);">⚡</div>
+      <h2 class="retro-title danger-glow" style="color: var(--primary); text-shadow: 0 0 10px var(--primary-glow);">
+        CODE WORDT GEÏNJECTEERD...
+      </h2>
+      <p class="retro-text" style="color: #fff; font-size: 1.05rem;">
+        Dit klopt! Jullie tegenaanval heeft de kern bereikt, maar heeft even tijd nodig om te verzenden naar de hoofdserver...
+      </p>
+      
+      <div class="mission-progress-bar" style="margin: 1.5rem 0;">
+        <div class="progress-track" style="height: 14px;">
+          <div class="progress-fill infinite-pulse-bar"></div>
+        </div>
+      </div>
+
+      <p style="font-size: 0.85rem; color: var(--text-muted);">
+        Verbinding met de centrale basis blijft open... Wacht op definitieve bevestiging.
+      </p>
     </div>
   </div>
 
@@ -239,20 +265,17 @@
   </div>
 
   <!-- =======================================================
-       OVERWINNINGSSCHERM (6X ZWART - SPOED TERUGKEER)
+       OVERWINNINGSSCHERM (GEFELICITEERD OF ALGEMENE TERUGROEP)
        ======================================================= -->
   <div class="terminal-screen" id="victoryModal" style="display: none;">
     <div class="retro-box victory-box text-center">
       <div class="box-header success">
-        <span>🏆 CODE GEKRAAKT // KERN IN MELTDOWN</span>
+        <span id="victoryHeaderBadge">🏆 CODE GEKRAAKT // KERN IN MELTDOWN</span>
         <span class="blink">● EVACUATION DIRECTIVE</span>
       </div>
-      <div class="victory-icon-big">🏃💨</div>
-      <h1 class="retro-title success-glow">IEDEREEN TERUG NAAR TER DUINEN!</h1>
-      <p class="retro-text" style="font-size: 1.15rem; color: #fff;">
-        Supercluster <strong id="victoryTeamName" style="color:var(--emerald);">Jullie Team</strong> heeft de 6 geheime protocollen gekraakt!<br>
-        <strong>SPOEDBEVEL:</strong> Iedereen moet NU direct zo snel mogelijk terugkeren naar Ter Duinen om de fysieke kist te openen en de barbecue te redden!
-      </p>
+      <div class="victory-icon-big" id="victoryIcon">🏆</div>
+      <h1 class="retro-title success-glow" id="victoryMainTitle">IEDEREEN TERUG NAAR TER DUINEN!</h1>
+      <p class="retro-text" id="victoryMainMessage" style="font-size: 1.15rem; color: #fff; line-height: 1.6;"></p>
       
       <div class="victory-code-display" id="victoryCodeDisplay">🔴 🔵 🟢 🟡 🟠 🟣</div>
       
@@ -420,10 +443,10 @@
             <p id="adminCrackAlertText" style="color: #fff; font-size: 1rem; margin-bottom: 1rem; line-height: 1.6;"></p>
             <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
               <button class="retro-btn btn-emerald" onclick="adminTriggerGlobalReturn()">
-                [ 🚨 ALARM: IEDEREEN TERUG NAAR TER DUINEN ]
+                [ 🏆 OPTIE A: DIT TEAM WINT & IEDEREEN TERUGROEPEN ]
               </button>
               <button class="retro-btn btn-danger" onclick="adminSabotageTeamCode()">
-                [ 🔄 AI Sabotage: Schakel over naar Backup Code (+6 Tokens) ]
+                [ 🔄 OPTIE B: AI Sabotage (Schakel over naar Backup Code + 6 Tokens) ]
               </button>
             </div>
           </div>
@@ -432,7 +455,6 @@
           <div class="admin-block">
             <h4 class="admin-block-title">🧩 1. Geheime Codes van de Corrupte AI-Kern (Centrale Post)</h4>
             
-            <!-- Code 1: Primaire Code -->
             <div class="admin-secret-code-box" style="margin-bottom: 1rem;">
               <label><strong style="color: var(--primary);">1. Primaire Code (Standaard te kraken code):</strong></label>
               <div class="secret-code-selectors">
@@ -457,27 +479,26 @@
               </div>
             </div>
 
-            <!-- Code 2: Backup Sabotage Code -->
             <div class="admin-secret-code-box" style="border-left: 3px solid var(--amber);">
-              <label><strong style="color: var(--amber);">2. Backup Code (Wordt enkel geactiveerd voor gesaboteerde teams):</strong></label>
+              <label><strong style="color: var(--amber);">2. Backup Code (Voor gesaboteerde teams):</strong></label>
               <div class="secret-code-selectors">
                 <select id="backupSlot1" class="retro-select mini-select" onchange="saveSecretCodes()">
                   <option value="red">🔴 EMP</option><option value="blue" selected>🔵 FIREWALL</option><option value="green">🟢 OVERRIDE</option><option value="yellow">🟡 PURGE</option><option value="orange">🟠 THROTTLE</option><option value="purple">🟣 NEURAL</option>
                 </select>
                 <select id="backupSlot2" class="retro-select mini-select" onchange="saveSecretCodes()">
-                  <option value="red">🔴 EMP</option><option value="blue">🔵 FIREWALL</option><option value="green">🟢 OVERRIDE</option><option value="yellow">🟡 PURGE</option><option value="orange">🟠 THROTTLE</option><option value="purple" selected>🟣 NEURAL</option>
+                  <option value="red">🔴 EMP</option><option value="blue">🔵 FIREWALL</option><option value="green">🟢 OVERRIDE</option><option value="yellow">🟡 PURGE</option><option value="orange">🟠 THROTTLE</option><option value="purple">🟣 NEURAL</option>
                 </select>
                 <select id="backupSlot3" class="retro-select mini-select" onchange="saveSecretCodes()">
                   <option value="red" selected>🔴 EMP</option><option value="blue">🔵 FIREWALL</option><option value="green">🟢 OVERRIDE</option><option value="yellow">🟡 PURGE</option><option value="orange">🟠 THROTTLE</option><option value="purple">🟣 NEURAL</option>
                 </select>
                 <select id="backupSlot4" class="retro-select mini-select" onchange="saveSecretCodes()">
-                  <option value="red">🔴 EMP</option><option value="blue">🔵 FIREWALL</option><option value="green" selected>🟢 OVERRIDE</option><option value="yellow">🟡 PURGE</option><option value="orange">🟠 THROTTLE</option><option value="purple">🟣 NEURAL</option>
+                  <option value="red">🔴 EMP</option><option value="blue">🔵 FIREWALL</option><option value="green">🟢 OVERRIDE</option><option value="yellow">🟡 PURGE</option><option value="orange">🟠 THROTTLE</option><option value="purple">🟣 NEURAL</option>
                 </select>
                 <select id="backupSlot5" class="retro-select mini-select" onchange="saveSecretCodes()">
-                  <option value="red">🔴 EMP</option><option value="blue">🔵 FIREWALL</option><option value="green">🟢 OVERRIDE</option><option value="yellow" selected>🟡 PURGE</option><option value="orange">🟠 THROTTLE</option><option value="purple">🟣 NEURAL</option>
+                  <option value="red">🔴 EMP</option><option value="blue">🔵 FIREWALL</option><option value="green">🟢 OVERRIDE</option><option value="yellow">🟡 PURGE</option><option value="orange">🟠 THROTTLE</option><option value="purple">🟣 NEURAL</option>
                 </select>
                 <select id="backupSlot6" class="retro-select mini-select" onchange="saveSecretCodes()">
-                  <option value="red">🔴 EMP</option><option value="blue">🔵 FIREWALL</option><option value="green">🟢 OVERRIDE</option><option value="yellow">🟡 PURGE</option><option value="orange" selected>🟠 THROTTLE</option><option value="purple">🟣 NEURAL</option>
+                  <option value="red">🔴 EMP</option><option value="blue">🔵 FIREWALL</option><option value="green">🟢 OVERRIDE</option><option value="yellow">🟡 PURGE</option><option value="orange">🟠 THROTTLE</option><option value="purple">🟣 NEURAL</option>
                 </select>
               </div>
             </div>
