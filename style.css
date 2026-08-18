@@ -62,7 +62,7 @@ body {
   z-index: 9999;
 }
 
-/* COCKPIT CONTAINER MET VLOEIENDE SCROLL */
+/* COCKPIT CONTAINER */
 .cockpit-container {
   width: 100%;
   max-width: 1400px;
@@ -174,7 +174,7 @@ body {
   box-shadow: 0 0 10px var(--emerald-glow);
 }
 
-/* INFINITE PULSE BAR VOOR VERZENDSCHERM */
+/* INFINITE PULSE BAR */
 .infinite-pulse-bar {
   width: 100%;
   background: linear-gradient(90deg, var(--primary), var(--emerald), var(--primary));
@@ -706,7 +706,7 @@ body {
 
 .modal-popup { max-width: 500px; width: 100%; }
 
-/* DYNAMISCHE GROOTTE VOOR ADMIN POPUP */
+/* ADMIN POPUP */
 .admin-popup {
   width: 95vw;
   max-width: 1100px;
