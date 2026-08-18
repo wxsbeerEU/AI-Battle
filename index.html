@@ -200,7 +200,7 @@
   </div>
 
   <!-- =======================================================
-       INDIVIDUELE TEAM LOCKOUT OVERLAY (AI VECHT TERUG)
+       INDIVIDUELE TEAM LOCKOUT OVERLAY
        ======================================================= -->
   <div class="terminal-screen" id="teamLockoutModal" style="display: none;">
     <div class="retro-box alert-box text-center">
@@ -218,7 +218,7 @@
   </div>
 
   <!-- =======================================================
-       NOODALARM / LIVE AUDIO OVERRIDE (GLOBAL)
+       NOODALARM / LIVE AUDIO OVERRIDE
        ======================================================= -->
   <div class="terminal-screen" id="lockdownModal" style="display: none;">
     <div class="retro-box alert-box text-center">
@@ -396,7 +396,7 @@
     </div>
   </div>
 
-  <!-- SYSADMIN MASTER BACKSITE -->
+  <!-- SYSADMIN MASTER BACKSITE MET DYNAMISCHE HOOGTE & SCROLL -->
   <div class="terminal-screen" id="adminModal" style="display: none;">
     <div class="retro-box admin-popup">
       <div class="popup-head">
@@ -404,7 +404,7 @@
         <button class="close-btn-red" onclick="closeAdminModal()" title="Sluit leidingpaneel (ESC)">[ SLUITEN ✕ ]</button>
       </div>
 
-      <div class="popup-body">
+      <div class="popup-body admin-scrollable-body">
         <div id="adminAuthSection">
           <p class="retro-text">Voer SysAdmin Root Key in:</p>
           <div style="display: flex; gap: 0.75rem; margin-top: 0.75rem;">
@@ -472,7 +472,7 @@
 
           <!-- Live Audio / Globale Broadcast -->
           <div class="admin-block">
-            <h4 class="admin-block-title">🚨 4. Globale Audio / Noodbevel Broadcast</h4>
+            <h4 class="admin-block-title">🚨 4. Globale Audio / Noodbevel Broadcast (Naar Alle Consoles)</h4>
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
               <input type="text" id="adminEmergencyTitle" class="retro-input" placeholder="Titel (bijv. ALLE TEAMS NAAR HET CENTRALE PLEIN)">
               <textarea id="adminEmergencyText" rows="2" class="retro-input" placeholder="Tekst van het bevel..."></textarea>
