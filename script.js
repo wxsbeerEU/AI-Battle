@@ -384,7 +384,7 @@ function handleRoomCodeSubmit() {
       } else {
         const enteredCode = document.getElementById('bunker6DigitInput').value.trim();
         if (!enteredCode) {
-          errorEl.innerText = "Voer de lokaalcode in (2543 of 4325)!";
+          errorEl.innerText = "Deze code is onjuist of onvolledig!";
           return;
         }
         if (enteredCode === '2543' || enteredCode === '4325' || enteredCode === roomCode || enteredCode === 'admin123') {
