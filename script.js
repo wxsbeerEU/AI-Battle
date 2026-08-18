@@ -26,7 +26,7 @@ try {
   console.error("Firebase init fout:", err);
 }
 
-// 19 DROPSPEL MISSIES
+// 24 DROPSPEL MISSIES (INCLUSIEF STRAATNAMEN, VOORDEUR, TONGBREKER, SPEELPLEIN & KNOOP)
 const SECTORS_DATA = [
   { 
     id: 't-1', 
@@ -160,6 +160,41 @@ const SECTORS_DATA = [
     name: 'Noodprotocol 112', 
     location: 'In de Straat / Openbaar Domein', 
     desc: 'Voor de veiligheid van het netwerk: vind in het openbaar domein een bord, sticker, stickerpaal, AED-kast of voertuig waar het noodnummer "112" op vermeld staat. Stuur de foto!' 
+  },
+  { 
+    id: 't-20', 
+    code: 'Opdracht 20', 
+    name: 'Straten Alliteratie Scan', 
+    location: 'Woonwijken Koksijde', 
+    desc: 'Vind in de omgeving 3 verschillende officiële straatnaamborden die met exact dezelfde letter beginnen (bijv. 3x met een K, P of Z). Maak een collage of stuur de 3 foto\'s door.' 
+  },
+  { 
+    id: 't-21', 
+    code: 'Opdracht 21', 
+    name: 'De Opvallende Voordeur', 
+    location: 'Woonstraten / Villa\'s', 
+    desc: 'Zoek een huis met een extreem opvallende, felle of artistieke voordeur (bijv. felgeel, knalrood of speciaal houtwerk). Maak een selfie met het team voor de deur (met respect voor de bewoners).' 
+  },
+  { 
+    id: 't-22', 
+    code: 'Opdracht 22', 
+    name: 'Tongbreker Decryptie', 
+    location: 'Willekeurige Plek', 
+    desc: 'Laat 1 teamlid 5x achter elkaar zónder haperen een moeilijke tongbreker uitspreken op video (bijv. "De koetsier poetst de postkoets" of "De knecht snijdt recht").' 
+  },
+  { 
+    id: 't-23', 
+    code: 'Opdracht 23', 
+    name: 'Speelplein Kleutertijd', 
+    location: 'Openbaar Speelplein in de buurt', 
+    desc: 'Zoek een speelplein. Maak een grappige en overdreven groepsfoto waarbij iedereen van het team doet alsof jullie 4-jarige kleutertjes zijn (op de schommel, glijbaan of in het zand).' 
+  },
+  { 
+    id: 't-24', 
+    code: 'Opdracht 24', 
+    name: 'De Menselijke Knoop Ontsnapping', 
+    location: 'Grasveld / Park', 
+    desc: 'Ga in een kring staan, steek je handen naar het midden en pak willekeurige handen van anderen vast. Ontrafel deze menselijke knoop zonder elkaars handen los te laten! Film de ontsnapping.' 
   }
 ];
 
@@ -257,6 +292,11 @@ function showCustomAlert(text, header = "⚠️ SYSTEEM MELDING") {
 function closeCustomAlert() {
   playBeep(400, 0.05);
   document.getElementById('customAlertModal').style.display = 'none';
+}
+
+function dismissSabotageModal() {
+  playBeep(600, 0.1);
+  document.getElementById('sabotageModal').style.display = 'none';
 }
 
 // FASE 1 & 2: INTRO & KAMERCODE FLOW
@@ -838,7 +878,7 @@ function evaluateGuess(guessColors, secretColors) {
   return { blackPins, whitePins, pins };
 }
 
-// LEIDING ACTIE 1: ALARM TRIGGEREN VOOR SPOEDTERUGKEER (WINNAAR + ALGEMENE TERUGROEP)
+// LEIDING ACTIE 1: ALARM TRIGGEREN VOOR SPOEDTERUGKEER
 function adminTriggerGlobalReturn() {
   if (isFirebaseReady && pendingCrackedTeam) {
     const winningCode = (currentTeamState.activeCodeType === 'backup') ? backupSecretCode : primarySecretCode;
@@ -865,11 +905,11 @@ function adminSabotageTeamCode() {
   db.ref(`teams/${tKey}/active_row`).set(1);
   db.ref(`teams/${tKey}/credits`).transaction(current => (current || 0) + 6);
 
-  // Stuur specifieke sabotage notificatie die direct popup triggert
+  // Stuur specifieke sabotage notificatie die direct custom modal triggert
   db.ref(`teams/${tKey}/sabotageNotice`).set({
     id: Date.now(),
-    title: "⚡ AI COUNTER-MEASURE: KERN SABOTAGE",
-    text: "De corrupte AI heeft jullie aanval op de primaire kern afgeweerd en jullie injectieparameters gereset! Jullie terminal is overgeschakeld naar het secundaire back-up protocol. Er zijn 6 compensatie-tokens toegevoegd. Herstart direct de aanval!"
+    title: "⚡ AI KERN SABOTAGE: PARAMETERS GEWIJZIGD",
+    text: "De corrupte AI heeft jullie aanval op de primaire kern afgeweerd en de decryptieparameters gewijzigd! Jullie terminal is overgeschakeld naar het secundaire back-up protocol. Er zijn 6 compensatie-tokens toegevoegd. Herstart direct de tegenaanval!"
   });
 
   // Verwijder alert in admin
@@ -879,7 +919,7 @@ function adminSabotageTeamCode() {
   showCustomAlert(`Sabotage uitgevoerd! ${tName} staat nu op de Backup Code en heeft +6 tokens ontvangen.`, "✓ SABOTAGE TOEGEPAST");
 }
 
-// REALTIME ADMIN LISTENERS VOOR INSTANT SYNC ZONDER REFRESH
+// REALTIME ADMIN LISTENERS
 function setupAdminRealtimeListeners() {
   if (!isFirebaseReady) return;
 
@@ -913,7 +953,7 @@ function setupAdminRealtimeListeners() {
     });
   });
 
-  // Live Teams Manager overzicht (tokens, wachtwoorden, status)
+  // Live Teams Manager overzicht
   db.ref('teams').on('value', snapshot => {
     const tbody = document.getElementById('adminTeamsManagerBody');
     if (!tbody) return;
@@ -1026,7 +1066,7 @@ function adminResetAllGameData() {
   }
 }
 
-// Sneltoetsen: Ctrl + Shift + A (Open Admin), Escape (Sluit Modals & Admin)
+// Sneltoetsen: Ctrl + Shift + A (Open Admin), Escape (Sluit Modals)
 window.addEventListener('keydown', function(e) {
   if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
     e.preventDefault();
@@ -1036,6 +1076,7 @@ window.addEventListener('keydown', function(e) {
     closeEvidenceModal();
     closeTutorialModal();
     closeCustomAlert();
+    dismissSabotageModal();
   }
 });
 
@@ -1061,10 +1102,13 @@ function setupFirebaseTeamListener(teamKey) {
       activeCodeType: data.activeCodeType || 'primary'
     };
 
-    // Sabotage pop-up check
+    // Check of er een sabotageNotice voor dit team is binnengekomen
     if (data.sabotageNotice) {
       document.getElementById('transmittingModal').style.display = 'none';
-      showCustomAlert(data.sabotageNotice.text, data.sabotageNotice.title);
+      playGlitchNoise();
+      document.getElementById('sabotageTitle').innerText = data.sabotageNotice.title;
+      document.getElementById('sabotageText').innerText = data.sabotageNotice.text;
+      document.getElementById('sabotageModal').style.display = 'flex';
       db.ref(`teams/${teamKey}/sabotageNotice`).remove();
     }
 
@@ -1119,7 +1163,7 @@ function setupFirebaseGlobalListeners() {
     }
   });
 
-  // Winnaars listener: Gedifferentieerd scherm voor winnaar vs andere teams
+  // Winnaars listener
   db.ref('gameState/winner').on('value', snapshot => {
     const winner = snapshot.val();
     if (winner && winner.teamName) {
