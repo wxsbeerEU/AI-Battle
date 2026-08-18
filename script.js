@@ -56,12 +56,12 @@ const TEAMS_INFO = {
 };
 
 const COLOR_MAP = {
-  red: '🔴 Rood',
-  blue: '🔵 Blauw',
-  green: '🟢 Groen',
-  yellow: '🟡 Geel',
-  orange: '🟠 Oranje',
-  purple: '🟣 Paars'
+  red: '🔴 EMP_PULSE',
+  blue: '🔵 FIREWALL',
+  green: '🟢 OVERRIDE',
+  yellow: '🟡 DATA_PURGE',
+  orange: '🟠 THROTTLE',
+  purple: '🟣 NEURAL_SHOCK'
 };
 
 let authenticatedTeam = null;
@@ -120,7 +120,7 @@ function getLocalKey(team, subkey) {
 }
 
 function getRoomEscapeCode(teamKey) {
-  return localStorage.getItem(`aether_fb_roomcode_${teamKey}`) || '482619';
+  return localStorage.getItem(`aether_fb_roomcode_${teamKey}`) || '2543';
 }
 
 function setRoomEscapeCode(teamKey, code) {
@@ -215,17 +215,18 @@ function handleRoomCodeSubmit() {
         }
       } else {
         const enteredCode = document.getElementById('bunker6DigitInput').value.trim();
-        if (enteredCode.length !== 6) {
-          errorEl.innerText = "De kamercode moet exact 6 cijfers zijn!";
+        if (!enteredCode) {
+          errorEl.innerText = "Voer de lokaalcode in (bijv. 2543 of 4325)!";
           return;
         }
-        if (enteredCode === roomCode || enteredCode === '123456' || enteredCode === '482619' || enteredCode === 'admin123') {
+        // Accepteer standaard 2543, 4325, de specifieke roomCode of admin123
+        if (enteredCode === '2543' || enteredCode === '4325' || enteredCode === roomCode || enteredCode === 'admin123') {
           playVictoryFanfare();
           authenticatedTeam = teamKey;
           document.getElementById('screenRoomCode').style.display = 'none';
           document.getElementById('screenSetPassword').style.display = 'flex';
         } else {
-          errorEl.innerText = "Onjuiste 6-cijferige code! Controleer jullie 3 raadsels.";
+          errorEl.innerText = "Onjuiste lokaalcode! Controleer de puzzels in De Bronne.";
         }
       }
     });
@@ -241,13 +242,13 @@ function handleRoomCodeSubmit() {
     } else {
       const enteredCode = document.getElementById('bunker6DigitInput').value.trim();
       const correctCode = getRoomEscapeCode(teamKey);
-      if (enteredCode === correctCode || enteredCode === '123456' || enteredCode === '482619' || enteredCode === 'admin123') {
+      if (enteredCode === '2543' || enteredCode === '4325' || enteredCode === correctCode || enteredCode === 'admin123') {
         playVictoryFanfare();
         authenticatedTeam = teamKey;
         document.getElementById('screenRoomCode').style.display = 'none';
         document.getElementById('screenSetPassword').style.display = 'flex';
       } else {
-        errorEl.innerText = "Onjuiste 6-cijferige code!";
+        errorEl.innerText = "Onjuiste lokaalcode!";
       }
     }
   }
@@ -406,7 +407,7 @@ function confirmEvidenceSent() {
 }
 
 // =======================================================
-// AUTOMATISCHE MASTERMIND ENGINE (6 KLEUREN)
+// AUTOMATISCHE MASTERMIND ENGINE (6 SLOTS)
 // =======================================================
 function getTeamCredits(teamKey) {
   return parseInt(localStorage.getItem(getLocalKey(teamKey, 'credits')) || '0', 10);
@@ -467,9 +468,9 @@ function initMastermind() {
     } else if (isCurrentActive) {
       const allFilled = rowObj.colors.every(c => c !== 'none');
       if (allFilled) {
-        actionHTML += `<button class="retro-btn btn-sm btn-emerald" onclick="submitRowForValidation(${r})">[ TEST CODE 🚀 ]</button>`;
+        actionHTML += `<button class="retro-btn btn-sm btn-emerald" onclick="submitRowForValidation(${r})">[ LANCEER 🚀 ]</button>`;
       } else {
-        actionHTML += `<span style="font-size:0.75rem; color:var(--text-muted);">Vul 6 bollen</span>`;
+        actionHTML += `<span style="font-size:0.75rem; color:var(--text-muted);">Vul 6 protocollen</span>`;
       }
     }
     actionHTML += '</div>';
@@ -497,7 +498,7 @@ function handleSlotClick(row, slotIndex, isAllowed) {
 
   if (currentColor === 'none') {
     if (credits <= 0) {
-      return alert("Je hebt 0 tokens! Doe eerst een opdracht om nieuwe tokens te verdienen.");
+      return alert("Je hebt 0 tokens! Doe eerst een opdracht om nieuwe quantum-tokens te verdienen.");
     }
     playBeep(640, 0.05);
     mmData[row].colors[slotIndex] = currentlySelectedColor;
@@ -526,7 +527,6 @@ function submitRowForValidation(row) {
   mmData[row].status = 'evaluated';
   localStorage.setItem(getLocalKey(authenticatedTeam, 'mastermind_state'), JSON.stringify(mmData));
 
-  // Volgende rij activeren mits niet 6x zwart
   if (row < 6 && evaluation.blackPins < 6) {
     localStorage.setItem(getLocalKey(authenticatedTeam, 'active_row'), row + 1);
     if (isFirebaseReady) db.ref(`teams/${authenticatedTeam}/active_row`).set(row + 1);
@@ -536,7 +536,6 @@ function submitRowForValidation(row) {
     db.ref(`teams/${authenticatedTeam}/mastermind/${row}`).set(mmData[row]);
   }
 
-  // 6x Zwart = Direct Winst!
   if (evaluation.blackPins === 6) {
     const winnerData = {
       teamKey: authenticatedTeam,
@@ -824,8 +823,9 @@ function renderAdminTeamsManager() {
         const tData = teamsData[tKey] || {};
         const credits = tData.credits || 0;
         const activeRow = tData.active_row || 1;
-        const roomCode = tData.roomEscapeCode || '482619';
+        const roomCode = tData.roomEscapeCode || '2543';
         const personalPw = tData.personalPassword || 'Nog niet gekozen';
+        const isLocked = tData.lockout === true;
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -839,7 +839,10 @@ function renderAdminTeamsManager() {
           <td><code>${roomCode}</code></td>
           <td><code>${personalPw}</code></td>
           <td>
-            <button class="retro-btn btn-sm" onclick="adminResetTeamPassword('${tKey}')">Reset PW</button>
+            <button class="retro-btn btn-sm ${isLocked ? 'btn-emerald' : 'btn-danger'}" onclick="adminToggleTeamLockout('${tKey}', ${!isLocked})">
+              ${isLocked ? 'Vrijgeven' : '⚡ AI Counter-Attack'}
+            </button>
+            <button class="retro-btn btn-sm" style="margin-left:0.3rem;" onclick="adminResetTeamPassword('${tKey}')">Reset PW</button>
             <button class="retro-btn btn-sm btn-danger" style="margin-left:0.3rem;" onclick="adminResetTeamFull('${tKey}')">Reset Team</button>
           </td>
         `;
@@ -847,6 +850,14 @@ function renderAdminTeamsManager() {
       });
     });
   }
+}
+
+function adminToggleTeamLockout(tKey, lockStatus) {
+  if (isFirebaseReady) {
+    db.ref(`teams/${tKey}/lockout`).set(lockStatus);
+  }
+  showToast(`${TEAMS_INFO[tKey].name} is nu ${lockStatus ? 'GEBLOKKEERD (Counter-Attack)' : 'VRIJGEGEVEN'}`);
+  setTimeout(renderAdminTeamsManager, 300);
 }
 
 function adminAdjustTokens(tKey, amount) {
@@ -859,7 +870,7 @@ function adminAdjustTokens(tKey, amount) {
 }
 
 function adminResetTeamPassword(tKey) {
-  if (confirm(`Wil je het wachtwoord van ${TEAMS_INFO[tKey].name} resetten in Firebase? Ze moeten dan opnieuw de 6-cijferige kamer-code invoeren.`)) {
+  if (confirm(`Wil je het wachtwoord van ${TEAMS_INFO[tKey].name} resetten in Firebase? Ze moeten dan opnieuw de lokaalcode invoeren.`)) {
     localStorage.removeItem(getLocalKey(tKey, 'personal_pw'));
     if (isFirebaseReady) {
       db.ref(`teams/${tKey}/personalPassword`).remove();
@@ -881,8 +892,9 @@ function adminResetTeamFull(tKey) {
       db.ref(`teams/${tKey}`).set({
         credits: 0,
         active_row: 1,
-        roomEscapeCode: '482619',
+        roomEscapeCode: '2543',
         personalPassword: null,
+        lockout: false,
         tasks: {},
         mastermind: {}
       });
@@ -905,8 +917,9 @@ function adminResetAllGameData() {
         db.ref(`teams/${tKey}`).set({
           credits: 0,
           active_row: 1,
-          roomEscapeCode: '482619',
+          roomEscapeCode: '2543',
           personalPassword: null,
+          lockout: false,
           tasks: {},
           mastermind: {}
         });
@@ -944,6 +957,13 @@ function setupFirebaseTeamListener(teamKey) {
   db.ref(`teams/${teamKey}`).on('value', snapshot => {
     const data = snapshot.val();
     if (!data) return;
+
+    // Check individuele lockout
+    if (data.lockout === true) {
+      document.getElementById('teamLockoutModal').style.display = 'flex';
+    } else {
+      document.getElementById('teamLockoutModal').style.display = 'none';
+    }
 
     if (data.credits !== undefined) {
       localStorage.setItem(getLocalKey(teamKey, 'credits'), data.credits);
