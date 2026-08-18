@@ -2,14 +2,14 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AETHER_OS // DEFCON-1 TERMINAL (AI CORE CONFLICT)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AETHER_OS // DEFCON-1 TERMINAL</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 
-  <!-- FIREBASE COMPAT SDKs -->
+  <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 </head>
@@ -18,6 +18,18 @@
   <div class="crt-overlay"></div>
   <div class="crt-scanlines"></div>
 
+  <!-- THEMATISCHE RETRO MODAL VOOR ALERTS/POPUPS -->
+  <div class="terminal-screen" id="customAlertModal" style="display: none; z-index: 99999;">
+    <div class="retro-box modal-popup text-center">
+      <div class="box-header danger">
+        <span id="customAlertHeader">⚠️ SYSTEEM MELDING</span>
+        <span class="blink">● ALERT</span>
+      </div>
+      <div class="emergency-text" id="customAlertText" style="margin: 1.25rem 0;">Melding</div>
+      <button class="retro-btn btn-primary btn-block" onclick="closeCustomAlert()">[ SLUITEN ✕ ]</button>
+    </div>
+  </div>
+
   <!-- =======================================================
        FASE 1: OPENINGSSCHERM - DE NOODOPROEP (MONI SPEECH)
        ======================================================= -->
@@ -25,21 +37,21 @@
     <div class="retro-box alert-box">
       <div class="box-header danger">
         <span>🚨 DEFCON-1: NOODSITUATIE TER DUINEN</span>
-        <span class="blink" id="dbStatusIndicator">● VERBINDEN MET DATABASE...</span>
+        <span class="blink" id="dbStatusIndicator">● DATABASE KOPPELEN...</span>
       </div>
       
       <h1 class="retro-title danger-glow">HET NETWERK LIGT PLAT!</h1>
       
       <p class="retro-text">
-        De brandoefening was een dekmantel! De centrale AI-kern (Centrale Post) is kwaadaardig geworden en heeft alle systemen, de koelcellen én de <strong>muziekinstallatie voor de bar</strong> gegijzeld!<br>
-        Als we deze malafide AI niet binnen <strong>2 uur</strong> neutraliseren, is de barbecue van woensdag volledig naar de vaantjes!
+        De brandoefening was een dekmantel! Virus <strong>GLITCH</strong> breekt uit en heeft alle servers, de koelcellen én de <strong>muziekinstallatie voor de bar</strong> gegijzeld!<br>
+        Als we de ontspoorde AI niet binnen <strong>2 uur</strong> uitschakelen, is de barbecue van woensdag volledig naar de vaantjes!
       </p>
 
       <div class="moni-terminal-box">
         <div class="moni-tag">> MONI_INVAL_DIRECTIVE:</div>
         <p>
-          "Jullie missie: Bouw de juiste 6-voudige quantum-tegenaanval op om de centrale AI te breken! 
-          Voer de lokaalcode in (2543 of 4325), ontgrendel de terminal en sla terug!"
+          "Jullie missie: Jullie moeten jullie eigen AI-systeem opsporen en uitschakelen! 
+          Voer de lokaalcode in (2543 of 4325), ontgrendel de terminal en start de tegenaanval!"
         </p>
       </div>
 
@@ -47,7 +59,6 @@
         [ OPEN NOODTERMINAL & START ONTGRENDELING ▶ ]
       </button>
 
-      <!-- ADMIN TOEGANG VANAF BEGINSCHERM -->
       <div style="text-align: center; margin-top: 1.25rem;">
         <button class="sysadmin-link-btn" onclick="openAdminModal()">[ ROOT://SYSADMIN_CONSOLE ]</button>
       </div>
@@ -55,7 +66,7 @@
   </div>
 
   <!-- =======================================================
-       FASE 2: KRAAK DE KAMER (CODE 2543 of 4325)
+       FASE 2: KRAAK DE KAMER (CODE 2543 OF 4325)
        ======================================================= -->
   <div class="terminal-screen" id="screenRoomCode" style="display: none;">
     <div class="retro-box">
@@ -142,12 +153,12 @@
   <div class="terminal-screen" id="screenTutorial" style="display: none;">
     <div class="retro-box tutorial-box">
       <div class="box-header success">
-        <span>⚡ OPERATIE QUANTUM_PURGE // TEGENAANVAL PROTOCOL</span>
-        <span id="tutorialTeamBadge">CLUSTER: ONBEKEND</span>
+        <span>⚡ OPERATIE QUANTUM_PURGE // PROTOCOL</span>
+        <span id="tutorialTeamBadge">TARGET: ONBEKEND</span>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2 class="retro-title success-glow" style="margin-bottom: 0;">HOE BREKEN WE DE KWAADAARDIGE AI?</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <h2 class="retro-title success-glow" style="margin-bottom: 0;">HOE REDDEN WE DE BARBECUE?</h2>
         <button class="close-btn-red" onclick="closeTutorialModal()">[ SLUITEN ✕ ]</button>
       </div>
       
@@ -163,7 +174,7 @@
         <div class="tutorial-step-card">
           <div class="step-badge">STAP 2</div>
           <div class="step-content">
-            <h3 class="step-title">🛡️ Injecteer de 6 Quantum-Tegenaanval Protocollen</h3>
+            <h3 class="step-title">🛡️ Injecteer de 6 Quantum-Protocollen</h3>
             <p>De Centrale Post is de corrupte kern. Gebruik jullie tokens om per slot een neutralisatie-protocol in te stellen (<strong>1 token = 1 slot</strong>):<br>
             • 🔴 <strong>EMP_PULSE</strong> | 🔵 <strong>FIREWALL</strong> | 🟢 <strong>OVERRIDE</strong><br>
             • 🟡 <strong>DATA_PURGE</strong> | 🟠 <strong>THROTTLE</strong> | 🟣 <strong>NEURAL_SHOCK</strong></p>
@@ -174,8 +185,8 @@
           <div class="step-badge">STAP 3</div>
           <div class="step-content">
             <h3 class="step-title">🏆 Automatische Verificatie & Uitschakeling</h3>
-            <p>Rij van 6 compleet? Klik direct op <strong>[ LANCEER TEGENAANVAL 🚀 ]</strong>. Het systeem berekent onmiddellijk het effect op de centrale AI:<br>
-            • <strong>Zwart (⬛)</strong> = Juist protocol op de juiste kernsequentie.<br>
+            <p>Rij van 6 compleet? Klik op <strong>[ LANCEER TEGENAANVAL 🚀 ]</strong>. Het systeem berekent onmiddellijk het effect:<br>
+            • <strong>Zwart (⬛)</strong> = Juist protocol op de juiste sequentie.<br>
             • <strong>Wit (⬜)</strong> = Juist protocol, maar op de verkeerde sequentie.<br>
             Het team dat als eerste <strong>6x Zwart</strong> behaalt, schakelt de centrale AI uit en redt het feest!</p>
           </div>
@@ -252,7 +263,7 @@
   </div>
 
   <!-- =======================================================
-       FASE 5: HOOFD COCKPIT (VOLLEDIG SCHERM MET NATUURLIJKE SCROLL)
+       FASE 5: HOOFD COCKPIT (RESPONSIEF & VOLLEDIGE SCROLL)
        ======================================================= -->
   <div class="cockpit-container" id="mainCockpit" style="display: none;">
     
@@ -269,7 +280,7 @@
 
       <div class="header-right-tools">
         <button class="retro-btn btn-sm btn-tutorial-link" onclick="openTutorialModal()">
-          [ 📜 OPERATIE_BRIEFING ]
+          [ 📜 BRIEFING ]
         </button>
         <div class="tokens-pill">
           ⚡ TOKENS: <strong id="headerCreditsCount">0</strong>
@@ -286,15 +297,15 @@
 
     <nav class="main-tabs-nav">
       <button class="tab-btn active" id="tabBtnSectors" onclick="switchTab('sectors')">[ 1. ACTIEVE MISSIES 🎯 ]</button>
-      <button class="tab-btn" id="tabBtnMastermind" onclick="switchTab('mastermind')">[ 2. TEGENAANVAL MATRIX (6 SLOTS) 🧩 ]</button>
+      <button class="tab-btn" id="tabBtnMastermind" onclick="switchTab('mastermind')">[ 2. TEGENAANVAL MATRIX 🧩 ]</button>
     </nav>
 
     <!-- TAB 1: ACTIEVE OPDRACHTEN -->
     <main id="tab-sectors" class="tab-panel active">
       <div class="instruction-box">
         <span class="info-tag">> MISSIE PROTOCOL:</span> 
-        Voltooi een van de actieve opdrachten ➔ Stuur bewijs naar <strong>0475 84 89 83</strong> ➔ Klik op "Transmissie Verzonden". 
-        Zodra de leiding goedkeurt, ontgrendelt er live via de server een token én een nieuwe opdracht!
+        Voltooi een actieve opdracht ➔ Stuur bewijs naar <strong>0475 84 89 83</strong> ➔ Klik op "Transmissie Verzonden". 
+        Zodra de leiding goedkeurt, ontgrendelt er live een token én een nieuwe opdracht!
       </div>
 
       <div class="mission-progress-bar">
@@ -309,14 +320,14 @@
     <main id="tab-mastermind" class="tab-panel">
       <div class="instruction-box">
         <span class="info-tag">> MALAFIDE AI NEUTRALISATIE:</span> 
-        1. Selecteer een quantum-protocol hieronder. ➔ 2. Klik op een leeg slot in jullie actieve rij (kost 1 token). ➔ 3. <strong>Rij van 6 vol?</strong> Klik op lanceren om de aanval direct te valideren!
+        1. Selecteer een quantum-protocol. ➔ 2. Klik op een leeg slot in jullie actieve rij (kost 1 token). ➔ 3. <strong>Rij van 6 vol?</strong> Klik op lanceren om de aanval direct te valideren!
       </div>
 
       <div class="mastermind-grid-layout">
         
         <div class="retro-box mm-board-card">
           <div class="palette-picker-bar">
-            <span class="palette-title">> SELECTEER TEGENAANVAL-PROTOCOL:</span>
+            <span class="palette-title">> SELECTEER PROTOCOL:</span>
             <div class="palette-buttons-row">
               <button class="pal-btn red active" onclick="selectColor('red')">🔴 EMP_PULSE</button>
               <button class="pal-btn blue" onclick="selectColor('blue')">🔵 FIREWALL</button>
@@ -345,7 +356,7 @@
           
           <div class="legend-row">
             <div class="pin"></div>
-            <div><strong>Leeg</strong> = Protocol maakt geen deel uit van de kerncode.</div>
+            <div><strong>Leeg</strong> = Protocol zit <u>niet</u> in de kerncode.</div>
           </div>
 
           <div class="notice-callout">
@@ -372,7 +383,7 @@
       </div>
 
       <div class="popup-body">
-        <p class="retro-text">Stuur foto, video of antwoord via WhatsApp/GSM naar de centrale leiding:</p>
+        <p class="retro-text">Stuur foto, video of antwoord via WhatsApp naar de centrale leiding:</p>
         
         <div class="phone-box">
           <div class="phone-num">📱 0475 84 89 83</div>
@@ -461,9 +472,9 @@
 
           <!-- Live Audio / Globale Broadcast -->
           <div class="admin-block">
-            <h4 class="admin-block-title">🚨 4. Globale Audio / Noodbevel Broadcast (Naar Alle Consoles)</h4>
+            <h4 class="admin-block-title">🚨 4. Globale Audio / Noodbevel Broadcast</h4>
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-              <input type="text" id="adminEmergencyTitle" class="retro-input" placeholder="Titel (bijv. IEDEREEN NAAR HET CENTRALE PLEIN)">
+              <input type="text" id="adminEmergencyTitle" class="retro-input" placeholder="Titel (bijv. ALLE TEAMS NAAR HET CENTRALE PLEIN)">
               <textarea id="adminEmergencyText" rows="2" class="retro-input" placeholder="Tekst van het bevel..."></textarea>
               <input type="file" id="adminAudioFileInput" accept="audio/*" class="retro-input">
               <button class="retro-btn btn-danger btn-block" onclick="sendEmergencyLockdown()">[ 🚨 BLOKKEER ALLE SCHERMEN MET BEVEL ]</button>
@@ -481,7 +492,7 @@
             </div>
 
             <button class="retro-btn btn-danger btn-block" onclick="adminResetAllGameData()">
-              [ 💣 VOLLEDIG SPEL RESETTEN (ALLE TEAMS & GEGEVENS LEEGMAKEN) ]
+              [ 💣 MASTER GAME RESET (WIST ALLE DATA IN FIREBASE) ]
             </button>
           </div>
 
@@ -493,8 +504,6 @@
       </div>
     </div>
   </div>
-
-  <div id="toastNotification" class="toast"></div>
 
   <script src="script.js"></script>
 </body>
