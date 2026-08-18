@@ -1,5 +1,5 @@
 /**
- * AETHER_OS - 100% FIREBASE REALTIME DATABASE POWERED ENGINE
+ * AETHER_OS - 100% REALTIME FIREBASE POWERED ENGINE
  */
 
 // =========================================================================
@@ -189,7 +189,7 @@ let currentTeamState = {
   mastermind: {},
   personalPassword: null,
   lockout: false,
-  activeCodeType: 'primary' // 'primary' of 'backup'
+  activeCodeType: 'primary'
 };
 
 let primarySecretCode = ['green', 'red', 'yellow', 'blue', 'orange', 'purple'];
@@ -385,6 +385,7 @@ function launchCockpit(teamKey) {
   document.getElementById('screenRoomCode').style.display = 'none';
   document.getElementById('screenSetPassword').style.display = 'none';
   document.getElementById('screenTutorial').style.display = 'none';
+  document.getElementById('transmittingModal').style.display = 'none';
   document.getElementById('mainCockpit').style.display = 'flex';
 
   const info = TEAMS_INFO[teamKey];
@@ -401,6 +402,7 @@ function logoutCurrentTeam() {
   document.getElementById('screenRoomCode').style.display = 'none';
   document.getElementById('screenSetPassword').style.display = 'none';
   document.getElementById('screenTutorial').style.display = 'none';
+  document.getElementById('transmittingModal').style.display = 'none';
 }
 
 // FASE 4: MISSIES RENDERING & GSM BEWIJS
@@ -532,7 +534,7 @@ function initMastermind() {
       pinsHTML += '</div>';
       actionHTML += pinsHTML;
     } else if (rowObj.status === 'cracked_pending') {
-      actionHTML += `<span style="font-size:0.8rem; color:var(--emerald); font-weight:bold;">🔒 VERIFICATIE BEZIG...</span>`;
+      actionHTML += `<span style="font-size:0.8rem; color:var(--primary); font-weight:bold;">⚡ UPLOADING...</span>`;
     } else if (isCurrentActive) {
       const allFilled = rowObj.colors.every(c => c !== 'none');
       if (allFilled) {
@@ -584,12 +586,11 @@ function handleSlotClick(row, slotIndex, isAllowed) {
   }
 }
 
-// AUTOMATISCHE DIRECTE EVALUATIE (TEGEN DE ACTIEVE CODE VAN HET TEAM)
+// AUTOMATISCHE DIRECTE EVALUATIE
 function submitRowForValidation(row) {
   const mmData = currentTeamState.mastermind || {};
   if (!mmData[row]) return;
 
-  // Gebruik de actieve code van het team (primaire of backup)
   const targetSecret = (currentTeamState.activeCodeType === 'backup') ? backupSecretCode : primarySecretCode;
   const evaluation = evaluateGuess(mmData[row].colors, targetSecret);
 
@@ -608,6 +609,9 @@ function submitRowForValidation(row) {
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       });
     }
+
+    // Toon direct het spannende verzendscherm
+    document.getElementById('transmittingModal').style.display = 'flex';
   } else {
     mmData[row].pins = evaluation.pins;
     mmData[row].status = 'evaluated';
@@ -755,8 +759,7 @@ function loginAdmin() {
     document.getElementById('adminAuthSection').style.display = 'none';
     document.getElementById('adminControlsSection').style.display = 'block';
     loadSecretCodesUI();
-    renderAdminSubmissions();
-    renderAdminTeamsManager();
+    setupAdminRealtimeListeners();
   } else {
     document.getElementById('adminAuthError').style.display = 'block';
   }
@@ -835,10 +838,10 @@ function evaluateGuess(guessColors, secretColors) {
   return { blackPins, whitePins, pins };
 }
 
-// LEIDING ACTIE 1: ALARM TRIGGEREN VOOR SPOEDTERUGKEER
+// LEIDING ACTIE 1: ALARM TRIGGEREN VOOR SPOEDTERUGKEER (WINNAAR + ALGEMENE TERUGROEP)
 function adminTriggerGlobalReturn() {
   if (isFirebaseReady && pendingCrackedTeam) {
-    const winningCode = (pendingCrackedTeam.teamKey && currentTeamState.activeCodeType === 'backup') ? backupSecretCode : primarySecretCode;
+    const winningCode = (currentTeamState.activeCodeType === 'backup') ? backupSecretCode : primarySecretCode;
     db.ref('gameState/winner').set({
       teamKey: pendingCrackedTeam.teamKey,
       teamName: pendingCrackedTeam.teamName,
@@ -862,49 +865,92 @@ function adminSabotageTeamCode() {
   db.ref(`teams/${tKey}/active_row`).set(1);
   db.ref(`teams/${tKey}/credits`).transaction(current => (current || 0) + 6);
 
-  // Stuur specifieke sabotage notificatie
+  // Stuur specifieke sabotage notificatie die direct popup triggert
   db.ref(`teams/${tKey}/sabotageNotice`).set({
     id: Date.now(),
     title: "⚡ AI COUNTER-MEASURE: KERN SABOTAGE",
     text: "De corrupte AI heeft jullie aanval op de primaire kern afgeweerd en jullie injectieparameters gereset! Jullie terminal is overgeschakeld naar het secundaire back-up protocol. Er zijn 6 compensatie-tokens toegevoegd. Herstart direct de aanval!"
   });
 
-  // Verwijder alert
+  // Verwijder alert in admin
   db.ref('gameState/crackedAlert').remove();
   document.getElementById('adminCrackAlertBox').style.display = 'none';
 
   showCustomAlert(`Sabotage uitgevoerd! ${tName} staat nu op de Backup Code en heeft +6 tokens ontvangen.`, "✓ SABOTAGE TOEGEPAST");
 }
 
-function renderAdminSubmissions() {
-  const tbody = document.getElementById('adminSubmissionsBody');
-  tbody.innerHTML = '';
+// REALTIME ADMIN LISTENERS VOOR INSTANT SYNC ZONDER REFRESH
+function setupAdminRealtimeListeners() {
+  if (!isFirebaseReady) return;
 
-  if (isFirebaseReady) {
-    db.ref('submissions/tasks').once('value', snapshot => {
-      const submissions = snapshot.val() || {};
-      const entries = Object.entries(submissions);
-      if (entries.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Geen openstaande opdrachten.</td></tr>';
-        return;
-      }
-      entries.forEach(([subKey, s]) => {
-        const tInfo = TEAMS_INFO[s.teamKey];
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><strong>${tInfo.icon} ${tInfo.name}</strong></td>
-          <td>${s.taskName}</td>
-          <td><span style="color:${s.status === 'approved' ? 'var(--emerald)' : 'var(--amber)'}">${s.status === 'approved' ? '✓ Goedgekeurd' : '⏳ Wacht op check'}</span></td>
-          <td>
-            ${s.status !== 'approved' ? `
-              <button class="retro-btn btn-sm btn-emerald" onclick="adminApproveTaskFB('${subKey}', '${s.teamKey}', '${s.taskId}')">[ GOEDKEUREN (+1 Token) ]</button>
-            ` : 'Voltooid'}
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
+  // Live opdrachten-inzendingen
+  db.ref('submissions/tasks').on('value', snapshot => {
+    const tbody = document.getElementById('adminSubmissionsBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const submissions = snapshot.val() || {};
+    const entries = Object.entries(submissions);
+
+    if (entries.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Geen openstaande opdrachten.</td></tr>';
+      return;
+    }
+
+    entries.forEach(([subKey, s]) => {
+      const tInfo = TEAMS_INFO[s.teamKey];
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${tInfo.icon} ${tInfo.name}</strong></td>
+        <td>${s.taskName}</td>
+        <td><span style="color:${s.status === 'approved' ? 'var(--emerald)' : 'var(--amber)'}">${s.status === 'approved' ? '✓ Goedgekeurd' : '⏳ Wacht op check'}</span></td>
+        <td>
+          ${s.status !== 'approved' ? `
+            <button class="retro-btn btn-sm btn-emerald" onclick="adminApproveTaskFB('${subKey}', '${s.teamKey}', '${s.taskId}')">[ GOEDKEUREN (+1 Token) ]</button>
+          ` : 'Voltooid'}
+        </td>
+      `;
+      tbody.appendChild(tr);
     });
-  }
+  });
+
+  // Live Teams Manager overzicht (tokens, wachtwoorden, status)
+  db.ref('teams').on('value', snapshot => {
+    const tbody = document.getElementById('adminTeamsManagerBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const teamsData = snapshot.val() || {};
+
+    Object.keys(TEAMS_INFO).forEach(tKey => {
+      const tInfo = TEAMS_INFO[tKey];
+      const tData = teamsData[tKey] || {};
+      const credits = tData.credits || 0;
+      const activeRow = tData.active_row || 1;
+      const activeCodeType = tData.activeCodeType === 'backup' ? '🟠 Backup Code' : '🟢 Primaire Code';
+      const personalPw = tData.personalPassword || 'Nog niet gekozen';
+      const isLocked = tData.lockout === true;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${tInfo.icon} ${tInfo.name}</strong></td>
+        <td style="color:var(--amber); font-weight:bold;">
+          <span id="creditsVal_${tKey}">${credits}</span> Tokens
+          <button class="retro-btn btn-sm" style="padding:0.15rem 0.4rem; margin-left:0.4rem;" onclick="adminAdjustTokens('${tKey}', 1)">+1</button>
+          <button class="retro-btn btn-sm" style="padding:0.15rem 0.4rem;" onclick="adminAdjustTokens('${tKey}', -1)">-1</button>
+        </td>
+        <td>Rij ${activeRow}</td>
+        <td><code>${activeCodeType}</code></td>
+        <td><code>${personalPw}</code></td>
+        <td>
+          <button class="retro-btn btn-sm ${isLocked ? 'btn-emerald' : 'btn-danger'}" onclick="adminToggleTeamLockout('${tKey}', ${!isLocked})">
+            ${isLocked ? 'Vrijgeven' : '⚡ Lockout'}
+          </button>
+          <button class="retro-btn btn-sm" style="margin-left:0.3rem;" onclick="adminResetTeamPassword('${tKey}')">Reset PW</button>
+          <button class="retro-btn btn-sm btn-danger" style="margin-left:0.3rem;" onclick="adminResetTeamFull('${tKey}')">Reset Team</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  });
 }
 
 function adminApproveTaskFB(subKey, teamKey, taskId) {
@@ -913,63 +959,18 @@ function adminApproveTaskFB(subKey, teamKey, taskId) {
     db.ref(`teams/${teamKey}/credits`).transaction(current => (current || 0) + 1);
     db.ref(`submissions/tasks/${subKey}`).remove();
   }
-  setTimeout(renderAdminSubmissions, 300);
-}
-
-function renderAdminTeamsManager() {
-  const tbody = document.getElementById('adminTeamsManagerBody');
-  tbody.innerHTML = '';
-
-  if (isFirebaseReady) {
-    db.ref('teams').once('value', snapshot => {
-      const teamsData = snapshot.val() || {};
-
-      Object.keys(TEAMS_INFO).forEach(tKey => {
-        const tInfo = TEAMS_INFO[tKey];
-        const tData = teamsData[tKey] || {};
-        const credits = tData.credits || 0;
-        const activeRow = tData.active_row || 1;
-        const activeCodeType = tData.activeCodeType === 'backup' ? '🟠 Backup Code' : '🟢 Primaire Code';
-        const personalPw = tData.personalPassword || 'Nog niet gekozen';
-        const isLocked = tData.lockout === true;
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><strong>${tInfo.icon} ${tInfo.name}</strong></td>
-          <td style="color:var(--amber); font-weight:bold;">
-            <span id="creditsVal_${tKey}">${credits}</span> Tokens
-            <button class="retro-btn btn-sm" style="padding:0.15rem 0.4rem; margin-left:0.4rem;" onclick="adminAdjustTokens('${tKey}', 1)">+1</button>
-            <button class="retro-btn btn-sm" style="padding:0.15rem 0.4rem;" onclick="adminAdjustTokens('${tKey}', -1)">-1</button>
-          </td>
-          <td>Rij ${activeRow}</td>
-          <td><code>${activeCodeType}</code></td>
-          <td><code>${personalPw}</code></td>
-          <td>
-            <button class="retro-btn btn-sm ${isLocked ? 'btn-emerald' : 'btn-danger'}" onclick="adminToggleTeamLockout('${tKey}', ${!isLocked})">
-              ${isLocked ? 'Vrijgeven' : '⚡ Lockout'}
-            </button>
-            <button class="retro-btn btn-sm" style="margin-left:0.3rem;" onclick="adminResetTeamPassword('${tKey}')">Reset PW</button>
-            <button class="retro-btn btn-sm btn-danger" style="margin-left:0.3rem;" onclick="adminResetTeamFull('${tKey}')">Reset Team</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    });
-  }
 }
 
 function adminAdjustTokens(tKey, amount) {
   if (isFirebaseReady) {
     db.ref(`teams/${tKey}/credits`).transaction(current => Math.max(0, (current || 0) + amount));
   }
-  setTimeout(renderAdminTeamsManager, 300);
 }
 
 function adminToggleTeamLockout(tKey, lockStatus) {
   if (isFirebaseReady) {
     db.ref(`teams/${tKey}/lockout`).set(lockStatus);
   }
-  setTimeout(renderAdminTeamsManager, 300);
 }
 
 function adminResetTeamPassword(tKey) {
@@ -977,7 +978,6 @@ function adminResetTeamPassword(tKey) {
     if (isFirebaseReady) {
       db.ref(`teams/${tKey}/personalPassword`).remove();
     }
-    setTimeout(renderAdminTeamsManager, 300);
   }
 }
 
@@ -995,7 +995,6 @@ function adminResetTeamFull(tKey) {
         mastermind: {}
       });
     }
-    setTimeout(renderAdminTeamsManager, 300);
   }
 }
 
@@ -1040,7 +1039,7 @@ window.addEventListener('keydown', function(e) {
   }
 });
 
-// REALTIME LISTENERS
+// REALTIME LISTENERS VOOR SPELERSCONSOLES
 function setupFirebaseTeamListener(teamKey) {
   if (!isFirebaseReady) return;
 
@@ -1062,8 +1061,9 @@ function setupFirebaseTeamListener(teamKey) {
       activeCodeType: data.activeCodeType || 'primary'
     };
 
-    // Check of er een sabotageNotice voor dit team is binnengekomen
+    // Sabotage pop-up check
     if (data.sabotageNotice) {
+      document.getElementById('transmittingModal').style.display = 'none';
       showCustomAlert(data.sabotageNotice.text, data.sabotageNotice.title);
       db.ref(`teams/${teamKey}/sabotageNotice`).remove();
     }
@@ -1119,10 +1119,30 @@ function setupFirebaseGlobalListeners() {
     }
   });
 
+  // Winnaars listener: Gedifferentieerd scherm voor winnaar vs andere teams
   db.ref('gameState/winner').on('value', snapshot => {
     const winner = snapshot.val();
     if (winner && winner.teamName) {
-      document.getElementById('victoryTeamName').innerText = winner.teamName;
+      document.getElementById('transmittingModal').style.display = 'none';
+
+      const isWinner = (authenticatedTeam === winner.teamKey);
+      const titleEl = document.getElementById('victoryMainTitle');
+      const msgEl = document.getElementById('victoryMainMessage');
+      const badgeEl = document.getElementById('victoryHeaderBadge');
+      const iconEl = document.getElementById('victoryIcon');
+
+      if (isWinner) {
+        badgeEl.innerText = "🏆 MASTER CORE GEKRAAKT // OVERWINNING";
+        iconEl.innerText = "🏆";
+        titleEl.innerText = "GEFELICITEERD! JULLIE HEBBEN GEWONNEN!";
+        msgEl.innerHTML = `Jullie hebben als eerste de 6 protocollen geïnjecteerd en de AI uitgeschakeld!<br><br><strong style="color:var(--emerald); font-size: 1.3rem;">RENNEN: Keer NU zo snel mogelijk terug naar Ter Duinen om de fysieke kist te openen en de barbecue te redden!</strong>`;
+      } else {
+        badgeEl.innerText = "⚠️ SYSTEEM MELTDOWN // MISSIE VOLTOOID";
+        iconEl.innerText = "🏃💨";
+        titleEl.innerText = "IEDEREEN TERUG NAAR TER DUINEN!";
+        msgEl.innerHTML = `De corrupte AI is zojuist uitgeschakeld door <strong style="color:var(--primary); font-size:1.2rem;">${winner.teamName}</strong>!<br><br>De missie is afgelopen. <strong>Keer allemaal rustig en ordelijk terug naar Ter Duinen!</strong>`;
+      }
+
       document.getElementById('victoryCodeDisplay').innerText = (winner.secret || []).map(c => COLOR_MAP[c] || c).join(' ');
       document.getElementById('victoryModal').style.display = 'flex';
       playVictoryFanfare();
