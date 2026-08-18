@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AETHER_OS // DEFCON-1 TERMINAL</title>
+  <title>AI-TakeOver</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
@@ -13,13 +13,31 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 </head>
-<body>
+<body onclick="unlockAudioOnFirstTouch()">
 
   <div class="crt-overlay"></div>
   <div class="crt-scanlines"></div>
 
-  <!-- AUDIO ELEMENT VOOR START BERICHT -->
-  <audio id="globalMissionAudioPlayer" style="display: none;"></audio>
+  <!-- AUDIO ELEMENT VOOR MISSIE START BERICHT -->
+  <audio id="globalMissionAudioPlayer" preload="auto"></audio>
+
+  <!-- NOOD-INTERACTIE OVERLAY VOOR BROWSER AUTOPLAY OVERRIDE -->
+  <div class="terminal-screen" id="autoplayBypassModal" style="display: none; z-index: 999999;">
+    <div class="retro-box alert-box text-center" style="max-width: 580px; border-width: 2px;">
+      <div class="box-header danger">
+        <span>🚨 INCOMING AUDIO STREAM</span>
+        <span class="blink">● TRANSMISSION READY</span>
+      </div>
+      <div class="alert-icon-big" style="color: var(--rose);">📻</div>
+      <h2 class="retro-title danger-glow">AUDIO TRANSMISSIE BINNEN!</h2>
+      <p class="retro-text" style="color: #fff; margin-bottom: 1.5rem;">
+        Er is zojuist een direct audiobericht binnengekomen van de leiding!
+      </p>
+      <button class="retro-btn btn-emerald btn-block btn-pulse" style="font-size: 1.1rem; padding: 1rem;" onclick="forcePlayIncomingMissionAudio()">
+        [ 🔊 START AUDIO TRANSMISSIE ▶ ]
+      </button>
+    </div>
+  </div>
 
   <!-- THEMATISCHE RETRO MODAL VOOR ALERTS/POPUPS -->
   <div class="terminal-screen" id="customAlertModal" style="display: none; z-index: 99999;">
@@ -609,7 +627,7 @@
           <div class="admin-block">
             <h4 class="admin-block-title">🚨 4. Noodbevel Broadcast (Alleen naar Spelers)</h4>
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-              <input type="text" id="adminEmergencyTitle" class="retro-input" placeholder="Titel (bijv. IEDEREEN NAAR HET CENTRALE PLEIN)">
+              <input type="text" id="adminEmergencyTitle" class="retro-input" placeholder="Titel (bijv. ALLE TEAMS NAAR HET CENTRALE PLEIN)">
               <textarea id="adminEmergencyText" rows="2" class="retro-input" placeholder="Tekst van het bevel..."></textarea>
               <input type="file" id="adminAudioFileInput" accept="audio/*" class="retro-input">
               <button class="retro-btn btn-danger btn-block" onclick="sendEmergencyLockdown()">[ 🚨 BLOKKEER ALLE SCHERMEN MET BEVEL ]</button>
