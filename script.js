@@ -126,7 +126,7 @@ function playVictoryFanfare() {
   setTimeout(() => playBeep(880, 0.3), 380);
 }
 
-// THEMATISCHE POPUP / ALERT FUNCTIE
+// THEMATISCHE POPUP / ALERT
 function showCustomAlert(text, header = "⚠️ SYSTEEM MELDING") {
   playGlitchNoise();
   document.getElementById('customAlertHeader').innerText = header;
@@ -252,6 +252,10 @@ function closeTutorialModal() {
   if (authenticatedTeam) {
     launchCockpit(authenticatedTeam);
   }
+}
+
+function finishTutorialAndLaunchCockpit() {
+  closeTutorialModal();
 }
 
 function launchCockpit(teamKey) {
@@ -445,7 +449,6 @@ function handleSlotClick(row, slotIndex, isAllowed) {
     playBeep(640, 0.05);
     mmData[row].colors[slotIndex] = currentlySelectedColor;
     
-    // Direct live in Firebase
     if (isFirebaseReady) {
       db.ref(`teams/${authenticatedTeam}/credits`).set(Math.max(0, credits - 1));
       db.ref(`teams/${authenticatedTeam}/mastermind/${row}`).set(mmData[row]);
@@ -459,7 +462,6 @@ function handleSlotClick(row, slotIndex, isAllowed) {
   }
 }
 
-// AUTOMATISCHE DIRECTE EVALUATIE TEGEN FIREBASE CODE
 function submitRowForValidation(row) {
   const mmData = currentTeamState.mastermind || {};
   if (!mmData[row]) return;
@@ -846,14 +848,13 @@ window.addEventListener('keydown', function(e) {
   }
 });
 
-// REALTIME LISTENERS (GEEN LOKALE OPSLAG MEER)
+// REALTIME LISTENERS (100% FIREBASE GESYNCHRONISEERD)
 function setupFirebaseTeamListener(teamKey) {
   if (!isFirebaseReady) return;
 
   db.ref(`teams/${teamKey}`).on('value', snapshot => {
     const data = snapshot.val() || {};
     
-    // Als team gereset is en wachtwoord weg is, gooi terug naar start
     if (authenticatedTeam === teamKey && !data.personalPassword && document.getElementById('mainCockpit').style.display === 'flex') {
       logoutCurrentTeam();
       return;
@@ -868,7 +869,6 @@ function setupFirebaseTeamListener(teamKey) {
       lockout: data.lockout === true
     };
 
-    // Individuele lockout
     document.getElementById('teamLockoutModal').style.display = currentTeamState.lockout ? 'flex' : 'none';
 
     renderSectors();
@@ -883,7 +883,6 @@ function setupFirebaseGlobalListeners() {
   const statusEl = document.getElementById('dbStatusIndicator');
   if (statusEl) statusEl.innerText = "● LIVE SERVER DATABASE CONNECTED";
 
-  // Secret code listener
   db.ref('gameState/secretCode').on('value', snapshot => {
     const code = snapshot.val();
     if (code && Array.isArray(code)) {
@@ -891,7 +890,6 @@ function setupFirebaseGlobalListeners() {
     }
   });
 
-  // Emergency listener
   db.ref('gameState/emergency').on('value', snapshot => {
     const data = snapshot.val();
     if (data) {
@@ -900,18 +898,16 @@ function setupFirebaseGlobalListeners() {
     }
   });
 
-  // Winnaars listener
   db.ref('gameState/winner').on('value', snapshot => {
     const winner = snapshot.val();
     if (winner && winner.teamName) {
       document.getElementById('victoryTeamName').innerText = winner.teamName;
-      document.getElementById('victoryCodeDisplay').innerText = (winner.secret || []).map(c => COLOR_MAP[c] || c).join(' ');
+      document.getElementById('victoryCodeDisplay').innerText = (winner.secret || []).map(c => COLOR_MAP[c]).join(' ');
       document.getElementById('victoryModal').style.display = 'flex';
       playVictoryFanfare();
     }
   });
 
-  // Timer sync
   db.ref('gameState/totalSeconds').on('value', snapshot => {
     const val = snapshot.val();
     if (val !== null) totalSeconds = val;
