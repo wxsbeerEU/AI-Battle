@@ -26,24 +26,119 @@ try {
   console.error("Firebase init fout:", err);
 }
 
-// 16 DROPSPEL MISSIES
+// 16 NIEUWE DROPSPEL MISSIES MET LOCATIES
 const SECTORS_DATA = [
-  { id: 't-1', code: 'Opdracht 1', name: 'De Masterchef Brigade', location: 'Terrein Ter Duinen', desc: 'Zoek een buitentrap of ingang. Maak een groepsfoto waarbij iedereen een restaurantfunctie uitbeeldt (1 boze chef, 2 obers, 3 afwassers, 4 hongerige gasten).' },
-  { id: 't-2', code: 'Opdracht 2', name: 'Parkeerplaats Datamining', location: 'Parking / Straat', desc: 'Vind op nummerplaten 3 auto\'s die een A, een I of het cijfer 4 bevatten. Stuur 3 duidelijke foto\'s door.' },
-  { id: 't-3', code: 'Opdracht 3', name: 'Het Verborgen Wifi-Wachtwoord', location: 'Borden aan de School', desc: 'Vind een officieel bord. Maak een woord van minstens 6 letters met enkel letters die op dit bord staan.' },
-  { id: 't-4', code: 'Opdracht 4', name: 'De Stille Serverruimte', location: 'Bankje of Stoep', desc: 'Het team moet 45 seconden muisstil op de grond/bank liggen opladen. Stuur een video van 15 seconden waarin niemand beweegt of lacht.' },
-  { id: 't-5', code: 'Opdracht 5', name: 'De AI Kleurenpalet Scan', location: 'Bermen / Tuinen', desc: 'Verzamel binnen 3 minuten 4 natuurlijke voorwerpen: iets groens (blad), iets bruins (takje), iets wit/grijs (steen/schelp) en iets geels/roods (bloem/bes).' },
-  { id: 't-6', code: 'Opdracht 6', name: 'Huisnummer Rekensom', location: 'In de Straat', desc: 'Vind in de straat 2 verschillende huisnummers die samen exact 50 vormen. Maak een selfie van teamleden bij elk van die twee huizen.' },
-  { id: 't-7', code: 'Opdracht 7', name: 'Binaire Boomknuffel', location: 'Directe Omgeving', desc: 'Vind de dikste boom in de straat. Hoeveel kinderen zijn er nodig om met gespreide armen de stam helemaal te omcirkelen? Stuur foto + aantal.' },
-  { id: 't-8', code: 'Opdracht 8', name: 'De Straat-Microchip', location: 'Op het Trottoir', desc: 'Vind een riooldeksel of watermeter-plaatje. Gebruik krijt of takjes om het om te toveren tot een moederbord met lijnen eromheen.' },
-  { id: 't-9', code: 'Opdracht 9', name: 'De Menselijke QR-Code', location: 'Grasveld', desc: 'Vorm met minimaal 8 kinderen liggend op de grond een perfect vierkant met een stip in het midden (zoals de hoek van een QR-code).' },
-  { id: 't-10', code: 'Opdracht 10', name: '10-Sec Slowmotion Sprint', location: 'Vrij Pad', desc: 'Maak een video van 10 seconden waarin het hele team een sprintje trekt in extreem overdreven slow-motion zónder te lachen.' },
-  { id: 't-11', code: 'Opdracht 11', name: 'Data-Transportketting', location: 'Vrije Ruimte', desc: 'Ga op een rij staan met 1m tussenafstand. Geef een voorwerp (dennenappel of schoen) door via de ellebogen of knieën (handen op de rug!).' },
-  { id: 't-12', code: 'Opdracht 12', name: 'De Stoeprand-Balans', location: 'Stoeprand', desc: 'Alle 10 de kinderen moeten tegelijk op de rand van de stoep op één been balanceren gedurende 20 seconden. Stuur video van 10 sec.' },
-  { id: 't-13', code: 'Opdracht 13', name: 'Het AI-Portret met Natuur', location: 'Op de Grond', desc: 'Maak op de grond met takjes, steentjes, zand en bladeren een robotgezicht van minstens 50 cm breed.' },
-  { id: 't-14', code: 'Opdracht 14', name: 'Verkeersbord Decoder', location: 'In de Straat', desc: 'Zoek een verkeersbord in de straat. Bedenk als team een maffe nieuwe betekenis gelinkt aan robots/AI en stuur foto + tekst door.' },
-  { id: 't-15', code: 'Opdracht 15', name: 'Lengte-Algoritme', location: 'Tegen een Muur', desc: 'Ga binnen 30 seconden op een rij staan, exact gesorteerd van klein naar groot, met de ruggen tegen een muur/hek. Iedereen geeft een robot-saluut.' },
-  { id: 't-16', code: 'Opdracht 16', name: 'Geluidsfragment Hack', location: 'Willekeurige Plek', desc: 'Neem een spraakbericht op van 10 seconden waarin het hele team tegelijk een bizar computer/robotgeluid maakt (piepjes, lasers, storingen).' }
+  { 
+    id: 't-1', 
+    code: 'Opdracht 1', 
+    name: 'Wiskundige Huizenscan', 
+    location: 'Woonstraten rond De Bronne / Ter Duinen', 
+    desc: 'Zoek een huisnummer dat deelbaar is door zowel 6 als 4 (bijv. 12, 24, 36, 48...). Maak een duidelijke foto van het team bij het huisnummer.' 
+  },
+  { 
+    id: 't-2', 
+    code: 'Opdracht 2', 
+    name: 'High-Five Protocol', 
+    location: 'Winkelstraat of Zeelaan', 
+    desc: 'Geef 10 willekeurige voorbijgangers een enthousiaste high-five. Maak een korte video of compilatie waarin minstens 3 high-fives te zien zijn.' 
+  },
+  { 
+    id: 't-3', 
+    code: 'Opdracht 3', 
+    name: 'Honden-Biometrie', 
+    location: 'Wandelpaden / Park', 
+    desc: 'Vraag netjes aan een baasje of jullie een groepsselfie mogen maken met hun hond. Stuur de foto door!' 
+  },
+  { 
+    id: 't-4', 
+    code: 'Opdracht 4', 
+    name: 'De Snorren-Scan', 
+    location: 'Dorp / Markt / Zeelaan', 
+    desc: 'Zoek een persoon met enkel een snor (geen volle baard). Vraag vriendelijk om een selfie met jullie team.' 
+  },
+  { 
+    id: 't-5', 
+    code: 'Opdracht 5', 
+    name: 'Colruyt Flashmob', 
+    location: 'Colruyt Koksijde', 
+    desc: 'Wandel naar de Colruyt (of parking/inkom). Doe met de hele groep tegelijk een synchroon TikTok-dansje en stuur de video door!' 
+  },
+  { 
+    id: 't-6', 
+    code: 'Opdracht 6', 
+    name: 'Megastraat Datamining', 
+    location: 'Koksijde Centrum / Straten', 
+    desc: 'Zoek een officieel straatnaambord met minstens 15 letters (exclusief spaties/symbolen). Maak een selfie met het bord.' 
+  },
+  { 
+    id: 't-7', code: 'Opdracht 7', 
+    name: 'Dubbele Cijfercode', 
+    location: 'Openbare Parking', 
+    desc: 'Vind een geparkeerde auto met een nummerplaat die minstens 2 dezelfde cijfers bevat (bijv. 1-ABC-223). Stuur de foto van de plaat.' 
+  },
+  { 
+    id: 't-8', 
+    code: 'Opdracht 8', 
+    name: 'Vlaggen-Observatie', 
+    location: 'Gemeentehuis / Hotels / Strandlaan', 
+    desc: 'Zoek een gebouw waar een officiële vlag aan wappert. Maak een groepsfoto met het gebouw en de vlag duidelijk in beeld.' 
+  },
+  { 
+    id: 't-9', 
+    code: 'Opdracht 9', 
+    name: 'Het Straat-Interview', 
+    location: 'Dorpsplein / Bankjes', 
+    desc: 'Neem een interview af van minstens 1 volle minuut met een voorbijganger (over hun dag, lievelingseten of de ontspoorde AI). Stuur de video door.' 
+  },
+  { 
+    id: 't-10', 
+    code: 'Opdracht 10', 
+    name: 'Rode Auto Infiltratie', 
+    location: 'Parking / Straten', 
+    desc: 'Vind een felrode auto. Maak een groepsfoto waarbij iedereen als een geheim agent rond de rode auto staat geslopen.' 
+  },
+  { 
+    id: 't-11', 
+    code: 'Opdracht 11', 
+    name: 'Beklim de Hoge Blekker', 
+    location: 'Natuurgebied De Hoge Blekker', 
+    desc: 'Wandel naar De Hoge Blekker en bereik de absolute top van de duin (of zo hoog als mogelijk). Maak een overwinningsfoto bovenop de top!' 
+  },
+  { 
+    id: 't-12', 
+    code: 'Opdracht 12', 
+    name: 'Natuurhistorische Safari', 
+    location: 'Natuurmuseum / Natuureducatief Centrum Koksijde', 
+    desc: 'Wandel naar het Natuurmuseum (of de ingang). Laat iedereen van de groep tegelijk een wild dier theatraal nadoen op video (met geluid!).' 
+  },
+  { 
+    id: 't-13', 
+    code: 'Opdracht 13', 
+    name: 'Menselijke Piramide', 
+    location: 'Grasveld / Plein', 
+    desc: 'Bouw met het hele team een stabiele menselijke piramide van minstens 2 of 3 verdiepingen. Houd dit 5 seconden vast voor de foto!' 
+  },
+  { 
+    id: 't-14', 
+    code: 'Opdracht 14', 
+    name: 'Huisnummer Som 10', 
+    location: 'Woonwijk', 
+    desc: 'Zoek een huisnummer waarvan de afzonderlijke cijfers opgeteld exact 10 vormen (bijv. 19, 28, 37, 46, 55, 64, 73, 82, 91 of 145). Stuur de foto.' 
+  },
+  { 
+    id: 't-15', 
+    code: 'Opdracht 15', 
+    name: 'Het Geheime Woord: Teletubbie', 
+    location: 'Winkelstraat / Park', 
+    desc: 'Laat een willekeurige voorbijganger spontaan of via een slimme vraag het woord "Teletubbie" hardop uitspreken op video.' 
+  },
+  { 
+    id: 't-16', 
+    code: 'Opdracht 16', 
+    name: 'De Brooddoos Monoloog', 
+    location: 'Willekeurige Plek', 
+    desc: 'Laat 1 iemand van jullie groep 1 volle minuut (60 seconden aan een stuk) zonder pauze vol passie over een brooddoos praten op video.' 
+  }
 ];
 
 const TEAMS_INFO = {
@@ -608,7 +703,7 @@ function closeVictoryModal() {
   document.getElementById('victoryModal').style.display = 'none';
 }
 
-// SYSADMIN LEIDING PANEEL (6-KLEURENCODE)
+// SYSADMIN LEIDING PANEEL
 function openAdminModal() {
   playBeep(400, 0.05);
   document.getElementById('adminModal').style.display = 'flex';
@@ -848,7 +943,7 @@ window.addEventListener('keydown', function(e) {
   }
 });
 
-// REALTIME LISTENERS (100% FIREBASE GESYNCHRONISEERD)
+// REALTIME LISTENERS
 function setupFirebaseTeamListener(teamKey) {
   if (!isFirebaseReady) return;
 
@@ -902,7 +997,7 @@ function setupFirebaseGlobalListeners() {
     const winner = snapshot.val();
     if (winner && winner.teamName) {
       document.getElementById('victoryTeamName').innerText = winner.teamName;
-      document.getElementById('victoryCodeDisplay').innerText = (winner.secret || []).map(c => COLOR_MAP[c]).join(' ');
+      document.getElementById('victoryCodeDisplay').innerText = (winner.secret || []).map(c => COLOR_MAP[c] || c).join(' ');
       document.getElementById('victoryModal').style.display = 'flex';
       playVictoryFanfare();
     }
