@@ -1,5 +1,5 @@
 /**
- * AETHER_OS - 100% REALTIME FIREBASE POWERED ENGINE
+ * AETHER_OS - 100% REALTIME FIREBASE POWERED ENGINE (MET AUTOPLAY BYPASS & AUDIO START)
  */
 
 // =========================================================================
@@ -238,10 +238,17 @@ let totalSeconds = 120 * 60;
 let timerRunning = true;
 let activeMissionAudioUrl = null;
 
-// SYNTHESIZER SOUND ENGINE
+// SYNTHESIZER SOUND ENGINE & BROWSER AUTOPLAY UNLOCK
 function getAudioContext() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
   return audioCtx;
+}
+
+function unlockAudioOnFirstTouch() {
+  getAudioContext();
 }
 
 function playGlitchNoise() {
@@ -817,10 +824,42 @@ function broadcastMissionStart(audioDataUrl) {
   alert("Spel gestart! Lokaalcode-invoer is vrijgegeven en het audiobericht wordt afgespeeld bij de teams.");
 }
 
+// AUDIO AUTOMATION & BYPASS VOOR SPELERS
+function triggerMissionAudioPlayback(audioUrl) {
+  if (!audioUrl || isAdminAuthenticated) return;
+  activeMissionAudioUrl = audioUrl;
+
+  const player = document.getElementById('globalMissionAudioPlayer');
+  player.src = audioUrl;
+  player.currentTime = 0;
+
+  // Probeer direct af te spelen via de ontgrendelde context
+  const playPromise = player.play();
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      // Direct afspelen geslaagd!
+      document.getElementById('autoplayBypassModal').style.display = 'none';
+    }).catch(() => {
+      // Browser blokkeert autoplay: toon de interactieve noodknop
+      document.getElementById('autoplayBypassModal').style.display = 'flex';
+    });
+  }
+}
+
+function forcePlayIncomingMissionAudio() {
+  document.getElementById('autoplayBypassModal').style.display = 'none';
+  if (activeMissionAudioUrl) {
+    const player = document.getElementById('globalMissionAudioPlayer');
+    player.src = activeMissionAudioUrl;
+    player.play().catch(() => {});
+  }
+}
+
 function replayMissionAudio() {
   if (activeMissionAudioUrl) {
     const player = document.getElementById('globalMissionAudioPlayer');
     player.src = activeMissionAudioUrl;
+    player.currentTime = 0;
     player.play().catch(() => {});
   }
 }
@@ -1214,18 +1253,14 @@ function setupFirebaseGlobalListeners() {
     }
   });
 
-  // Luister naar audiobroadcast bij de start
+  // Luister naar audiobroadcast bij de start (met automatische playback trigger)
   db.ref('gameState/missionAudioUrl').on('value', snapshot => {
     if (isAdminAuthenticated) return;
     const audioUrl = snapshot.val();
     if (audioUrl) {
-      activeMissionAudioUrl = audioUrl;
       const replayBox = document.getElementById('missionAudioReplayBox');
       if (replayBox) replayBox.style.display = 'block';
-
-      const player = document.getElementById('globalMissionAudioPlayer');
-      player.src = audioUrl;
-      player.play().catch(() => {});
+      triggerMissionAudioPlayback(audioUrl);
     }
   });
 
