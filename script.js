@@ -1,5 +1,5 @@
 /**
- * AETHER_OS - 100% REALTIME FIREBASE POWERED ENGINE (MET BONUS TOKENS LOGICA)
+ * AETHER_OS - 100% REALTIME FIREBASE POWERED ENGINE
  */
 
 // =========================================================================
@@ -217,6 +217,8 @@ const COLOR_MAP = {
 };
 
 let authenticatedTeam = null;
+let isAdminAuthenticated = false;
+
 let currentTeamState = {
   credits: 0,
   active_row: 1,
@@ -234,6 +236,7 @@ let currentlySelectedColor = 'red';
 let audioCtx = null;
 let totalSeconds = 120 * 60;
 let timerRunning = true;
+let activeMissionAudioUrl = null;
 
 // SYNTHESIZER SOUND ENGINE
 function getAudioContext() {
@@ -242,6 +245,7 @@ function getAudioContext() {
 }
 
 function playGlitchNoise() {
+  if (isAdminAuthenticated) return;
   try {
     const ctx = getAudioContext();
     const osc = ctx.createOscillator();
@@ -259,6 +263,7 @@ function playGlitchNoise() {
 }
 
 function playBeep(freq = 600, duration = 0.08) {
+  if (isAdminAuthenticated) return;
   try {
     const ctx = getAudioContext();
     const osc = ctx.createOscillator();
@@ -275,6 +280,7 @@ function playBeep(freq = 600, duration = 0.08) {
 }
 
 function playVictoryFanfare() {
+  if (isAdminAuthenticated) return;
   playBeep(440, 0.1);
   setTimeout(() => playBeep(554, 0.1), 120);
   setTimeout(() => playBeep(659, 0.15), 240);
@@ -283,6 +289,7 @@ function playVictoryFanfare() {
 
 // THEMATISCHE POPUP / ALERT
 function showCustomAlert(text, header = "⚠️ SYSTEEM MELDING") {
+  if (isAdminAuthenticated) return;
   playGlitchNoise();
   document.getElementById('customAlertHeader').innerText = header;
   document.getElementById('customAlertText').innerText = text;
@@ -631,7 +638,6 @@ function handleSlotClick(row, slotIndex, isAllowed) {
   }
 }
 
-// AUTOMATISCHE DIRECTE EVALUATIE
 function submitRowForValidation(row) {
   const mmData = currentTeamState.mastermind || {};
   if (!mmData[row]) return;
@@ -655,7 +661,6 @@ function submitRowForValidation(row) {
       });
     }
 
-    // Toon direct het spannende verzendscherm
     document.getElementById('transmittingModal').style.display = 'flex';
   } else {
     mmData[row].pins = evaluation.pins;
@@ -723,7 +728,7 @@ function sendEmergencyLockdown() {
   const fileInput = document.getElementById('adminAudioFileInput');
 
   if (!text && (!fileInput.files || fileInput.files.length === 0)) {
-    return showCustomAlert("Typ een tekst of voeg een audiobestand toe!");
+    return alert("Typ een tekst of voeg een audiobestand toe!");
   }
 
   if (fileInput.files && fileInput.files[0]) {
@@ -751,7 +756,7 @@ function publishEmergencyPayload(title, text, audioUrl) {
 }
 
 function checkEmergencyLockdown(payload) {
-  if (!payload) return;
+  if (!payload || isAdminAuthenticated) return;
   const dismissedId = sessionStorage.getItem('aether_dismissed_emergency');
 
   if (dismissedId !== String(payload.id)) {
@@ -786,21 +791,53 @@ function closeVictoryModal() {
   document.getElementById('victoryModal').style.display = 'none';
 }
 
+// STARTSEIN & AUDIO BROADCAST VANUIT ADMIN
+function adminStartMissionBroadcast() {
+  const fileInput = document.getElementById('adminMissionAudioFileInput');
+
+  if (fileInput.files && fileInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      broadcastMissionStart(e.target.result);
+    };
+    reader.readAsDataURL(fileInput.files[0]);
+  } else {
+    broadcastMissionStart(null);
+  }
+}
+
+function broadcastMissionStart(audioDataUrl) {
+  if (isFirebaseReady) {
+    db.ref('gameState/missionStarted').set(true);
+    db.ref('gameState/timerRunning').set(true);
+    if (audioDataUrl) {
+      db.ref('gameState/missionAudioUrl').set(audioDataUrl);
+    }
+  }
+  alert("Spel gestart! Lokaalcode-invoer is vrijgegeven en het audiobericht wordt afgespeeld bij de teams.");
+}
+
+function replayMissionAudio() {
+  if (activeMissionAudioUrl) {
+    const player = document.getElementById('globalMissionAudioPlayer');
+    player.src = activeMissionAudioUrl;
+    player.play().catch(() => {});
+  }
+}
+
 // SYSADMIN LEIDING PANEEL
 function openAdminModal() {
-  playBeep(400, 0.05);
   document.getElementById('adminModal').style.display = 'flex';
 }
 
 function closeAdminModal() {
-  playBeep(300, 0.05);
   document.getElementById('adminModal').style.display = 'none';
 }
 
 function loginAdmin() {
   const p = document.getElementById('adminPasswordInput').value;
   if (p === 'admin123' || p === 'core2026') {
-    playVictoryFanfare();
+    isAdminAuthenticated = true;
     document.getElementById('adminAuthSection').style.display = 'none';
     document.getElementById('adminControlsSection').style.display = 'block';
     loadSecretCodesUI();
@@ -833,7 +870,7 @@ function saveSecretCodes() {
     db.ref('gameState/primarySecretCode').set(primary);
     db.ref('gameState/backupSecretCode').set(backup);
   }
-  showCustomAlert("Primaire en Backup Codes succesvol opgeslagen in Firebase!", "✓ CODES GEÜPDATET");
+  alert("Primaire en Backup Codes opgeslagen in Firebase!");
 }
 
 function loadSecretCodesUI() {
@@ -904,31 +941,27 @@ function adminSabotageTeamCode() {
   const tKey = pendingCrackedTeam.teamKey;
   const tName = pendingCrackedTeam.teamName;
 
-  // Schakel specifiek dit team over op de backup code
   db.ref(`teams/${tKey}/activeCodeType`).set('backup');
   db.ref(`teams/${tKey}/mastermind`).remove();
   db.ref(`teams/${tKey}/active_row`).set(1);
   db.ref(`teams/${tKey}/credits`).transaction(current => (current || 0) + 6);
 
-  // Stuur specifieke sabotage notificatie die direct custom modal triggert
   db.ref(`teams/${tKey}/sabotageNotice`).set({
     id: Date.now(),
     title: "⚡ AI KERN SABOTAGE: PARAMETERS GEWIJZIGD",
     text: "De corrupte AI heeft jullie aanval op de primaire kern afgeweerd en de decryptieparameters gewijzigd! Jullie terminal is overgeschakeld naar het secundaire back-up protocol. Er zijn 6 compensatie-tokens toegevoegd. Herstart direct de tegenaanval!"
   });
 
-  // Verwijder alert in admin
   db.ref('gameState/crackedAlert').remove();
   document.getElementById('adminCrackAlertBox').style.display = 'none';
 
-  showCustomAlert(`Sabotage uitgevoerd! ${tName} staat nu op de Backup Code en heeft +6 tokens ontvangen.`, "✓ SABOTAGE TOEGEPAST");
+  alert(`Sabotage uitgevoerd! ${tName} staat nu op de Backup Code en heeft +6 tokens ontvangen.`);
 }
 
 // REALTIME ADMIN LISTENERS
 function setupAdminRealtimeListeners() {
   if (!isFirebaseReady) return;
 
-  // Live opdrachten-inzendingen
   db.ref('submissions/tasks').on('value', snapshot => {
     const tbody = document.getElementById('adminSubmissionsBody');
     if (!tbody) return;
@@ -958,7 +991,6 @@ function setupAdminRealtimeListeners() {
     });
   });
 
-  // Live Teams Manager overzicht (inclusief Bonus Tokens knop)
   db.ref('teams').on('value', snapshot => {
     const tbody = document.getElementById('adminTeamsManagerBody');
     if (!tbody) return;
@@ -999,7 +1031,6 @@ function setupAdminRealtimeListeners() {
   });
 }
 
-// BONUS TOKENS LOGICA VOOR ADMIN
 function adminGiveBonusTokensPrompt(tKey) {
   const tInfo = TEAMS_INFO[tKey];
   const input = prompt(`Hoeveel BONUS tokens wil je toekennen aan ${tInfo.name}? (Bijv. 2, 3 of 5):`, "2");
@@ -1011,10 +1042,7 @@ function adminGiveBonusTokensPrompt(tKey) {
   }
 
   if (isFirebaseReady) {
-    // 1. Tokens direct toevoegen
     db.ref(`teams/${tKey}/credits`).transaction(current => (current || 0) + amount);
-
-    // 2. Bericht triggeren op de console van dat team
     db.ref(`teams/${tKey}/bonusNotice`).set({
       id: Date.now(),
       amount: amount,
@@ -1022,8 +1050,6 @@ function adminGiveBonusTokensPrompt(tKey) {
       text: `De centrale AI verzwakt door jullie acties! Jullie ontvangen +${amount} Bonus Quantum-Tokens voor de tegenaanval!`
     });
   }
-
-  showCustomAlert(`+${amount} Bonus tokens toegekend aan ${tInfo.name}! Het team krijgt direct een melding op het scherm.`, "✓ BONUS VERSTUURD");
 }
 
 function adminApproveTaskFB(subKey, teamKey, taskId) {
@@ -1078,6 +1104,8 @@ function adminResetAllGameData() {
       db.ref('gameState/winner').remove();
       db.ref('gameState/crackedAlert').remove();
       db.ref('gameState/emergency').remove();
+      db.ref('gameState/missionStarted').set(false);
+      db.ref('gameState/missionAudioUrl').remove();
       db.ref('gameState/totalSeconds').set(7200);
       db.ref('gameState/timerRunning').set(false);
 
@@ -1094,8 +1122,8 @@ function adminResetAllGameData() {
         });
       });
     }
-    showCustomAlert("Volledig spel gereset in Firebase!", "✓ RESET VOLTOOID");
-    setTimeout(() => location.reload(), 1000);
+    alert("Volledig spel gereset in Firebase!");
+    setTimeout(() => location.reload(), 500);
   }
 }
 
@@ -1119,6 +1147,7 @@ function setupFirebaseTeamListener(teamKey) {
   if (!isFirebaseReady) return;
 
   db.ref(`teams/${teamKey}`).on('value', snapshot => {
+    if (isAdminAuthenticated) return;
     const data = snapshot.val() || {};
     
     if (authenticatedTeam === teamKey && !data.personalPassword && document.getElementById('mainCockpit').style.display === 'flex') {
@@ -1169,6 +1198,37 @@ function setupFirebaseGlobalListeners() {
   const statusEl = document.getElementById('dbStatusIndicator');
   if (statusEl) statusEl.innerText = "● LIVE SERVER DATABASE CONNECTED";
 
+  // Luister naar startsein van de missie
+  db.ref('gameState/missionStarted').on('value', snapshot => {
+    if (isAdminAuthenticated) return;
+    const isStarted = snapshot.val() === true;
+    const lockedNotice = document.getElementById('introLockedNotice');
+    const unlockedSection = document.getElementById('introUnlockedSection');
+
+    if (isStarted) {
+      if (lockedNotice) lockedNotice.style.display = 'none';
+      if (unlockedSection) unlockedSection.style.display = 'block';
+    } else {
+      if (lockedNotice) lockedNotice.style.display = 'block';
+      if (unlockedSection) unlockedSection.style.display = 'none';
+    }
+  });
+
+  // Luister naar audiobroadcast bij de start
+  db.ref('gameState/missionAudioUrl').on('value', snapshot => {
+    if (isAdminAuthenticated) return;
+    const audioUrl = snapshot.val();
+    if (audioUrl) {
+      activeMissionAudioUrl = audioUrl;
+      const replayBox = document.getElementById('missionAudioReplayBox');
+      if (replayBox) replayBox.style.display = 'block';
+
+      const player = document.getElementById('globalMissionAudioPlayer');
+      player.src = audioUrl;
+      player.play().catch(() => {});
+    }
+  });
+
   // Luister naar Primaire en Backup Codes
   db.ref('gameState/primarySecretCode').on('value', snapshot => {
     const code = snapshot.val();
@@ -1199,6 +1259,7 @@ function setupFirebaseGlobalListeners() {
   });
 
   db.ref('gameState/emergency').on('value', snapshot => {
+    if (isAdminAuthenticated) return;
     const data = snapshot.val();
     if (data) {
       document.getElementById('lockdownTitle').dataset.emergencyId = data.id;
@@ -1208,6 +1269,7 @@ function setupFirebaseGlobalListeners() {
 
   // Winnaars listener
   db.ref('gameState/winner').on('value', snapshot => {
+    if (isAdminAuthenticated) return;
     const winner = snapshot.val();
     if (winner && winner.teamName) {
       document.getElementById('transmittingModal').style.display = 'none';
