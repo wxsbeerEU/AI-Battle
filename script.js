@@ -1,5 +1,5 @@
 /**
- * AETHER_OS - 100% REALTIME FIREBASE POWERED ENGINE
+ * AETHER_OS - 100% REALTIME FIREBASE POWERED ENGINE (MET BONUS TOKENS LOGICA)
  */
 
 // =========================================================================
@@ -26,7 +26,7 @@ try {
   console.error("Firebase init fout:", err);
 }
 
-// 24 DROPSPEL MISSIES (INCLUSIEF STRAATNAMEN, VOORDEUR, TONGBREKER, SPEELPLEIN & KNOOP)
+// 24 DROPSPEL MISSIES
 const SECTORS_DATA = [
   { 
     id: 't-1', 
@@ -297,6 +297,11 @@ function closeCustomAlert() {
 function dismissSabotageModal() {
   playBeep(600, 0.1);
   document.getElementById('sabotageModal').style.display = 'none';
+}
+
+function dismissBonusTokensModal() {
+  playBeep(600, 0.1);
+  document.getElementById('bonusTokensModal').style.display = 'none';
 }
 
 // FASE 1 & 2: INTRO & KAMERCODE FLOW
@@ -953,7 +958,7 @@ function setupAdminRealtimeListeners() {
     });
   });
 
-  // Live Teams Manager overzicht
+  // Live Teams Manager overzicht (inclusief Bonus Tokens knop)
   db.ref('teams').on('value', snapshot => {
     const tbody = document.getElementById('adminTeamsManagerBody');
     if (!tbody) return;
@@ -981,7 +986,8 @@ function setupAdminRealtimeListeners() {
         <td><code>${activeCodeType}</code></td>
         <td><code>${personalPw}</code></td>
         <td>
-          <button class="retro-btn btn-sm ${isLocked ? 'btn-emerald' : 'btn-danger'}" onclick="adminToggleTeamLockout('${tKey}', ${!isLocked})">
+          <button class="retro-btn btn-sm btn-emerald" onclick="adminGiveBonusTokensPrompt('${tKey}')">🎁 Bonus Tokens</button>
+          <button class="retro-btn btn-sm ${isLocked ? 'btn-emerald' : 'btn-danger'}" style="margin-left:0.3rem;" onclick="adminToggleTeamLockout('${tKey}', ${!isLocked})">
             ${isLocked ? 'Vrijgeven' : '⚡ Lockout'}
           </button>
           <button class="retro-btn btn-sm" style="margin-left:0.3rem;" onclick="adminResetTeamPassword('${tKey}')">Reset PW</button>
@@ -991,6 +997,33 @@ function setupAdminRealtimeListeners() {
       tbody.appendChild(tr);
     });
   });
+}
+
+// BONUS TOKENS LOGICA VOOR ADMIN
+function adminGiveBonusTokensPrompt(tKey) {
+  const tInfo = TEAMS_INFO[tKey];
+  const input = prompt(`Hoeveel BONUS tokens wil je toekennen aan ${tInfo.name}? (Bijv. 2, 3 of 5):`, "2");
+  if (!input) return;
+
+  const amount = parseInt(input, 10);
+  if (isNaN(amount) || amount <= 0) {
+    return alert("Voer een geldig getal groter dan 0 in!");
+  }
+
+  if (isFirebaseReady) {
+    // 1. Tokens direct toevoegen
+    db.ref(`teams/${tKey}/credits`).transaction(current => (current || 0) + amount);
+
+    // 2. Bericht triggeren op de console van dat team
+    db.ref(`teams/${tKey}/bonusNotice`).set({
+      id: Date.now(),
+      amount: amount,
+      title: "⚡ SYSTEEM INBREUK // AI VERZWAKT",
+      text: `De centrale AI verzwakt door jullie acties! Jullie ontvangen +${amount} Bonus Quantum-Tokens voor de tegenaanval!`
+    });
+  }
+
+  showCustomAlert(`+${amount} Bonus tokens toegekend aan ${tInfo.name}! Het team krijgt direct een melding op het scherm.`, "✓ BONUS VERSTUURD");
 }
 
 function adminApproveTaskFB(subKey, teamKey, taskId) {
@@ -1077,6 +1110,7 @@ window.addEventListener('keydown', function(e) {
     closeTutorialModal();
     closeCustomAlert();
     dismissSabotageModal();
+    dismissBonusTokensModal();
   }
 });
 
@@ -1102,7 +1136,16 @@ function setupFirebaseTeamListener(teamKey) {
       activeCodeType: data.activeCodeType || 'primary'
     };
 
-    // Check of er een sabotageNotice voor dit team is binnengekomen
+    // Check voor Bonus Tokens pop-up
+    if (data.bonusNotice) {
+      playVictoryFanfare();
+      document.getElementById('bonusTokensTitle').innerText = data.bonusNotice.title;
+      document.getElementById('bonusTokensText').innerText = data.bonusNotice.text;
+      document.getElementById('bonusTokensModal').style.display = 'flex';
+      db.ref(`teams/${teamKey}/bonusNotice`).remove();
+    }
+
+    // Check voor Sabotage pop-up
     if (data.sabotageNotice) {
       document.getElementById('transmittingModal').style.display = 'none';
       playGlitchNoise();
