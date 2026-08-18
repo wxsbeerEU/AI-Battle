@@ -693,7 +693,7 @@ body {
 
 .modal-popup { max-width: 500px; width: 100%; }
 
-/* DYNAMISCHE GROOTTE VOOR ADMIN POPUP (PAST PERFECT OP LAPTOP) */
+/* DYNAMISCHE GROOTTE VOOR ADMIN POPUP */
 .admin-popup {
   width: 95vw;
   max-width: 1100px;
